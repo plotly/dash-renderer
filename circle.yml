@@ -4,13 +4,12 @@ machine:
 
 dependencies:
     pre:
-	- pip install tox
+        - pip install tox
         - pip install -r tests/requirements.txt
         - npm install
         - npm run build-prod
 
-
 test:
     override:
-	- tox
+        - tox
         - npm run test
