@@ -185,7 +185,7 @@ function loadSavedStateAndTriggerVisibleInputs(dispatch, getState, skipTheseInpu
     };
 }
 
-function triggerDefaultState(dispatch, getState) {
+export function triggerDefaultState(dispatch, getState) {
     const {graphs} = getState();
     const {InputGraph} = graphs;
     const allNodes = InputGraph.overallOrder();
@@ -448,7 +448,6 @@ export const notifyObservers = function(payload) {
             }
 
 
-
             promises.push(fetch('/update-component', {
                 method: 'POST',
                 headers: {
@@ -464,7 +463,6 @@ export const notifyObservers = function(payload) {
                 });
 
                 return res.json().then(function handleJson(data) {
-
                     // clear this item from the request queue
                     dispatch(setRequestQueue(
                         reject(
