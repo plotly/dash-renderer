@@ -118,21 +118,25 @@ class Tests(IntegrationTests):
 
         # Somehow the html attributes are unordered.
         # Try different combinations (they're all valid html)
+        style_permutations = [
+            'style="color: red; font-size: 30px;"',
+            'style="font-size: 30px; color: red;"'
+        ]
         permutations = itertools.permutations([
             'id="p.c.3"',
             'class="my-class"',
             'title="tooltip"',
-            'style="color: red; font-size: 30px;"'
+
         ], 4)
         passed = False
-        for permutation in permutations:
+        for (style, permutation) in itertools.product(style_permutations, permutations):
             actual_cleaned = re.sub(comment_regex, '', el.get_attribute('innerHTML'))
             expected_cleaned = re.sub(
                 comment_regex,
                 '',
                 rendered_dom.replace('\n', '')
                             .replace('    ', '')
-                            .replace('PERMUTE', ' '.join(permutation))
+                            .replace('PERMUTE', ' '.join(permutation + [style]))
             )
 
             if actual_cleaned == expected_cleaned:
