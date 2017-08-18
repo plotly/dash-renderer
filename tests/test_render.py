@@ -128,8 +128,8 @@ class Tests(IntegrationTests):
             'title="tooltip"',
         ], 3)
         passed = False
-        for style in style_permutations:
-            for permutation in permutations:
+        for permutation in permutations:
+            for style in style_permutations:
                 actual_cleaned = re.sub(comment_regex, '', el.get_attribute('innerHTML'))
                 expected_cleaned = re.sub(
                     comment_regex,
@@ -138,9 +138,7 @@ class Tests(IntegrationTests):
                                 .replace('    ', '')
                                 .replace('PERMUTE', ' '.join(list(permutation) + [style]))
                 )
-
-                if actual_cleaned == expected_cleaned:
-                    break
+                passed = passed or (actual_cleaned == expected_cleaned)
         if not passed:
             raise Exception(
                 'HTML does not match\nActual:\n{}\n\nExpected:\n{}'.format(
