@@ -63,7 +63,6 @@ class Tests(IntegrationTests):
 
         el = self.wait_for_element_by_id('_dash-app-content')
 
-        # TODO - Why is `font-size` being used not `fontSize`?
         # TODO - Make less fragile with http://lxml.de/lxmlhtml.html#html-diff
         rendered_dom = '''
             <div>
@@ -127,23 +126,22 @@ class Tests(IntegrationTests):
         ], 4)
         passed = False
         for permutation in permutations:
-            passed = (
-                re.sub(comment_regex, '', el.get_attribute('innerHTML')) ==
-                re.sub(
-                    comment_regex,
-                    '',
-                    rendered_dom.replace('\n', '')
-                                .replace('    ', '')
-                                .replace('PERMUTE', ' '.join(permutation))
-                )
+            actual_cleaned = re.sub(comment_regex, '', el.get_attribute('innerHTML'))
+            expected_cleaned = re.sub(
+                comment_regex,
+                '',
+                rendered_dom.replace('\n', '')
+                            .replace('    ', '')
+                            .replace('PERMUTE', ' '.join(permutation))
             )
-            if passed:
+
+            if actual_cleaned == expected_cleaned:
                 break
         if not passed:
             raise Exception(
                 'HTML does not match\nActual:\n{}\n\nExpected:\n{}'.format(
-                    el.get_attribute('innerHTML'),
-                    rendered_dom
+                    actual_cleaned,
+                    expected_cleaned
                 )
             )
 
