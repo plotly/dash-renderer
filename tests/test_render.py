@@ -136,7 +136,7 @@ class Tests(IntegrationTests):
                     '',
                     rendered_dom.replace('\n', '')
                                 .replace('    ', '')
-                                .replace('PERMUTE', ' '.join(permutation + [style]))
+                                .replace('PERMUTE', ' '.join(list(permutation) + [style]))
                 )
 
                 if actual_cleaned == expected_cleaned:
