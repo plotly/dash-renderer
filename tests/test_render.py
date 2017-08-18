@@ -126,8 +126,7 @@ class Tests(IntegrationTests):
             'id="p.c.3"',
             'class="my-class"',
             'title="tooltip"',
-
-        ], 4)
+        ], 3)
         passed = False
         for style in style_permutations:
             for permutation in permutations:
