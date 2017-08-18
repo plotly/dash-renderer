@@ -129,18 +129,19 @@ class Tests(IntegrationTests):
 
         ], 4)
         passed = False
-        for (style, permutation) in itertools.product(style_permutations, permutations):
-            actual_cleaned = re.sub(comment_regex, '', el.get_attribute('innerHTML'))
-            expected_cleaned = re.sub(
-                comment_regex,
-                '',
-                rendered_dom.replace('\n', '')
-                            .replace('    ', '')
-                            .replace('PERMUTE', ' '.join(permutation + [style]))
-            )
+        for style in style_permutations:
+            for permutation in permutations:
+                actual_cleaned = re.sub(comment_regex, '', el.get_attribute('innerHTML'))
+                expected_cleaned = re.sub(
+                    comment_regex,
+                    '',
+                    rendered_dom.replace('\n', '')
+                                .replace('    ', '')
+                                .replace('PERMUTE', ' '.join(permutation + [style]))
+                )
 
-            if actual_cleaned == expected_cleaned:
-                break
+                if actual_cleaned == expected_cleaned:
+                    break
         if not passed:
             raise Exception(
                 'HTML does not match\nActual:\n{}\n\nExpected:\n{}'.format(
