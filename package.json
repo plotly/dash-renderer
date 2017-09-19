@@ -54,5 +54,12 @@
     "redux-logger": "^3.0.6",
     "serv": "^0.2.4",
     "webpack-dev-server": "^2.7.1"
+  },
+  "greenkeeper": {
+    "ignore": [
+      "webpack",
+      "webpack-partial",
+      "webpack-dev-server"
+    ]
   }
 }
