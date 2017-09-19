@@ -40,8 +40,8 @@
     "redux": "^3.4.0",
     "redux-actions": "^2.2.1",
     "redux-thunk": "^2.0.1",
-    "webpack": "^3.5.5",
-    "webpack-partial": "^2.1.0",
+    "webpack": "^1.13.1",
+    "webpack-partial": "^1.2.0",
     "whatwg-fetch": "^2.0.2"
   },
   "devDependencies": {
