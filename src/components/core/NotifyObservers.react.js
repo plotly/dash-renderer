@@ -1,5 +1,5 @@
 import {connect} from 'react-redux';
-import {isEmpty} from 'ramda';
+import {append, isEmpty, lensPath, view} from 'ramda';
 import {notifyObservers, updateProps} from '../../actions';
 import React, {PropTypes} from 'react';
 
@@ -11,7 +11,8 @@ import React, {PropTypes} from 'react';
 function mapStateToProps (state) {
     return {
         dependencies: state.dependenciesRequest.content,
-        paths: state.paths
+        paths: state.paths,
+        layout: state.layout
     };
 }
 
@@ -33,6 +34,10 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
         },
 
         setProps: function setProps(newProps) {
+            const itempath = stateProps.paths[ownProps.id];
+            const propPath = append('props', itempath);
+            const prevProps = view(lensPath(propPath), stateProps.layout);
+
             const payload = {
                 props: newProps,
                 id: ownProps.id,
@@ -43,7 +48,11 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
             dispatch(updateProps(payload));
 
             // Update output components that depend on this input
-            dispatch(notifyObservers({id: ownProps.id, props: newProps}));
+            dispatch(notifyObservers({
+                id: ownProps.id,
+                props: newProps,
+                prevProps
+            }));
         }
     }
 

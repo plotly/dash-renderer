@@ -158,7 +158,8 @@ export function notifyObservers(payload) {
         const {
             id,
             event,
-            props
+            props,
+            prevProps
         } = payload
 
         const {
@@ -359,6 +360,25 @@ export function notifyObservers(payload) {
                         value: view(propLens, layout)
                     };
                 });
+                payload.prevInputs = inputs.map(inputObject => {
+                    if (id === inputObject.id && prevProps) {
+                        return {
+                            id: id,
+                            property: inputObject.property,
+                            value: prevProps[inputObject.property]
+                        };
+                    } else {
+                        const propLens = lensPath(
+                            concat(paths[inputObject.id],
+                            ['props', inputObject.property]
+                        ));
+                        return {
+                            id: inputObject.id,
+                            property: inputObject.property,
+                            value: view(propLens, layout)
+                        };
+                    }
+                });
             }
             if (state.length > 0) {
                 payload.state = state.map(stateObject => {
@@ -372,7 +392,27 @@ export function notifyObservers(payload) {
                         value: view(propLens, layout)
                     };
                 });
+                payload.prevState = state.map(stateObject => {
+                    if (id === stateObject.id && prevProps) {
+                        return {
+                            id: id,
+                            property: stateObject.property,
+                            value: prevProps[stateObject.property]
+                        };
+                    } else {
+                        const propLens = lensPath(
+                            concat(paths[stateObject.id],
+                            ['props', stateObject.property]
+                        ));
+                        return {
+                            id: stateObject.id,
+                            property: stateObject.property,
+                            value: view(propLens, layout)
+                        };
+                    }
+                });
             }
+
 
             promises.push(fetch(`${urlBase(config)}_dash-update-component`, {
                 method: 'POST',
