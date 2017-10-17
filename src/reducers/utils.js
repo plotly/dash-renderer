@@ -1,34 +1,24 @@
 import R from 'ramda';
 
-const extend = R.reduce(R.flip(R.append))
-
 // crawl a layout object, apply a function on every object
 export const crawlLayout = (object, func, path=[]) => {
     func(object, path);
+    /* eslint-disable */
+    console.warn(path);
+    /* eslint-enable */
 
     /*
      * object may be a string, a number, or null
      * R.has will return false for both of those types
      */
-    if (R.type(object) === 'Object' &&
-        R.has('props', object) &&
-        R.has('children', object.props)
-    ) {
-        const newPath = extend(path, ['props', 'children']);
-        if (Array.isArray(object.props.children)) {
-            object.props.children.forEach((child, i) => {
+    if (R.type(object) === 'Object') {
+        R.keys(object).forEach(key => {
+            if (R.contains(R.type(object[key]), ['Array', 'Object'])) {
                 crawlLayout(
-                    child,
-                    func,
-                    R.append(i, newPath));
-            });
-        } else {
-            crawlLayout(
-                object.props.children,
-                func,
-                newPath
-            );
-        }
+                    object[key], func, R.append(key, path)
+                );
+            }
+        })
     }  else if (R.type(object) === 'Array') {
 
         /*
