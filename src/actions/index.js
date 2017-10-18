@@ -397,6 +397,10 @@ export function notifyObservers(payload) {
                 const updateRequestQueue = rejected => {
                     const postRequestQueue = getState().requestQueue
                     const thisRequestIndex = getThisRequestIndex();
+                    if (thisRequestIndex === -1) {
+                        // It was already pruned away
+                        return;
+                    }
                     const updatedQueue = adjust(
                         merge(__, {
                             status: res.status,
