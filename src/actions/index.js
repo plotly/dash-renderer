@@ -411,11 +411,12 @@ export function notifyObservers(payload) {
                         postRequestQueue
                     );
                     // We don't need to store any requests before this one
-                    const requestUid = postRequestQueue[thisRequestIndex].uid;
+                    const thisControllerId = postRequestQueue[
+                        thisRequestIndex].controllerId;
                     const prunedQueue = updatedQueue.filter(
                         (queueItem, index) => {
                             return (
-                                queueItem.uid !== requestUid ||
+                                queueItem.controllerId !== thisControllerId ||
                                 index >= thisRequestIndex
                             );
                         }
