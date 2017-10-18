@@ -406,8 +406,18 @@ export function notifyObservers(payload) {
                         thisRequestIndex,
                         postRequestQueue
                     );
+                    // We don't need to store any requests before this one
+                    const requestUid = postRequestQueue[thisRequestIndex].uid;
+                    const prunedQueue = updatedQueue.filter(
+                        (queueItem, index) => {
+                            return (
+                                queueItem.uid !== requestUid ||
+                                index >= thisRequestIndex
+                            );
+                        }
+                    );
 
-                    dispatch(setRequestQueue(updatedQueue));
+                    dispatch(setRequestQueue(prunedQueue));
                 }
 
                 const isRejected = () => {
@@ -415,6 +425,12 @@ export function notifyObservers(payload) {
                         propEq('controllerId', newRequestQueue[i].controllerId),
                         getState().requestQueue
                     );
+                    /*
+                     * Note that if the latest request is still `loading`
+                     * or even if the latest request failed,
+                     * we still reject this response in favor of waiting
+                     * for the latest request to finish.
+                     */
                     const rejected = latestRequestIndex > getThisRequestIndex();
                     return rejected;
                 }
