@@ -8,7 +8,7 @@
 # `dash_html_components.__init__: module references __file__`
 # TODO - Understand this better
 # from .version import __version__
-__version__ = '0.12.0-rc2'
+__version__ = '0.11.1'
 __file__
 
 # Dash renderer's dependencies get loaded in a special order by the server:
