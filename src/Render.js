@@ -1,8 +1,27 @@
-import {connect} from 'react-redux';
-import {isEmpty} from 'ramda';
-import {notifyObservers, updateProps} from '../../actions';
+import * as R from 'ramda';
 import React, {PropTypes} from 'react';
-import Render from '../../Render';
+import {connect} from 'react-redux';
+import {notifyObservers, updateProps} from './actions';
+import Registry from './registry';
+
+function render(componentJson) {
+    if (R.type(componentJson) === 'Object' &&
+        R.has('type', componentJson) &&
+        R.has('namespace', componentJson) &&
+        R.has('props', componentJson)
+    ) {
+        return <NotifyObservers {...componentJson}/>;
+    } else if (R.type(componentJson) === 'Array') {
+        return componentJson.map(render);
+    } else {
+        // number, boolean, string, null, array, undefined,
+        // or an Object that doesn't have the component keys
+        // (assumed to be a react object)
+        return componentJson;
+    }
+}
+
+
 
 /*
  * NotifyObservers passes a connected `setProps` handler down to
@@ -24,7 +43,6 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
     const {dispatch} = dispatchProps;
     return {
         id: ownProps.id,
-        children: ownProps.children,
         dependencies: stateProps.dependencies,
         paths: stateProps.paths,
 
@@ -47,22 +65,22 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
             dispatch(notifyObservers({id: ownProps.id, props: newProps}));
         },
 
-        render: Render
+        componentJson: ownProps
     }
 
 }
 
-function NotifyObserversComponent ({
-    children,
-    id,
-    paths,
 
+function NotifyObserversComponent({
+    id,
+
+    paths,
     dependencies,
 
     fireEvent,
     setProps,
 
-    render
+    componentJson
 }) {
     const thisComponentTriggersEvents = (
         dependencies && dependencies.find(dependency => (
@@ -105,22 +123,37 @@ function NotifyObserversComponent ({
     if (thisComponentTriggersEvents && paths[id]) {
         extraProps.fireEvent = fireEvent;
     }
+    extraProps.render = render;
 
-    if (!isEmpty(extraProps)) {
-        return React.cloneElement(children, extraProps);
-    } else {
-        return children;
-    }
+    const allProps = R.merge(componentJson.props, extraProps);
+
+    const element = Registry.resolve(
+        componentJson.type, componentJson.namespace);
+
+    return React.createElement(
+        element,
+        allProps
+    );
 }
 
-NotifyObserversComponent.propTypes = {
-    id: PropTypes.string.isRequired,
-    children: PropTypes.node.isRequired,
-    path: PropTypes.array.isRequired
-};
 
-export default connect(
+NotifyObserversComponent.propTypes = {
+    id: PropTypes.string,
+
+    paths: PropTypes.object,
+    dependencies: PropTypes.object,
+
+    fireEvent: PropTypes.func,
+    setProps: PropTypes.func,
+
+    componentJson: PropTypes.object // oneOf?
+}
+
+
+const NotifyObservers = connect(
     mapStateToProps,
     mapDispatchToProps,
     mergeProps
 )(NotifyObserversComponent);
+
+export default NotifyObservers;
