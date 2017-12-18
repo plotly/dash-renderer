@@ -517,15 +517,21 @@ class Tests(IntegrationTests):
         wait_for(
             lambda: (
                 self.driver.find_element_by_id('output')
-                .get_attribute('innerHTML') == '''
-                <div>
-                    <input id="sub-input-1" value="sub input initial value">
+                .get_attribute('innerHTML') in [
+                '''<div>
+                    <input {}>
                     <div id="sub-output-1">
                         sub input initial value
                     </div>
-                </div>'''.replace('\n', '').replace('  ', '')
+                </div>'''.replace('\n', '').replace('  ', '').format(attr)
+                for attr in [
+                    # can't guarentee the order of these attributes
+                    'id="sub-input-1" value="sub input initial value"',
+                    'value="sub input initial value" id="sub-input-1"'
+                ]]
             )
         )
+
         self.percy_snapshot(name='callback-generating-function-1')
 
         # the paths should include these new output IDs
