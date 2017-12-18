@@ -41,28 +41,29 @@ function mapDispatchToProps (dispatch) {
 
 function mergeProps(stateProps, dispatchProps, ownProps) {
     const {dispatch} = dispatchProps;
+    const id = R.view(R.lensPath(['props', 'id']), ownProps);
     return {
-        id: ownProps.id,
+        id: id,
         dependencies: stateProps.dependencies,
         paths: stateProps.paths,
 
         fireEvent: function fireEvent({event}) {
             // Update this component's observers with the updated props
-            dispatch(notifyObservers({event, id: ownProps.id}));
+            dispatch(notifyObservers({event, id: id}));
         },
 
         setProps: function setProps(newProps) {
             const payload = {
                 props: newProps,
-                id: ownProps.id,
-                itempath: stateProps.paths[ownProps.id]
+                id: id,
+                itempath: stateProps.paths[id]
             };
 
             // Update this component's props
             dispatch(updateProps(payload));
 
             // Update output components that depend on this input
-            dispatch(notifyObservers({id: ownProps.id, props: newProps}));
+            dispatch(notifyObservers({id: id, props: newProps}));
         },
 
         componentJson: ownProps
