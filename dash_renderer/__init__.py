@@ -8,8 +8,9 @@
 # `dash_html_components.__init__: module references __file__`
 # TODO - Understand this better
 # from .version import __version__
-__version__ = '0.11.1'
 __file__
+from .version import __version__
+NPM_VERSION = '0.13.0-rc2'
 
 # Dash renderer's dependencies get loaded in a special order by the server:
 # React bundles first, the renderer bundle at the very end.
@@ -33,7 +34,7 @@ _js_dist = [
         "external_url": (
             'https://unpkg.com/dash-renderer@{}'
             '/dash_renderer/bundle.js'
-        ).format(__version__),
+        ).format(NPM_VERSION),
         'namespace': 'dash_renderer'
     }
 ]
