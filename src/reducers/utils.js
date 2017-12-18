@@ -10,25 +10,16 @@ export const crawlLayout = (object, func, path=[]) => {
      * object may be a string, a number, or null
      * R.has will return false for both of those types
      */
-    if (R.type(object) === 'Object' &&
-        R.has('props', object) &&
-        R.has('children', object.props)
-    ) {
-        const newPath = extend(path, ['props', 'children']);
-        if (Array.isArray(object.props.children)) {
-            object.props.children.forEach((child, i) => {
-                crawlLayout(
-                    child,
-                    func,
-                    R.append(i, newPath));
-            });
-        } else {
+    if (R.type(object) === 'Object') {
+        R.keys(object).forEach(key => {
+            const newPath = extend(path, [key]);
+
             crawlLayout(
-                object.props.children,
+                object[key],
                 func,
-                newPath
-            );
-        }
+                newPath);
+
+        });
     }  else if (R.type(object) === 'Array') {
 
         /*
@@ -49,10 +40,10 @@ export const crawlLayout = (object, func, path=[]) => {
     }
 }
 
-export function hasId(child) {
+export function hasId(element) {
     return (
-        R.type(child) === 'Object' &&
-        R.has('props', child) &&
-        R.has('id', child.props)
+        R.type(element) === 'Object' &&
+        R.has('props', element) &&
+        R.has('id', element.props)
     );
 }
