@@ -39,6 +39,7 @@ export const computePaths = createAction(ACTIONS('COMPUTE_PATHS'));
 export const setLayout = createAction(ACTIONS('SET_LAYOUT'));
 export const setAppLifecycle = createAction(ACTIONS('SET_APP_LIFECYCLE'));
 export const readConfig = createAction(ACTIONS('READ_CONFIG'));
+export const setShareKey = createAction(ACTIONS('SET_SHAREKEY'));
 
 export function hydrateInitialOutputs() {
     return function (dispatch, getState) {
@@ -373,7 +374,8 @@ function updateOutput(
         layout,
         graphs,
         paths,
-        dependenciesRequest
+        dependenciesRequest,
+        shareKey
     } = getState();
     const {InputGraph} = graphs;
 
@@ -434,7 +436,7 @@ function updateOutput(
         });
     }
 
-    return fetch(`${urlBase(config)}_dash-update-component`, {
+    return fetch(`${urlBase(config)}_dash-update-component?share_key=${shareKey}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

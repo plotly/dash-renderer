@@ -34,12 +34,14 @@ const request = {GET, POST};
 function apiThunk(endpoint, method, store, id, body, headers={}) {
     return (dispatch, getState) => {
         const config = getState().config;
+        const shareKey = getState().shareKey;
 
         dispatch({
             type: store,
             payload: {id, status: 'loading'}
         });
-        return request[method](`${urlBase(config)}${endpoint}`, body, headers)
+        return request[method](`${urlBase(config)}${endpoint}?share_key=${shareKey}`,
+                               body, headers)
         .then(res => {
             const contentType = res.headers.get("content-type");
             if(contentType && contentType.indexOf("application/json") !== -1) {
