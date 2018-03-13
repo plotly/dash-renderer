@@ -1,12 +1,14 @@
 import {connect} from 'react-redux'
 import {contains, isEmpty, isNil} from 'ramda'
 import React, {Component, PropTypes} from 'react';
+import queryString from 'query-string';
 import TreeContainer from './TreeContainer';
 import {
     computeGraphs,
     computePaths,
     hydrateInitialOutputs,
-    setLayout
+    setLayout,
+    setShareKey
 } from './actions/index';
 import {getDependencies, getLayout} from './actions/api';
 import {APP_STATES} from './reducers/constants';
@@ -37,6 +39,10 @@ class UnconnectedContainer extends Component {
             layoutRequest,
             paths
         } = props;
+
+        // Set share Key to state:
+        const shareKey = queryString.parse(location.search)['share_key'];
+        dispatch(setShareKey(shareKey));
 
         if (isEmpty(layoutRequest)) {
             dispatch(getLayout());
