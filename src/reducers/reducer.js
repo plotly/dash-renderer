@@ -9,6 +9,7 @@ import appLifecycle from './appLifecycle';
 import history from './history';
 import * as API from './api';
 import config from './config';
+import shareKey from './shareKey';
 
 const reducer = combineReducers({
     appLifecycle,
@@ -20,7 +21,8 @@ const reducer = combineReducers({
     dependenciesRequest: API.dependenciesRequest,
     layoutRequest: API.layoutRequest,
     loginRequest: API.loginRequest,
-    history
+    history,
+    shareKey
 });
 
 
