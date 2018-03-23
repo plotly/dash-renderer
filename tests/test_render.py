@@ -156,7 +156,7 @@ class Tests(IntegrationTests):
                     </div>
                 </div>
 
-            </div>
+            </div><div id="_finished_loading"></div>
         '''
         # React wraps text and numbers with e.g. <!-- react-text: 20 -->
         # Remove those
