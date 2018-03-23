@@ -98,6 +98,7 @@ class UnconnectedContainer extends Component {
             return (
                 <div id="_dash-app-content">
                     <TreeContainer layout={layout}/>
+                    <div id="_finished_loading"></div> 
                 </div>
             );
         }
