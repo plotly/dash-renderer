@@ -36,6 +36,7 @@ jobs:
       - run:
           name: Run lint
           command: |
+              . venv/bin/activate
               pylint dash_renderer setup.py
               flake8 dash_renderer setup.py
 
