@@ -5,7 +5,7 @@ jobs:
     docker:
       - image: circleci/python:2.7-stretch-node-browsers
         environment:
-          PERCY_PARALLEL_TOTAL: 2
+          PERCY_PARALLEL_TOTAL: 3
 
     working_directory: ~/repo
 
@@ -34,13 +34,6 @@ jobs:
               - "node_modules"
 
       - run:
-          name: Run lint
-          command: |
-              . venv/bin/activate
-              pylint dash_renderer setup.py
-              flake8 dash_renderer setup.py
-
-      - run:
           name: Run tests
           command: |
               . venv/bin/activate
@@ -54,7 +47,14 @@ jobs:
     docker:
       - image: circleci/python:3.6-stretch-node-browsers
         environment:
-            PERCY_PARALLEL_TOTAL: 2
+            PERCY_PARALLEL_TOTAL: 3
+
+  "python-3.7":
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.7-stretch-node-browsers
+        environment:
+            PERCY_PARALLEL_TOTAL: 3
 
 
 workflows:
@@ -63,3 +63,4 @@ workflows:
     jobs:
       - "python-2.7"
       - "python-3.6"
+      - "python-3.7"
