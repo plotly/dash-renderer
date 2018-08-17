@@ -1,10 +1,12 @@
 from setuptools import setup
 
-exec (open('dash_renderer/version.py').read())
+# pylint: disable=exec-used
+exec(open('dash_renderer/version.py').read())
 
 setup(
     name='dash_renderer',
-    version=__version__,
+    # pylint: disable=undefined-variable
+    version=__version__,  # noqa: F821
     author='Chris Parmer',
     author_email='chris@plot.ly',
     packages=['dash_renderer'],

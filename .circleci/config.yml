@@ -34,6 +34,12 @@ jobs:
               - "node_modules"
 
       - run:
+          name: Run lint
+          command: |
+              pylint dash_renderer setup.py
+              flake8 dash_renderer setup.py
+
+      - run:
           name: Run tests
           command: |
               . venv/bin/activate

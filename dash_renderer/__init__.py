@@ -10,6 +10,7 @@ import sys
 # `dash_html_components.__init__: module references __file__`
 # TODO - Understand this better
 from .version import __version__
+# pylint: disable=pointless-statement
 __file__
 
 _DEFAULT_REACT_VERSION = '15.4.2'
@@ -28,7 +29,7 @@ _REACT_VERSION_TO_URLS = {
     '16.2.0': {
         'external_url': [
             'https://unpkg.com/react@16.2.0/umd/react.production.min.js',
-            'https://unpkg.com/react-dom@16.2.0/umd/react-dom.production.min.js'
+            'https://unpkg.com/react-dom@16.2.0/umd/react-dom.production.min.js'  # noqa: E501
         ],
         'relative_package_path': [
             'react@16.2.0.production.min.js',
@@ -40,7 +41,8 @@ _REACT_VERSION_TO_URLS = {
 
 def _set_react_version(react_version):
     """
-    Update the version of React in _js_dist_dependencies served by dash-renderer to the client
+    Update the version of React in _js_dist_dependencies served
+    by dash-renderer to the client
 
     Example:
     ```
@@ -63,14 +65,17 @@ def _set_react_version(react_version):
     # React bundles first, the renderer bundle at the very end.
     setattr(_this_module, '_js_dist_dependencies', [{
         'external_url': _REACT_VERSION_TO_URLS[react_version]['external_url'],
-        'relative_package_path': _REACT_VERSION_TO_URLS[react_version]['relative_package_path'],
+        'relative_package_path':
+            _REACT_VERSION_TO_URLS[react_version]['relative_package_path'],
         'namespace': 'dash_renderer'
     }])
 
 
+# pylint: disable=invalid-name
 _js_dist_dependencies = []
 _set_react_version(_DEFAULT_REACT_VERSION)
 
+# pylint: disable=invalid-name
 _js_dist = [
     {
         'relative_package_path': 'bundle.js',
