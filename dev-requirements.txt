@@ -6,3 +6,5 @@ selenium
 mock
 tox
 six
+pylint
+flake8
