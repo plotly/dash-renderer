@@ -4,13 +4,20 @@ jobs:
   "python-2.7": &test-template
     docker:
       - image: circleci/python:2.7-stretch-node-browsers
+        environment:
+          PYTHON_VERSION: py27
 
     working_directory: ~/repo
 
     steps:
       - checkout
+
+      - run:
+          name: Write Python Version
+          command: echo $PYTHON_VERSION > pyversion.txt
+
       - restore_cache:
-          key: deps1-{{ .Branch }}-{{ checksum "dev-requirements.txt" }}
+          key: deps1-{{ .Branch }}-{{ checksum "dev-requirements.txt" }}-{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}-{{ checksum "pyversion.txt" }}
 
       - run:
           name: Install dependencies
@@ -19,14 +26,14 @@ jobs:
               python -m venv venv || virtualenv venv
               . venv/bin/activate
               pip install -r dev-requirements.txt
-              npm install
+              npm install --ignore-scripts
 
       - run:
           name: Build
           command: npm run build-prod
 
       - save_cache:
-          key: deps1-{{ .Branch }}-{{ checksum "dev-requirements.txt" }}
+          key: deps1-{{ .Branch }}-{{ checksum "dev-requirements.txt" }}-{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}-{{ checksum "pyversion.txt" }}
           paths:
               - "venv"
               - "node_modules"
@@ -44,11 +51,15 @@ jobs:
     <<: *test-template
     docker:
       - image: circleci/python:3.6-stretch-node-browsers
+        environment:
+            PYTHON_VERSION: py36
 
   "python-3.7":
     <<: *test-template
     docker:
       - image: circleci/python:3.7-stretch-node-browsers
+        environment:
+          PYTHON_VERSION: py37
 
 
 workflows:
