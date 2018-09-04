@@ -484,9 +484,6 @@ function updateOutput(
             /* eslint-enable no-console */
         }
     }
-    /* eslint-disable no-console */
-    console.log('Fetching _dash-update-component...')
-    /* eslint-enable no-console */
     return fetch(`${urlBase(config)}_dash-update-component`, {
         method: 'POST',
         headers: {
@@ -751,9 +748,6 @@ function updateOutput(
 
         });
     }).then(() => {
-        /* eslint-disable no-console */
-        console.log('Done fetching _dash-update-component!')
-        /* eslint-enable no-console */
         if(hooks.request_post !== null) {
             if(typeof hooks.request_post === 'function') {
                 hooks.request_post();
