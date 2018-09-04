@@ -1,13 +1,20 @@
 /*eslint-env browser */
 
 'use strict';
+import { DashRenderer } from './DashRenderer'
 
-import React from 'react';
-import ReactDOM from 'react-dom';
-import AppProvider from './AppProvider.react';
+const renderer = new DashRenderer({
+    request_pre: () => {
+        /* eslint-disable no-console */
+        console.log('THIS IS THE REQUEST PRE HOOK');
+        /* eslint-enable no-console */
+    },
+    request_post: () => {
+        /* eslint-disable no-console */
+        console.log('THIS IS THE REQUEST *POST* HOOK');
+        /* eslint-enable no-console */
+    }
 
+})
 
-ReactDOM.render(
-    <AppProvider/>,
-    document.getElementById('react-entry-point')
-);
+window.console.log(renderer)

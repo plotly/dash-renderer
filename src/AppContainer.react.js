@@ -1,17 +1,17 @@
-import {connect} from 'react-redux';
 import React from 'react';
 import Authentication from './Authentication.react';
 import APIController from './APIController.react';
 import DocumentTitle from './components/core/DocumentTitle.react';
 import Loading from './components/core/Loading.react';
 import Toolbar from './components/core/Toolbar.react';
+import PropTypes from 'prop-types';
 
-function UnconnectedAppContainer() {
+function UnconnectedAppContainer({hooks}) {
     return (
         <Authentication>
             <div>
                 <Toolbar/>
-                <APIController/>
+                <APIController hooks={hooks}/>
                 <DocumentTitle/>
                 <Loading/>
             </div>
@@ -19,11 +19,8 @@ function UnconnectedAppContainer() {
     );
 }
 
-const AppContainer = connect(
-    state => ({
-        history: state.history
-    }),
-    dispatch => ({dispatch})
-)(UnconnectedAppContainer);
+UnconnectedAppContainer.propTypes = {
+    hooks: PropTypes.object
+}
 
-export default AppContainer;
+export default UnconnectedAppContainer;

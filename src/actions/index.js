@@ -39,6 +39,7 @@ export const computePaths = createAction(ACTIONS('COMPUTE_PATHS'));
 export const setLayout = createAction(ACTIONS('SET_LAYOUT'));
 export const setAppLifecycle = createAction(ACTIONS('SET_APP_LIFECYCLE'));
 export const readConfig = createAction(ACTIONS('READ_CONFIG'));
+export const setHooks = createAction(ACTIONS('SET_HOOKS'));
 
 export function hydrateInitialOutputs() {
     return function (dispatch, getState) {
@@ -383,7 +384,8 @@ function updateOutput(
         layout,
         graphs,
         paths,
-        dependenciesRequest
+        dependenciesRequest,
+        hooks
     } = getState();
     const {InputGraph} = graphs;
 
@@ -469,6 +471,22 @@ function updateOutput(
         });
     }
 
+    if(hooks.request_pre !== null) {
+        if(typeof hooks.request_pre === 'function') {
+            hooks.request_pre();
+        }
+        else {
+            /* eslint-disable no-console */
+            // Throwing an Error or TypeError etc here will cause an infinite loop for some reason
+            console.error(
+                "The request_pre hook provided was not of type function, preventing Dash from firing it. Please make sure the request_pre hook is a function"
+            )
+            /* eslint-enable no-console */
+        }
+    }
+    /* eslint-disable no-console */
+    console.log('Fetching _dash-update-component...')
+    /* eslint-enable no-console */
     return fetch(`${urlBase(config)}_dash-update-component`, {
         method: 'POST',
         headers: {
@@ -732,8 +750,24 @@ function updateOutput(
             }
 
         });
+    }).then(() => {
+        /* eslint-disable no-console */
+        console.log('Done fetching _dash-update-component!')
+        /* eslint-enable no-console */
+        if(hooks.request_post !== null) {
+            if(typeof hooks.request_post === 'function') {
+                hooks.request_post();
+            }
+            else {
+                /* eslint-disable no-console */
+                // Throwing an Error or TypeError etc here will cause an infinite loop for some reason
+                console.error(
+                    "The request_post hook provided was not of type function, preventing Dash from firing it. Please make sure the request_post hook is a function"
+                )
+                /* eslint-enable no-console */
+            }
+        }
     });
-
 }
 
 export function serialize(state) {

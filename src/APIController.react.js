@@ -7,7 +7,8 @@ import {
     computeGraphs,
     computePaths,
     hydrateInitialOutputs,
-    setLayout
+    setLayout,
+    setHooks
 } from './actions/index';
 import {getDependencies, getLayout} from './actions/api';
 import {APP_STATES} from './reducers/constants';
@@ -36,7 +37,8 @@ class UnconnectedContainer extends Component {
             graphs,
             layout,
             layoutRequest,
-            paths
+            paths,
+            hooks
         } = props;
 
         if (isEmpty(layoutRequest)) {
@@ -47,6 +49,10 @@ class UnconnectedContainer extends Component {
             } else if (isNil(paths)) {
                 dispatch(computePaths({subTree: layout, startingPath: []}));
             }
+        }
+
+        if(hooks.request_pre !== null || hooks.request_post !== null) {
+            dispatch(setHooks(hooks));
         }
 
         if (isEmpty(dependenciesRequest)) {
@@ -77,7 +83,7 @@ class UnconnectedContainer extends Component {
             appLifecycle,
             dependenciesRequest,
             layoutRequest,
-            layout
+            layout,
         } = this.props;
 
         if (layoutRequest.status &&
@@ -98,7 +104,7 @@ class UnconnectedContainer extends Component {
         else if (appLifecycle === APP_STATES('HYDRATED')) {
             return (
                 <div id="_dash-app-content">
-                    <TreeContainer layout={layout}/>
+                    <TreeContainer layout={layout} />
                 </div>
             );
         }
@@ -118,19 +124,21 @@ UnconnectedContainer.propTypes = {
     layoutRequest: PropTypes.object,
     layout: PropTypes.object,
     paths: PropTypes.object,
-    history: PropTypes.array
+    history: PropTypes.array,
+    hooks: PropTypes.object
 }
 
 const Container = connect(
     // map state to props
-    state => ({
+    (state, ownProps) => ({
         appLifecycle: state.appLifecycle,
         dependenciesRequest: state.dependenciesRequest,
         layoutRequest: state.layoutRequest,
         layout: state.layout,
         graphs: state.graphs,
         paths: state.paths,
-        history: state.history
+        history: state.history,
+        hooks: ownProps.hooks
     }),
     dispatch => ({dispatch})
 )(UnconnectedContainer);
