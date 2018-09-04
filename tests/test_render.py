@@ -1866,3 +1866,78 @@ class Tests(IntegrationTests):
         self.assertTrue(timestamp_2.value > timestamp_1.value)
         self.assertEqual(call_count.value, 4)
         self.percy_snapshot('button-2 click again')
+
+    def test_request_hooks(self):
+        app = Dash(__name__)
+
+        app.index_string = '''
+        <!DOCTYPE html>
+        <html>
+            <head>
+                {%metas%}
+                <title>{%title%}</title>
+                {%favicon%}
+                {%css%}
+            </head>
+            <body>
+                <div>Testing custom DashRenderer</div>
+                {%app_entry%}
+                <footer>
+                    {%config%}
+                    {%scripts%}
+                    <script id="_dash-renderer" type"application/json">
+                        console.log('firing up a custom renderer!')
+                        const renderer = new DashRenderer({
+                            request_pre: () => {
+                                var output = document.getElementById('output-pre')
+                                if(output) {
+                                    output.innerHTML = 'request_pre changed this text!';
+                                }
+                            },
+                            request_post: () => {
+                                var output = document.getElementById('output-post')
+                                if(output) {
+                                    output.innerHTML = 'request_post changed this text!';
+                                }
+                            }
+                        })
+                    </script>
+                </footer>
+                <div>With request hooks</div>
+            </body>
+        </html>
+        '''
+
+        app.layout = html.Div([
+            dcc.Input(
+                id='input',
+                value='initial value'
+            ),
+            html.Div(
+                html.Div([
+                    html.Div(id='output-1'),
+                    html.Div(id='output-pre'),
+                    html.Div(id='output-post')
+                ])
+            )
+        ])
+
+        call_count = Value('i', 0)
+
+        @app.callback(Output('output-1', 'children'), [Input('input', 'value')])
+        def update_output(value):
+            call_count.value = call_count.value + 1
+            return value
+        call_count = Value('i', 0)
+
+        self.startServer(app)
+
+        input1 = self.wait_for_element_by_css_selector('#input')
+        input1.clear()
+
+        input1.send_keys('fire request hooks')
+
+        self.wait_for_text_to_equal('#output-1', 'fire request hooks')
+        self.wait_for_text_to_equal('#output-pre', 'request_pre changed this text!')
+        self.wait_for_text_to_equal('#output-post', 'request_post changed this text!')
+        self.percy_snapshot(name='request-hooks')
