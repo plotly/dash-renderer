@@ -473,7 +473,7 @@ function updateOutput(
 
     if(hooks.request_pre !== null) {
         if(typeof hooks.request_pre === 'function') {
-            hooks.request_pre();
+            hooks.request_pre(JSON.stringify(payload));
         }
         else {
             /* eslint-disable no-console */
@@ -604,6 +604,22 @@ function updateOutput(
                 id: outputComponentId,
                 props: data.response.props
             }));
+
+            // Fire custom request_post hook if any
+            if(hooks.request_post !== null) {
+                if(typeof hooks.request_post === 'function') {
+                    hooks.request_post(payload, data.response);
+                }
+                else {
+                    /* eslint-disable no-console */
+                    // Throwing an Error or TypeError etc here will cause an infinite loop for some reason
+                    console.error(
+                        "The request_post hook provided was not of type function, preventing Dash from firing it. Please make sure the request_post hook is a function"
+                    )
+                    /* eslint-enable no-console */
+                }
+            }
+
 
             /*
              * If the response includes children, then we need to update our
@@ -748,19 +764,6 @@ function updateOutput(
 
         });
     }).then(() => {
-        if(hooks.request_post !== null) {
-            if(typeof hooks.request_post === 'function') {
-                hooks.request_post();
-            }
-            else {
-                /* eslint-disable no-console */
-                // Throwing an Error or TypeError etc here will cause an infinite loop for some reason
-                console.error(
-                    "The request_post hook provided was not of type function, preventing Dash from firing it. Please make sure the request_post hook is a function"
-                )
-                /* eslint-enable no-console */
-            }
-        }
     });
 }
 
