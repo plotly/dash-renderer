@@ -472,7 +472,7 @@ function updateOutput(
     }
 
     if(hooks.request_pre !== null) {
-        if(typeof hooks.request_pre === 'function') {
+        if(type(hooks.request_pre) === 'function') {
             hooks.request_pre(payload);
         }
         else {
@@ -607,7 +607,7 @@ function updateOutput(
 
             // Fire custom request_post hook if any
             if(hooks.request_post !== null) {
-                if(typeof hooks.request_post === 'function') {
+                if(type(hooks.request_post) === 'function') {
                     hooks.request_post(payload, data.response);
                 }
                 else {
