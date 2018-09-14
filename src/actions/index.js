@@ -473,7 +473,7 @@ function updateOutput(
 
     if(hooks.request_pre !== null) {
         if(typeof hooks.request_pre === 'function') {
-            hooks.request_pre(JSON.stringify(payload));
+            hooks.request_pre(payload);
         }
         else {
             /* eslint-disable no-console */
