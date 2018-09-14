@@ -763,9 +763,7 @@ function updateOutput(
             }
 
         });
-    }).then(() => {
-    });
-}
+    })}
 
 export function serialize(state) {
     // Record minimal input state in the url
