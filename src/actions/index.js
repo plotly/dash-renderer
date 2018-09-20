@@ -13,6 +13,7 @@ import {
     has,
     intersection,
     isEmpty,
+    isNil,
     keys,
     lensPath,
     merge,
@@ -79,6 +80,10 @@ function triggerDefaultState(dispatch, getState) {
             propLens,
             getState().layout
         );
+
+        if (isNil(propValue)) {
+            return;
+        }
 
         dispatch(notifyObservers({
             id: componentId,
