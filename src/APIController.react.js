@@ -38,7 +38,8 @@ class UnconnectedContainer extends Component {
             layout,
             layoutRequest,
             paths,
-            hooks
+            hooks,
+            storedHooks
         } = props;
 
         if (isEmpty(layoutRequest)) {
@@ -51,14 +52,16 @@ class UnconnectedContainer extends Component {
             }
         }
 
-        if(hooks.request_pre !== null || hooks.request_post !== null) {
-            dispatch(setHooks(hooks));
-        }
-
         if (isEmpty(dependenciesRequest)) {
             dispatch(getDependencies());
         } else if (dependenciesRequest.status === 200 && isEmpty(graphs)) {
             dispatch(computeGraphs(dependenciesRequest.content));
+        }
+
+        if(hooks.request_pre !== null || hooks.request_post !== null || !hooks.empty) {
+            dispatch(setHooks(hooks));
+        } else {
+            dispatch(setHooks({request_pre: null, request_post: null, empty: true}))
         }
 
         if (
@@ -70,6 +73,9 @@ class UnconnectedContainer extends Component {
             layoutRequest.status === 200 &&
             !isEmpty(layout) &&
             !isNil(paths) &&
+
+            // Custom request hooks
+            (!isEmpty(storedHooks) || storedHooks.empty) &&
 
             // Hasn't already hydrated
             appLifecycle === APP_STATES('STARTED')
@@ -125,7 +131,8 @@ UnconnectedContainer.propTypes = {
     layout: PropTypes.object,
     paths: PropTypes.object,
     history: PropTypes.array,
-    hooks: PropTypes.object
+    hooks: PropTypes.object,
+    setHooks: PropTypes.object
 }
 
 const Container = connect(
@@ -138,7 +145,8 @@ const Container = connect(
         graphs: state.graphs,
         paths: state.paths,
         history: state.history,
-        hooks: ownProps.hooks
+        hooks: ownProps.hooks,
+        storedHooks: state.hooks
     }),
     dispatch => ({dispatch})
 )(UnconnectedContainer);
