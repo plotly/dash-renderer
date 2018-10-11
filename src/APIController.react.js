@@ -8,7 +8,6 @@ import {
     computePaths,
     hydrateInitialOutputs,
     setLayout,
-    setHooks
 } from './actions/index';
 import {getDependencies, getLayout} from './actions/api';
 import {APP_STATES} from './reducers/constants';
@@ -38,8 +37,6 @@ class UnconnectedContainer extends Component {
             layout,
             layoutRequest,
             paths,
-            hooks,
-            storedHooks
         } = props;
 
         if (isEmpty(layoutRequest)) {
@@ -58,12 +55,6 @@ class UnconnectedContainer extends Component {
             dispatch(computeGraphs(dependenciesRequest.content));
         }
 
-        if(hooks.request_pre !== null || hooks.request_post !== null || !hooks.empty) {
-            dispatch(setHooks(hooks));
-        } else {
-            dispatch(setHooks({request_pre: null, request_post: null, empty: true}))
-        }
-
         if (
             // dependenciesRequest and its computed stores
             dependenciesRequest.status === 200 &&
@@ -73,9 +64,6 @@ class UnconnectedContainer extends Component {
             layoutRequest.status === 200 &&
             !isEmpty(layout) &&
             !isNil(paths) &&
-
-            // Custom request hooks
-            (!isEmpty(storedHooks) || storedHooks.empty) &&
 
             // Hasn't already hydrated
             appLifecycle === APP_STATES('STARTED')
@@ -131,13 +119,11 @@ UnconnectedContainer.propTypes = {
     layout: PropTypes.object,
     paths: PropTypes.object,
     history: PropTypes.array,
-    hooks: PropTypes.object,
-    setHooks: PropTypes.object
 }
 
 const Container = connect(
     // map state to props
-    (state, ownProps) => ({
+    (state) => ({
         appLifecycle: state.appLifecycle,
         dependenciesRequest: state.dependenciesRequest,
         layoutRequest: state.layoutRequest,
@@ -145,8 +131,6 @@ const Container = connect(
         graphs: state.graphs,
         paths: state.paths,
         history: state.history,
-        hooks: ownProps.hooks,
-        storedHooks: state.hooks
     }),
     dispatch => ({dispatch})
 )(UnconnectedContainer);
