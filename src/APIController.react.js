@@ -73,7 +73,6 @@ class UnconnectedContainer extends Component {
             dispatch(hydrateInitialOutputs());
         }
     }
-
     render() {
         const {
             appLifecycle,
@@ -81,7 +80,6 @@ class UnconnectedContainer extends Component {
             layoutRequest,
             layout,
         } = this.props;
-
         if (
             layoutRequest.status &&
             !contains(layoutRequest.status, [STATUS.OK, 'loading'])
@@ -99,12 +97,18 @@ class UnconnectedContainer extends Component {
         } else if (appLifecycle === getAppState('HYDRATED')) {
             return (
                 <div id="_dash-app-content">
-                    <TreeContainer layout={layout} />
+                    <TreeContainer layout={layout} loading={false}/>
                 </div>
             );
         }
-
-        return <div className="_dash-loading">{'Loading...'}</div>;
+        if(isEmpty(layout)) {
+            return <div>Loading Layout...</div>
+        }
+        return (
+            <div id="_dash-app-content">
+                <TreeContainer layout={layout} loading={true} />
+            </div>
+        );
     }
 }
 UnconnectedContainer.propTypes = {

@@ -27,6 +27,7 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
         children: ownProps.children,
         dependencies: stateProps.dependencies,
         paths: stateProps.paths,
+        loading: ownProps.loading,
 
         fireEvent: function fireEvent({event}) {
             // Update this component's observers with the updated props
@@ -55,6 +56,8 @@ function NotifyObserversComponent({
     paths,
 
     dependencies,
+
+    loading,
 
     fireEvent,
     setProps,
@@ -102,6 +105,9 @@ function NotifyObserversComponent({
         extraProps.fireEvent = fireEvent;
     }
 
+    // Set loading state
+    extraProps.loading = loading;
+
     if (!isEmpty(extraProps)) {
         return React.cloneElement(children, extraProps);
     }
@@ -112,6 +118,7 @@ NotifyObserversComponent.propTypes = {
     id: PropTypes.string.isRequired,
     children: PropTypes.node.isRequired,
     path: PropTypes.array.isRequired,
+    loading: PropTypes.bool,
 };
 
 export default connect(

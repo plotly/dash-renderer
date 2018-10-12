@@ -12,15 +12,20 @@ export default class TreeContainer extends Component {
     }
 
     render() {
-        return render(this.props.layout);
+        console.log('layout:', this.props.layout);
+        return recursivelyRender(this.props.layout, this.props.loading);
     }
 }
 
 TreeContainer.propTypes = {
     layout: PropTypes.object,
+    loading: PropTypes.bool
 };
 
-function render(component) {
+function recursivelyRender(component, loading = false) {
+    if(R.isEmpty(component)) {
+        return <div>Empty</div>;
+    }
     if (
         R.contains(R.type(component), ['String', 'Number', 'Null', 'Boolean'])
     ) {
@@ -55,7 +60,9 @@ function render(component) {
         children = (Array.isArray(componentProps.children)
             ? componentProps.children
             : [componentProps.children]
-        ).map(render);
+        ).map(child => {
+            return recursivelyRender(child, loading);
+        });
     }
 
     if (!component.type) {
@@ -78,9 +85,9 @@ function render(component) {
         ...children
     );
 
-    return <NotifyObservers id={componentProps.id}>{parent}</NotifyObservers>;
+    return <NotifyObservers id={componentProps.id} loading={loading}>{parent}</NotifyObservers>;
 }
 
-render.propTypes = {
+recursivelyRender.propTypes = {
     children: PropTypes.object,
 };
