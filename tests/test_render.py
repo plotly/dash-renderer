@@ -1886,7 +1886,6 @@ class Tests(IntegrationTests):
                     {%config%}
                     {%scripts%}
                     <script id="_dash-renderer" type"application/json">
-                        console.log('firing up a custom renderer!')
                         const renderer = new DashRenderer({
                             request_pre: () => {
                                 var output = document.getElementById('output-pre')

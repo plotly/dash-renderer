@@ -43,8 +43,6 @@ export const setHooks = createAction(ACTIONS('SET_HOOKS'));
 
 export function hydrateInitialOutputs() {
     return function (dispatch, getState) {
-        /* eslint-disable no-console */
-        console.log('hydrateInitialOutputs()');
         triggerDefaultState(dispatch, getState);
         dispatch(setAppLifecycle(APP_STATES('HYDRATED')));
     }
