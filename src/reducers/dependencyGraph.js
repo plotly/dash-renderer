@@ -11,18 +11,17 @@ const graphs = (state = initialGraph, action) => {
 
             dependencies.forEach(function registerDependency(dependency) {
                 const {output, inputs, events} = dependency;
-                const outputId = `${output.id}.${output.property}`;
                 inputs.forEach(inputObject => {
                     const inputId = `${inputObject.id}.${inputObject.property}`;
-                    inputGraph.addNode(outputId);
+                    inputGraph.addNode(output);
                     inputGraph.addNode(inputId);
-                    inputGraph.addDependency(inputId, outputId);
+                    inputGraph.addDependency(inputId, output);
                 });
                 events.forEach(eventObject => {
                     const eventId = `${eventObject.id}.${eventObject.event}`;
-                    eventGraph.addNode(outputId);
+                    eventGraph.addNode(output);
                     eventGraph.addNode(eventId);
-                    eventGraph.addDependency(eventId, outputId);
+                    eventGraph.addDependency(eventId, output);
                 });
             });
 
