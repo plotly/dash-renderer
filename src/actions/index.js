@@ -352,8 +352,6 @@ export function notifyObservers(payload) {
         const promises = [];
         for (let i = 0; i < queuedObservers.length; i++) {
             const outputIdAndProp = queuedObservers[i];
-            // const [outputComponentId, outputProp] = outputIdAndProp.split('.');
-
             const requestUid = newRequestQueue[i].uid;
 
             promises.push(
@@ -515,7 +513,6 @@ function updateOutput(
 
         const isRejected = () => {
             const latestRequestIndex = findLastIndex(
-                // newRequestQueue[i].controllerId),
                 propEq('controllerId', outputIdAndProp),
                 getState().requestQueue
             );
