@@ -39,11 +39,14 @@ function hydrateProps(props) {
 function hydrateComponent(component_name, namespace, props, omittedProps, extraProps) {
     const element = Registry.resolve(component_name, namespace);
 
-    return React.createElement(
+    const component = React.createElement(
         element,
         R.omit(omittedProps, props),
         ...extraProps
-    )
+    );
+
+    // eslint-disable-next-line
+    return <NotifyObservers id={props.id}>{component}</NotifyObservers>
 }
 
 function render(component) {
@@ -97,15 +100,13 @@ function render(component) {
         throw new Error('component.namespace is undefined');
     }
 
-    const hydrated = hydrateComponent(
+    return hydrateComponent(
         component.type,
         component.namespace,
         R.omit('children', hydrateProps(componentProps)),
         ['children'],
         children
     );
-
-    return <NotifyObservers id={componentProps.id}>{hydrated}</NotifyObservers>;
 }
 
 render.propTypes = {
