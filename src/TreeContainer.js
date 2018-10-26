@@ -20,6 +20,32 @@ TreeContainer.propTypes = {
     layout: PropTypes.object,
 };
 
+function isComponent(c) {
+    return c && c.hasOwnProperty('namespace') && c.hasOwnProperty('props') && c.hasOwnProperty('type');
+}
+
+function hydrateProps(props) {
+    const replace = {};
+    Object.entries(props)
+        .filter(([_, v]) => isComponent(v))
+        .forEach(([k, v]) => {
+            const newProps = hydrateProps(v.props);
+            replace[k] = hydrateComponent(v.type, v.namespace, newProps, [], {})
+    });
+    return R.merge(props, replace);
+}
+
+
+function hydrateComponent(component_name, namespace, props, omittedProps, extraProps) {
+    const element = Registry.resolve(component_name, namespace);
+
+    return React.createElement(
+        element,
+        R.omit(omittedProps, props),
+        ...extraProps
+    )
+}
+
 function render(component) {
     if (
         R.contains(R.type(component), ['String', 'Number', 'Null', 'Boolean'])
@@ -70,15 +96,16 @@ function render(component) {
         /* eslint-enable no-console */
         throw new Error('component.namespace is undefined');
     }
-    const element = Registry.resolve(component.type, component.namespace);
 
-    const parent = React.createElement(
-        element,
-        R.omit(['children'], component.props),
-        ...children
+    const hydrated = hydrateComponent(
+        component.type,
+        component.namespace,
+        R.omit('children', hydrateProps(componentProps)),
+        ['children'],
+        children
     );
 
-    return <NotifyObservers id={componentProps.id}>{parent}</NotifyObservers>;
+    return <NotifyObservers id={componentProps.id}>{hydrated}</NotifyObservers>;
 }
 
 render.propTypes = {
