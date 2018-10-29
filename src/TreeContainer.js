@@ -21,7 +21,16 @@ TreeContainer.propTypes = {
 };
 
 function isComponent(c) {
-    return c && c.hasOwnProperty('namespace') && c.hasOwnProperty('props') && c.hasOwnProperty('type');
+    switch (R.type(c)) {
+        case 'Array':
+            return R.any(isComponent)(c);
+        case 'Object':
+            return c.hasOwnProperty('namespace')
+                && c.hasOwnProperty('props')
+                && c.hasOwnProperty('type');
+        default:
+            return false;
+    }
 }
 
 function hydrateProps(props) {
@@ -29,8 +38,15 @@ function hydrateProps(props) {
     Object.entries(props)
         .filter(([_, v]) => isComponent(v))
         .forEach(([k, v]) => {
-            const newProps = hydrateProps(v.props);
-            replace[k] = hydrateComponent(v.type, v.namespace, newProps, [], {})
+            if (R.type(v) === 'Array') {
+                replace[k] = v.map(c => {
+                    const newProps = hydrateProps(c.props);
+                    return hydrateComponent(c.type, c.namespace, newProps, [], {});
+                });
+            } else {
+                const newProps = hydrateProps(v.props);
+                replace[k] = hydrateComponent(v.type, v.namespace, newProps, [], {});
+            }
     });
     return R.merge(props, replace);
 }
