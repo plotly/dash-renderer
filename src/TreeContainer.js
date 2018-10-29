@@ -29,6 +29,9 @@ function hydrateProps(props) {
             if (R.type(v) === 'Array') {
                 // TODO add key ?.
                 replace[k] = v.map(c => {
+                    if (!isComponent(c)) {
+                        return c;
+                    }
                     const newProps = hydrateProps(c.props);
                     return hydrateComponent(
                         c.type,
