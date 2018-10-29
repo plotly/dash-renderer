@@ -6,28 +6,16 @@ import PropTypes from 'prop-types';
 import Registry from './registry';
 import NotifyObservers from './components/core/NotifyObservers.react';
 
-export default class TreeContainer extends Component {
-    shouldComponentUpdate(nextProps) {
-        return nextProps.layout !== this.props.layout;
-    }
-
-    render() {
-        return render(this.props.layout);
-    }
-}
-
-TreeContainer.propTypes = {
-    layout: PropTypes.object,
-};
-
 function isComponent(c) {
     switch (R.type(c)) {
         case 'Array':
             return R.any(isComponent)(c);
         case 'Object':
-            return c.hasOwnProperty('namespace')
-                && c.hasOwnProperty('props')
-                && c.hasOwnProperty('type');
+            return (
+                c.hasOwnProperty('namespace') &&
+                c.hasOwnProperty('props') &&
+                c.hasOwnProperty('type')
+            );
         default:
             return false;
     }
@@ -39,92 +27,64 @@ function hydrateProps(props) {
         .filter(([_, v]) => isComponent(v))
         .forEach(([k, v]) => {
             if (R.type(v) === 'Array') {
+                // TODO add key ?.
                 replace[k] = v.map(c => {
                     const newProps = hydrateProps(c.props);
-                    return hydrateComponent(c.type, c.namespace, newProps, [], {});
+                    return hydrateComponent(
+                        c.type,
+                        c.namespace,
+                        newProps
+                    );
                 });
             } else {
                 const newProps = hydrateProps(v.props);
-                replace[k] = hydrateComponent(v.type, v.namespace, newProps, [], {});
+                replace[k] = hydrateComponent(
+                    v.type,
+                    v.namespace,
+                    newProps
+                );
             }
-    });
+        });
     return R.merge(props, replace);
 }
 
-
-function hydrateComponent(component_name, namespace, props, omittedProps, extraProps) {
+function hydrateComponent(
+    component_name,
+    namespace,
+    props,
+) {
     const element = Registry.resolve(component_name, namespace);
 
     const component = React.createElement(
         element,
-        R.omit(omittedProps, props),
-        ...extraProps
+        props
     );
 
     // eslint-disable-next-line
-    return <NotifyObservers id={props.id}>{component}</NotifyObservers>
+    return <NotifyObservers id={props.id}>{component}</NotifyObservers>;
 }
 
-function render(component) {
-    if (
-        R.contains(R.type(component), ['String', 'Number', 'Null', 'Boolean'])
-    ) {
-        return component;
+export default class TreeContainer extends Component {
+    shouldComponentUpdate(nextProps) {
+        return nextProps.layout !== this.props.layout;
     }
 
-    // Create list of child elements
-    let children;
+    render() {
+        const { layout } = this.props;
+        if (
+            R.contains(R.type(layout), ['String', 'Number', 'Null', 'Boolean'])
+        ) {
+            return layout;
+        }
 
-    const componentProps = R.propOr({}, 'props', component);
-
-    if (
-        !R.has('props', component) ||
-        !R.has('children', component.props) ||
-        typeof component.props.children === 'undefined'
-    ) {
-        // No children
-        children = [];
-    } else if (
-        R.contains(R.type(component.props.children), [
-            'String',
-            'Number',
-            'Null',
-            'Boolean',
-        ])
-    ) {
-        children = [component.props.children];
-    } else {
-        // One or multiple objects
-        // Recursively render the tree
-        // TODO - I think we should pass in `key` here.
-        children = (Array.isArray(componentProps.children)
-            ? componentProps.children
-            : [componentProps.children]
-        ).map(render);
+        return hydrateComponent(
+            layout.type,
+            layout.namespace,
+            hydrateProps(layout.props)
+        );
     }
-
-    if (!component.type) {
-        /* eslint-disable no-console */
-        console.error(R.type(component), component);
-        /* eslint-enable no-console */
-        throw new Error('component.type is undefined');
-    }
-    if (!component.namespace) {
-        /* eslint-disable no-console */
-        console.error(R.type(component), component);
-        /* eslint-enable no-console */
-        throw new Error('component.namespace is undefined');
-    }
-
-    return hydrateComponent(
-        component.type,
-        component.namespace,
-        R.omit('children', hydrateProps(componentProps)),
-        ['children'],
-        children
-    );
 }
 
-render.propTypes = {
-    children: PropTypes.object,
+TreeContainer.propTypes = {
+    layout: PropTypes.object,
 };
