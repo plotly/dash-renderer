@@ -4,6 +4,11 @@ import dash
 from dash.development.base_component import Component
 import dash_html_components as html
 import dash_core_components as dcc
+from dash.exceptions import PreventUpdate
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.wait import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
+
 from .IntegrationTests import IntegrationTests
 from .utils import assert_clean_console, wait_for
 from multiprocessing import Value
@@ -12,6 +17,9 @@ import re
 import itertools
 import json
 import unittest
+import component_props
+
+TIMEOUT = 20
 
 
 class Tests(IntegrationTests):
@@ -19,31 +27,15 @@ class Tests(IntegrationTests):
         pass
 
     def wait_for_element_by_css_selector(self, selector):
-        start_time = time.time()
-        exception = Exception('Time ran out, {} not found'.format(selector))
-        while time.time() < start_time + 20:
-            try:
-                return self.driver.find_element_by_css_selector(selector)
-            except Exception as e:
-                exception = e
-                pass
-            time.sleep(0.25)
-        raise exception
+        return WebDriverWait(self.driver, TIMEOUT).until(
+            EC.presence_of_element_located((By.CSS_SELECTOR, selector))
+        )
 
     def wait_for_text_to_equal(self, selector, assertion_text):
-        start_time = time.time()
-        exception = Exception('Time ran out, {} on {} not found'.format(
-            assertion_text, selector))
-        while time.time() < start_time + 20:
-            el = self.wait_for_element_by_css_selector(selector)
-            try:
-                return self.assertEqual(el.text, assertion_text)
-            except Exception as e:
-                exception = e
-                pass
-            time.sleep(0.25)
-
-        raise exception
+        return WebDriverWait(self.driver, TIMEOUT).until(
+            EC.text_to_be_present_in_element((By.CSS_SELECTOR, selector),
+                                             assertion_text)
+        )
 
     def request_queue_assertions(
             self, check_rejected=True, expected_length=None):
@@ -1866,3 +1858,40 @@ class Tests(IntegrationTests):
         self.assertTrue(timestamp_2.value > timestamp_1.value)
         self.assertEqual(call_count.value, 4)
         self.percy_snapshot('button-2 click again')
+
+    def test_component_as_props(self):
+        app = dash.Dash(__name__)
+        app.layout = html.Div([
+            html.Button('button', id='mod-btn'),
+            component_props.ComponentProps(
+                id='c-props',
+                component_props=html.Div('Component as prop'),
+                comp_array=[
+                    html.Div([html.Div('1'), html.Div('2'), 3]),
+                    html.Div('4')
+                ]
+            ),
+            html.Div(id='output')
+        ])
+
+        @app.callback(Output('c-props', 'component_props'),
+                      [Input('mod-btn', 'n_clicks')])
+        def on_clicks(n_clicks):
+            if n_clicks is None:
+                raise PreventUpdate
+
+            return html.H2('New component from a callback')
+
+        self.startServer(app)
+
+        self.wait_for_text_to_equal('#c-props > div:nth-child(1)', 'Component as prop')
+        for i in range(1, 3):
+            self.wait_for_text_to_equal(
+                '#c-props > div:nth-child(2) > div:nth-child(1) > div:nth-child({})'.format(i),
+                str(i)
+            )
+        self.wait_for_text_to_equal('#c-props > div:nth-child(2) > div:nth-child(1)', '3')
+        self.wait_for_text_to_equal('#c-props > div:nth-child(2) > div:nth-child(2)', '4')
+
+        self.wait_for_element_by_css_selector('#mod-btn').click()
+        self.wait_for_text_to_equal('#c-props > h2', 'New component from a callback')

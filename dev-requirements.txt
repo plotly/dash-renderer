@@ -5,3 +5,4 @@ percy
 selenium
 mock
 six
+tests/requirements/component_props-0.0.1.tar.gz
