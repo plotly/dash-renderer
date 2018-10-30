@@ -95,15 +95,21 @@ class UnconnectedContainer extends Component {
                 </div>
             );
         } else if (appLifecycle === getAppState('HYDRATED')) {
+            window.console.log('hydrated return');
             return (
                 <div id="_dash-app-content">
-                    <TreeContainer layout={layout} loading={false}/>
+                    <TreeContainer layout={layout} loading={false} />
                 </div>
             );
         }
-        if(isEmpty(layout)) {
-            return <div>Loading Layout...</div>
+        if (isEmpty(layout)) {
+            return (
+                <div id="_dash-app-content">
+                    <TreeContainer layout={layout} loading={true} />
+                </div>
+            );
         }
+        window.console.log('return at end of render()');
         return (
             <div id="_dash-app-content">
                 <TreeContainer layout={layout} loading={true} />

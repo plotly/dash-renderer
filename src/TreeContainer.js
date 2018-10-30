@@ -12,7 +12,6 @@ export default class TreeContainer extends Component {
     }
 
     render() {
-        console.log('layout:', this.props.layout);
         return recursivelyRender(this.props.layout, this.props.loading);
     }
 }
@@ -23,13 +22,14 @@ TreeContainer.propTypes = {
 };
 
 function recursivelyRender(component, loading = false) {
-    if(R.isEmpty(component)) {
-        return <div>Empty</div>;
-    }
     if (
         R.contains(R.type(component), ['String', 'Number', 'Null', 'Boolean'])
     ) {
         return component;
+    }
+
+    if(R.isEmpty(component)) {
+        return null;
     }
 
     // Create list of child elements

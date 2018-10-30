@@ -1,8 +1,11 @@
 import {connect} from 'react-redux';
-import {isEmpty} from 'ramda';
+import {contains, any, isEmpty} from 'ramda';
 import {notifyObservers, updateProps} from '../../actions';
 import React from 'react';
 import PropTypes from 'prop-types';
+import {request} from 'https';
+import { STATUS } from '../../constants/constants';
+import { debug } from 'util';
 
 /*
  * NotifyObservers passes a connected `setProps` handler down to
@@ -13,6 +16,7 @@ function mapStateToProps(state) {
     return {
         dependencies: state.dependenciesRequest.content,
         paths: state.paths,
+        requestQueue: state.requestQueue,
     };
 }
 
@@ -28,6 +32,7 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
         dependencies: stateProps.dependencies,
         paths: stateProps.paths,
         loading: ownProps.loading,
+        requestQueue: stateProps.requestQueue,
 
         fireEvent: function fireEvent({event}) {
             // Update this component's observers with the updated props
@@ -61,7 +66,19 @@ function NotifyObserversComponent({
 
     fireEvent,
     setProps,
+    requestQueue,
 }) {
+    let isLoading = loading;
+
+    if (any(r => r.status === 'loading' && contains(id, r.controllerId), requestQueue)) {
+        isLoading = true;
+    }
+
+    const thisRequest = requestQueue.filter(r => contains(id, r.controllerId))
+    if(thisRequest.status === STATUS.OK) {
+        isLoading = false;
+    }
+
     const thisComponentTriggersEvents =
         dependencies &&
         dependencies.find(dependency =>
@@ -106,7 +123,7 @@ function NotifyObserversComponent({
     }
 
     // Set loading state
-    extraProps.loading = loading;
+    extraProps.loading = isLoading;
 
     if (!isEmpty(extraProps)) {
         return React.cloneElement(children, extraProps);
