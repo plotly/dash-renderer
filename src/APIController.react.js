@@ -95,6 +95,7 @@ class UnconnectedContainer extends Component {
                 </div>
             );
         } else if (appLifecycle === getAppState('HYDRATED')) {
+            window.console.log('hydrated return');
             return (
                 <div id="_dash-app-content">
                     <TreeContainer layout={layout} loading={false} />
@@ -108,6 +109,7 @@ class UnconnectedContainer extends Component {
                 </div>
             );
         }
+        window.console.log('return at end of render()');
         return (
             <div id="_dash-app-content">
                 <TreeContainer layout={layout} loading={true} />
