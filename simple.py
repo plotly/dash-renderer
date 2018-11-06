@@ -36,11 +36,11 @@ app.layout = html.Div(
             className="w-60 center pt4",
             children=[
                 dcc.Tabs(
-                    id="tabs-example",
-                    value="tab-1-example",
+                    id="tabs",
+                    value="tab-1",
                     children=[
-                        dcc.Tab(label="Normal Graph", value="tab-1-example", style={'backgroundColor': '#f5f5f5'}),
-                        dcc.Tab(label="Funky Graph", value="tab-2-example", style={'backgroundColor': '#f5f5f5'}),
+                        dcc.Tab(label="Normal Graph", value="tab-1", style={'backgroundColor': '#f5f5f5'}),
+                        dcc.Tab(label="Funky Graph", value="tab-2", style={'backgroundColor': '#f5f5f5'}),
                     ],
                     colors={
                         "primary": "white",
@@ -59,7 +59,7 @@ app.layout = html.Div(
                         "height": "498px"
                     },
                     children=[
-                        dcc.Loading(id='tabs-content-example')
+                        dcc.Loading(id='tabs-content')
                     ]
                 ),
             ],
@@ -83,11 +83,11 @@ app.layout = html.Div(
 )
 
 
-@app.callback(Output('tabs-content-example', 'children'),
-              [Input('tabs-example', 'value')])
+@app.callback(Output('tabs-content', 'children'),
+              [Input('tabs', 'value')])
 def render_content(tab):
     time.sleep(2)
-    if tab == 'tab-1-example':
+    if tab == 'tab-1':
         return html.Div(id='loading-1', children=[
             dcc.Graph(
                 id='graph-2-tabs',
@@ -126,7 +126,7 @@ def render_content(tab):
                 ),
             )
         ])
-    elif tab == 'tab-2-example':
+    elif tab == 'tab-2':
         return html.Div(id='loading-2', children=[
             dcc.Graph(
                 id='graph-1-tabs',
@@ -172,6 +172,7 @@ def render_content(tab):
     [Input(component_id="input-1", component_property="value")],
 )
 def update_output_div(input_value):
+    time.sleep(1)
     return html.H1(className="tc yellow mt4", children=["{}".format(input_value)])
 
 

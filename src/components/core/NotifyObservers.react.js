@@ -1,11 +1,9 @@
 import {connect} from 'react-redux';
-import {contains, any, isEmpty} from 'ramda';
+import {contains, isEmpty} from 'ramda';
 import {notifyObservers, updateProps} from '../../actions';
 import React from 'react';
 import PropTypes from 'prop-types';
-import {request} from 'https';
-import { STATUS } from '../../constants/constants';
-import { debug } from 'util';
+import {STATUS} from '../../constants/constants';
 
 /*
  * NotifyObservers passes a connected `setProps` handler down to
@@ -68,14 +66,21 @@ function NotifyObserversComponent({
     setProps,
     requestQueue,
 }) {
+    // loading prop coming from TreeContainer
     let isLoading = loading;
+    let loadingProp;
+    let loadingComponent;
 
-    if (any(r => r.status === 'loading' && contains(id, r.controllerId), requestQueue)) {
-        isLoading = true;
-    }
+    requestQueue.map(r => {
+        if (r.status === 'loading' && contains(id, r.controllerId)) {
+            isLoading = true;
+            loadingComponent = r.controllerId.split('.')[0];
+            loadingProp = r.controllerId.split('.')[1];
+        }
+    });
 
-    const thisRequest = requestQueue.filter(r => contains(id, r.controllerId))
-    if(thisRequest.status === STATUS.OK) {
+    const thisRequest = requestQueue.filter(r => contains(id, r.controllerId));
+    if (thisRequest.status === STATUS.OK) {
         isLoading = false;
     }
 
@@ -123,7 +128,11 @@ function NotifyObserversComponent({
     }
 
     // Set loading state
-    extraProps.loading = isLoading;
+    extraProps.status = {
+        isLoading: isLoading,
+        propName: loadingProp,
+        componentName: loadingComponent,
+    };
 
     if (!isEmpty(extraProps)) {
         return React.cloneElement(children, extraProps);
