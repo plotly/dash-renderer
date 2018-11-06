@@ -54,7 +54,7 @@
       "no-alert": ["off"],
       "no-caller": ["error"],
       "no-case-declarations": ["error"],
-      "no-console": ["off"],
+      "no-console": ["error"],
       "no-div-regex": ["error"],
       "no-dupe-keys": ["error"],
       "no-else-return": ["error"],

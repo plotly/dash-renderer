@@ -59,7 +59,11 @@ app.layout = dcc.Loading(children=[html.Div(
                         "height": "498px"
                     },
                     children=[
+<<<<<<< HEAD
                         dcc.Loading(id='tabs-content', type='graph')
+=======
+                        dcc.Loading(id='tabs-content')
+>>>>>>> f860e1c... Add componentName and propName props to loading object, cleanup
                     ]
                 ),
             ],
@@ -166,7 +170,18 @@ def render_content(tab):
             )
         ])
 
+<<<<<<< HEAD
 app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+=======
+
+@app.callback(
+    Output(component_id="output-1", component_property="children"),
+    [Input(component_id="input-1", component_property="value")],
+)
+def update_output_div(input_value):
+    time.sleep(1)
+    return html.H1(className="tc yellow mt4", children=["{}".format(input_value)])
+>>>>>>> f860e1c... Add componentName and propName props to loading object, cleanup
 
 
 if __name__ == "__main__":
