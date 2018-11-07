@@ -72,7 +72,7 @@ app.layout = dcc.Loading(children=[html.Div(
         html.Div(
             className="w-80 center",
             children=[
-                dcc.Loading(id='output-1')
+                dcc.Loading(id='output-1', type='cube')
             ],
         ),
         html.Div(
