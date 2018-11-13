@@ -22,7 +22,7 @@ card_style_greyed = {
 
 app.scripts.config.serve_locally = True
 
-app.layout = html.Div(
+app.layout = dcc.Loading(children=[html.Div(
     className="sans-serif",
     children=[
         html.Div(
@@ -59,7 +59,7 @@ app.layout = html.Div(
                         "height": "498px"
                     },
                     children=[
-                        dcc.Loading(id='tabs-content')
+                        dcc.Loading(id='tabs-content', type='graph')
                     ]
                 ),
             ],
@@ -68,7 +68,7 @@ app.layout = html.Div(
         html.Div(
             className="w-80 center",
             children=[
-                dcc.Loading(id='output-1', type='cube')
+                dcc.Loading(id='output-1')
             ],
         ),
         html.Div(
@@ -80,7 +80,7 @@ app.layout = html.Div(
             ],
         ),
     ],
-)
+)], type='cube', fullscreen=True)
 
 
 @app.callback(Output('tabs-content', 'children'),
