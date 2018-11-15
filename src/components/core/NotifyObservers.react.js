@@ -128,7 +128,7 @@ function NotifyObserversComponent({
     }
 
     // Set loading state
-    extraProps.status = {
+    extraProps.loading_state = {
         is_loading: isLoading,
         prop_name: loadingProp,
         component_name: loadingComponent,
