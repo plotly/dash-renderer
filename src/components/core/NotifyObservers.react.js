@@ -1,5 +1,5 @@
 import {connect} from 'react-redux';
-import {contains, isEmpty} from 'ramda';
+import {contains, isEmpty, forEach} from 'ramda';
 import {notifyObservers, updateProps} from '../../actions';
 import React from 'react';
 import PropTypes from 'prop-types';
@@ -71,13 +71,12 @@ function NotifyObserversComponent({
     let loadingProp;
     let loadingComponent;
 
-    requestQueue.map(r => {
+    forEach(r => {
         if (r.status === 'loading' && contains(id, r.controllerId)) {
             isLoading = true;
-            loadingComponent = r.controllerId.split('.')[0];
-            loadingProp = r.controllerId.split('.')[1];
+            [loadingComponent, loadingProp] = r.controllerId.split('.');
         }
-    });
+    }, requestQueue);
 
     const thisRequest = requestQueue.filter(r => contains(id, r.controllerId));
     if (thisRequest.status === STATUS.OK) {
