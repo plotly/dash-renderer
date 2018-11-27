@@ -397,8 +397,14 @@ function updateOutput(
      * }
      *
      */
+
+    const [outputComponentId, outputProp] = outputIdAndProp.split('.');
     const payload = {
-        output: outputIdAndProp,
+        output: config.multi_output ? outputIdAndProp :
+            {
+                id: outputComponentId,
+                property: outputProp
+            }
     };
 
     if (event) {
@@ -406,7 +412,13 @@ function updateOutput(
     }
 
     const {inputs, state} = dependenciesRequest.content.find(
-        dependency => dependency.output === outputIdAndProp
+        dependency => {
+            if (config.multi_output) {
+                return dependency.output === outputIdAndProp
+            }
+            return dependency.output.id === outputComponentId &&
+                dependency.output.property === outputProp
+        }
     );
     const validKeys = keys(paths);
     if (inputs.length > 0) {
@@ -566,10 +578,13 @@ function updateOutput(
              */
 
             const {paths} = getState();
+            const multi = data.multi;
 
-            Object.entries(data.response).forEach(([outputIdAndProp, props]) => {
+            const handleResponse = ([outputIdAndProp, props]) => {
+                // Backward compatibility
+                const pathKey = multi ? outputIdAndProp : outputComponentId;
                 const observerUpdatePayload = {
-                    itempath: paths[outputIdAndProp],
+                    itempath: paths[pathKey],
                     props,
                     source: 'response'
                 };
@@ -577,7 +592,7 @@ function updateOutput(
 
                 dispatch(
                     notifyObservers({
-                        id: outputIdAndProp,
+                        id: pathKey,
                         props: props,
                     })
                 );
@@ -592,7 +607,7 @@ function updateOutput(
                         computePaths({
                             subTree: observerUpdatePayload.props.children,
                             startingPath: concat(
-                                paths[outputIdAndProp],
+                                paths[pathKey],
                                 ['props', 'children']
                             ),
                         })
@@ -735,7 +750,15 @@ function updateOutput(
                         });
                     }
                 }
-            });
+            };
+            if (multi) {
+                Object.entries(data.response).forEach(handleResponse)
+            } else {
+                handleResponse([
+                    outputIdAndProp,
+                    data.response.props
+                ])
+            }
         });
     });
 }
