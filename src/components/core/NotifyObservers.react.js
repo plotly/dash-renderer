@@ -57,11 +57,8 @@ function NotifyObserversComponent({
     children,
     id,
     paths,
-
     dependencies,
-
     loading,
-
     fireEvent,
     setProps,
     requestQueue,
