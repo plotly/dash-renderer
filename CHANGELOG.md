@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [0.16.0] - 2018-11-29
+- Loading states API [#267](https://github.com/plotly/dash/issues/267)
+
 ## [0.15.0] - 2018-11-14
 ### Added
 - Hot reload [#73](https://github.com/plotly/dash-renderer/pull/73)
