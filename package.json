@@ -9,6 +9,7 @@
     "publish-all": "npm publish && echo \"twine!!!\"",
     "publish-pypi": "npm run prepublish && python setup.py sdist upload",
     "build:dev": "webpack --mode development",
+    "build:dev.watch": "webpack --mode development --watch",
     "build:prod": "webpack --mode production",
     "start": "webpack-serve ./webpack.serve.config.js",
     "format": "prettier --config .prettierrc --write src/**/*.js",

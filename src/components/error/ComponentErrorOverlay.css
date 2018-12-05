@@ -1,0 +1,13 @@
+.dash-error-overlay-container {
+    position: relative;
+}
+.dash-error-overlay {
+    position: relative;
+    padding: 2px;
+    background-color: #FF0000;
+    color: white;
+    display: inline-block;
+}
+.dash-error-overlay__children {
+    position: relative;
+}
