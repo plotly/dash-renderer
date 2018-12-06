@@ -88,6 +88,7 @@ _js_dist = [
             'https://unpkg.com/dash-renderer@{}'
             '/dash_renderer/dash_renderer.min.js.map'
         ).format(__version__),
-        'namespace': 'dash_renderer'
+        'namespace': 'dash_renderer',
+        'dynamic': True
     }
 ]
