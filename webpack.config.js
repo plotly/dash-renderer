@@ -58,7 +58,6 @@ module.exports = (env, argv) => {
                     ],
                 },
             ],
-        },
-        devtool: mode === 'development' ? 'eval-source-map' : 'none',
+        }
     };
 };
