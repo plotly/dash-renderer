@@ -13,16 +13,7 @@ export default class GlobalErrorOverlay extends Component {
     return (
       <div id="_dash-global-error-overlay">
         <div id="_dash-app-content">{this.props.children}</div>
-        <div id="_dash-error-menu"
-             style={{
-               position: 'absolute',
-               bottom: '10px',
-               right: '10px',
-               height: '300px',
-               width: '400px',
-               overflowY: 'auto',
-               display: visible
-              }}>
+        <div id="_dash-error-menu">
           {isEmpty(error.backEnd) ? null : (
             <button onClick={() => resolve('backEnd')}>
               Resolve BackEnd Error
