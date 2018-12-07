@@ -2,11 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.15.2] - 2018-12-06
+## [0.15.2] - 2018-12-07
 ### Added
 - Source map [#104](https://github.com/plotly/dash-renderer/issues/104)
     Related Dash issue [#480](https://github.com/plotly/dash/issues/480)
-
 
 ## [0.15.1] - 2018-11-17
 ### Fixed
