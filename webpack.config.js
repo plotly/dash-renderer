@@ -56,6 +56,10 @@ module.exports = (env, argv) => {
                         },
                     ],
                 },
+                {
+                    test: /\.svg$/,
+                    loader: 'svg-inline-loader'
+                }
             ],
         },
         devtool: mode === 'development' ? 'eval-source-map' : 'none',
