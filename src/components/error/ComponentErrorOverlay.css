@@ -1,11 +1,19 @@
-.dash-error-overlay-container {
-    position: relative;
-    display: inline-block;
-}
 .dash-error-overlay {
-    position: relative;
     padding: 1rem 2rem;
     background-color: #FF0000;
     color: white;
     display: inline-block;
+    animation: dash-error-overlay-animation 0.5s;
+    margin: 2px;
+}
+
+@keyframes dash-error-overlay-animation {
+    from {
+        opacity: 0;
+        transform: scale(1.2);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
