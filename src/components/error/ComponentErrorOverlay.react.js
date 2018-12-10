@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import './ComponentErrorOverlay.css';
-import { isEmpty } from 'ramda';
 
 export default class ComponentErrorOverlay extends Component {
     constructor(props) {
@@ -12,7 +11,6 @@ export default class ComponentErrorOverlay extends Component {
         const {
             componentId,
             componentType,
-            children
         } = this.props;
         const errorLocationString =
             'Error in ' + componentType + '(id=' + componentId + ')';

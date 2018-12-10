@@ -1,9 +1,53 @@
-.dash-fe-errors{
+
+.dash-error-card {
     box-sizing: border-box;
     border: 1px solid black;
     position: fixed;
     top: 88px;
     right: 88px;
-    width: 400px;
-    height: 300px;
+    min-width: 400px;
+    min-height: 300px;
+    animation: dash-error-card-animation 0.5s;
+    padding: 1rem;
+    text-align: left;
+    background-color: white;
+    transition: all 0.2s;
+}
+.dash-error-card--container {
+    padding: 0rem;
+}
+
+.dash-error-card__topbar {
+    width: 100%;
+    height: 32px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 1px solid black;
+}
+.dash-error-card__message {
+    font-weight: bold;
+    font-size: 1rem;
+}
+
+.dash-error-card__content {
+    box-sizing: border-box;
+    padding: 1rem;
+}
+
+@keyframes dash-error-card-animation {
+    from {
+        opacity: 0;
+        -webkit-transform: scale(1.1);
+        -moz-transform: scale(1.1);
+        -ms-transform: scale(1.1);
+        transform: scale(1.1);
+    }
+    to {
+        opacity: 1;
+        -webkit-transform: scale(1);
+        -moz-transform: scale(1);
+        -ms-transform: scale(1);
+        transform: scale(1);
+    }
 }

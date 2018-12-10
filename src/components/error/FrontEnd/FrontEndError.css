@@ -1,0 +1,45 @@
+.dash-fe-errors{
+}
+
+.dash-fe-error-top {
+    display: flex;
+}
+.dash-fe-error__icon-error {
+    width: 32px;
+    height: 32px;
+    display: inline-block;
+    margin-right: 16px;
+}
+.dash-fe-error__icon-close {
+    width: 10px;
+    height: 10px;
+    position: absolute;
+    right: 12px;
+    top: 2px;
+    display: inline-block;
+}
+.dash-fe-error__icon-close:hover {
+    cursor: pointer;
+}
+.dash-fe-error__icon-arrow {
+    width: 8px;
+    height: 28px;
+    margin: 0px 8px;
+}
+.dash-fe-error__icon-arrow:hover {
+    cursor: pointer;
+}
+.dash-fe-error__title {
+    text-align: left;
+    margin: 0px;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.dash-fe-error__st {
+    background-color:#C4C4C4;
+    width: 400px;
+    height: 200px;
+    overflow: scroll;
+    padding: 1rem;
+}
