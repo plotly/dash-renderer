@@ -10,20 +10,37 @@ class DebugAlertContainer extends Component {
         super(props);
     }
     render() {
-        return <div className='dash-debug-alert-container'>
-            <div className='dash-debug-alert'>
-                <InlineSVG className="dash-debug-alert-container__icon" src={ErrorIcon} />
-                {this.props.errors.length}
+        const {alertsOpened} = this.props;
+        return (
+            <div
+                className={`dash-debug-alert-container${
+                    alertsOpened ? ' dash-debug-alert-container--opened' : ''
+                }`}
+                onClick={this.props.onClick}
+            >
+                <div className="dash-debug-alert">
+                    <InlineSVG
+                        className="dash-debug-alert-container__icon"
+                        src={ErrorIcon}
+                    />
+                    {this.props.errors.length}
+                </div>
+                <div className="dash-debug-alert">
+                    <InlineSVG
+                        className="dash-debug-alert-container__icon dash-debug-alert-container__icon--warning"
+                        src={WarningIcon}
+                    />
+                    0
+                </div>
             </div>
-            <InlineSVG className="dash-debug-alert-container__icon dash-debug-alert-container__icon--warning" src={WarningIcon} />
-        </div>
+        );
     }
 }
 
 DebugAlertContainer.propTypes = {
-    errors: PropTypes.object
-}
+    errors: PropTypes.object,
+    alertsOpened: PropTypes.bool,
+    onClick: PropTypes.function,
+};
 
-export {
-    DebugAlertContainer
-}
+export {DebugAlertContainer};

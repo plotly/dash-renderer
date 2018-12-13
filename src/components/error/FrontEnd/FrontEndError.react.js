@@ -4,14 +4,20 @@ import CloseIcon from '../icons/CloseIcon.svg';
 import PropTypes from 'prop-types';
 import InlineSVG from 'svg-inline-react';
 
-const FrontEndError = ({e, resolve}) => {
-    let closeButton;
+const FrontEndError = ({e, resolve, inAlertsTray}) => {
+    let closeButton, cardClasses;
     // if resolve is defined, the error should be a standalone card
     if(resolve) {
         closeButton = <InlineSVG className="dash-fe-error__icon-close" src={CloseIcon} onClick={() => resolve('frontEnd', e.myUID)}/>
+        cardClasses = 'dash-error-card';
+    } else {
+        cardClasses = 'dash-error-card__content';
+    }
+    if(inAlertsTray) {
+        cardClasses += ' dash-error-card--alerts-tray'
     }
     return (
-        <div className={resolve ? 'dash-error-card' : 'dash-error-card__content'}>
+        <div className={cardClasses}>
             <div className="dash-fe-error-top">
                 <InlineSVG className="dash-fe-error__icon-error" src={ErrorIcon} />
                 <h6 className="dash-fe-error__title">
@@ -32,6 +38,11 @@ const FrontEndError = ({e, resolve}) => {
 FrontEndError.propTypes = {
     e: PropTypes.object,
     resolve: PropTypes.func,
+    inAlertsTray: PropTypes.bool
 };
+
+FrontEndError.defaultProps = {
+    inAlertsTray: false
+}
 
 export {FrontEndError};

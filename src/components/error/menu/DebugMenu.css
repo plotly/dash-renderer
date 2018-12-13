@@ -15,7 +15,6 @@
     height: 64px;
 }
 .dash-debug-menu--opened {
-    width: 352px;
     height: 96px;
     border: 1px solid black;
     border-radius: 0px;
@@ -45,7 +44,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    width: 20%;
+    width: 74px;
 }
 
 .dash-debug-menu__button {

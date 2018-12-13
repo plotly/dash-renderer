@@ -7,6 +7,8 @@ import PropTypes from 'prop-types';
 import {DebugAlertContainer} from './DebugAlertContainer.react';
 import GlobalErrorOverlay from '../GlobalErrorOverlay.react';
 import {isEmpty} from 'ramda';
+import {FrontEndError} from '../frontend/FrontEndError.react.js';
+import {FrontEndErrorContainer} from '../frontend/FrontEndErrorContainer.js';
 
 class DebugMenu extends Component {
     constructor(props) {
@@ -14,22 +16,58 @@ class DebugMenu extends Component {
 
         this.state = {
             opened: false,
+            alertsOpened: false,
             toastsEnabled: true,
         };
     }
     render() {
-        const {opened, toastsEnabled} = this.state;
+        const {opened, alertsOpened, toastsEnabled} = this.state;
         const {errors, resolveError, dispatch} = this.props;
 
         const menuClasses = opened
             ? 'dash-debug-menu dash-debug-menu--opened'
             : 'dash-debug-menu dash-debug-menu--closed';
 
+        let frontEndErrors;
+        if (alertsOpened) {
+            if (errors.frontEnd.length > 1) {
+                frontEndErrors = (
+                    <FrontEndErrorContainer
+                        errors={errors.frontEnd}
+                        resolve={(type, myId) =>
+                            resolveError(dispatch, type, myId)
+                        }
+                        inAlertsTray={true}
+                    />
+                );
+            } else if (!isEmpty(errors.frontEnd)) {
+                const e = errors.frontEnd[0];
+                frontEndErrors = (
+                    <FrontEndError
+                        e={e}
+                        resolve={(type, myId) =>
+                            resolveError(dispatch, type, myId)
+                        }
+                        inAlertsTray={true}
+                    />
+                );
+            }
+        }
+
         const menuContent = opened ? (
             <div className="dash-debug-menu__content">
-                <div className="dash-debug-menu__button-container">
-                    <DebugAlertContainer errors={errors.frontEnd} />
-                </div>
+                {frontEndErrors}
+                {errors.frontEnd.length > 0 ? (
+                    <div className="dash-debug-menu__button-container">
+                        <DebugAlertContainer
+                            errors={errors.frontEnd}
+                            alertsOpened={alertsOpened}
+                            onClick={() =>
+                                this.setState({alertsOpened: !alertsOpened})
+                            }
+                        />
+                    </div>
+                ) : null}
                 <div className="dash-debug-menu__button-container">
                     <div className="dash-debug-menu__button">
                         Callback Graph
@@ -42,7 +80,11 @@ class DebugMenu extends Component {
                 </div>
                 <div className="dash-debug-menu__button-container">
                     <div
-                        className={`dash-debug-menu__button ${toastsEnabled ? 'dash-debug-menu__button--enabled' : ''}`}
+                        className={`dash-debug-menu__button ${
+                            toastsEnabled
+                                ? 'dash-debug-menu__button--enabled'
+                                : ''
+                        }`}
                         onClick={() =>
                             this.setState({
                                 toastsEnabled: !toastsEnabled,
@@ -80,9 +122,7 @@ class DebugMenu extends Component {
                     {menuContent}
                 </div>
                 <GlobalErrorOverlay
-                    resolve={(type, myId) =>
-                        resolveError(dispatch, type, myId)
-                    }
+                    resolve={(type, myId) => resolveError(dispatch, type, myId)}
                     error={errors}
                     visible={
                         !(isEmpty(errors.backEnd) && isEmpty(errors.frontEnd))

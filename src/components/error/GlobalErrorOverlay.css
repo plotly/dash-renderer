@@ -5,13 +5,18 @@
     position: fixed;
     top: 88px;
     right: 88px;
-    min-width: 400px;
+    min-width: 372px;
     min-height: 300px;
     animation: dash-error-card-animation 0.5s;
     padding: 1rem;
     text-align: left;
     background-color: white;
-    transition: all 0.2s;
+}
+.dash-error-card--alerts-tray {
+    position: absolute;
+    top: -300px;
+    left: -1px;
+    animation: none;
 }
 .dash-error-card--container {
     padding: 0rem;

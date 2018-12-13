@@ -5,6 +5,14 @@
     display: flex;
     flex-direction: column;
     justify-content: center;
+    transition: background-color 0.1s, border 0.1s;
+}
+.dash-debug-alert-container:hover {
+    cursor: pointer;
+}
+.dash-debug-alert-container--opened {
+    background-color: rgba(17, 157, 255, 0.12);
+    border: 1px solid #119DFF;
 }
 .dash-debug-alert-container__icon {
     width: 12px;

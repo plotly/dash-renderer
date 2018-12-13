@@ -40,8 +40,13 @@ class FrontEndErrorContainer extends Component {
     render() {
         const currentError = this.props.errors[this.state.selected];
         const errorsLength = this.props.errors.length;
+        const inAlertsTray = this.props.inAlertsTray;
+        let cardClasses = "dash-error-card dash-error-card--container";
+        if(inAlertsTray) {
+            cardClasses += ' dash-error-card--alerts-tray';
+        }
         return (
-            <div className="dash-error-card dash-error-card--container">
+            <div className={cardClasses}>
                 <div className="dash-error-card__topbar">
                     <InlineSVG
                         className="dash-fe-error__icon-arrow"
@@ -74,6 +79,11 @@ class FrontEndErrorContainer extends Component {
 FrontEndErrorContainer.propTypes = {
     errors: PropTypes.array,
     resolve: PropTypes.func,
+    inAlertsTray: PropTypes.bool
 };
+
+FrontEndErrorContainer.propTypes = {
+    inAlertsTray: false
+}
 
 export {FrontEndErrorContainer};
