@@ -1,0 +1,78 @@
+
+.dash-debug-menu {
+    transition: width 0.05s, background-color 0.1s;
+    position: fixed;
+    bottom: 68px;
+    right: 84px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.dash-debug-menu--closed {
+    background-color: #C4C4C4;
+    border-radius: 100%;
+    width: 64px;
+    height: 64px;
+}
+.dash-debug-menu--opened {
+    width: 352px;
+    height: 96px;
+    border: 1px solid black;
+    border-radius: 0px;
+}
+
+.dash-debug-menu--closed:hover {
+    cursor: pointer;
+    background-color: #adadad;
+}
+
+.dash-debug-menu__icon {
+    width: 28px;
+    height: 32px;
+}
+.dash-debug-menu__icon--close {
+    width: 12px;
+    height: 12px;
+}
+
+.dash-debug-menu__content {
+    display: flex;
+    width: 100%;
+    height: 100%;
+}
+
+.dash-debug-menu__button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 20%;
+}
+
+.dash-debug-menu__button {
+    background-color: #C4C4C4;
+    border-radius: 100%;
+    width: 64px;
+    height: 64px;
+    font-size: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.2s;
+    color: black;
+}
+.dash-debug-menu__button--enabled {
+    background-color: #12DB0D;
+    color: white;
+}
+.dash-debug-menu__button--small {
+    width: 32px;
+    height: 32px;
+}
+.dash-debug-menu__button:hover {
+    cursor: pointer;
+    background-color: #adadad;
+}
+
+.dash-debug-menu__button--enabled:hover {
+    background-color: #11c50c;
+}

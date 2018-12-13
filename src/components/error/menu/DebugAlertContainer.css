@@ -1,0 +1,22 @@
+.dash-debug-alert-container {
+    box-sizing: border-box;
+    border: 1px solid black;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+.dash-debug-alert-container__icon {
+    width: 12px;
+    height: 12px;
+    margin-right: 4px;
+}
+.dash-debug-alert-container__icon--warning {
+    height: auto;
+}
+
+.dash-debug-alert {
+    display: flex;
+    align-items: center;
+    font-size: 10px;
+}
