@@ -3,10 +3,11 @@
 
 .dash-fe-error-top {
     display: flex;
+    align-items: center;
 }
 .dash-fe-error__icon-error {
-    width: 32px;
-    height: 32px;
+    width: 20px;
+    height: 20px;
     display: inline-block;
     margin-right: 16px;
 }
@@ -15,7 +16,7 @@
     height: 10px;
     position: absolute;
     right: 12px;
-    top: 2px;
+    top: 8px;
     display: inline-block;
 }
 .dash-fe-error__icon-close:hover {
@@ -32,12 +33,11 @@
 .dash-fe-error__title {
     text-align: left;
     margin: 0px;
-    font-size: 16px;
-    font-weight: bold;
+    font-size: 18px;
 }
 
 .dash-fe-error__st {
-    background-color:#C4C4C4;
+    background-color:#FDF3F4;
     width: 386px;
     height: 200px;
     overflow: scroll;

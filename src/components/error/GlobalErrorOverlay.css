@@ -1,3 +1,4 @@
+@import url('https://fonts.googleapis.com/css?family=Roboto');
 
 .dash-error-card {
     box-sizing: border-box;
@@ -11,9 +12,10 @@
     min-width: 412px;
     min-height: 300px;
     animation: dash-error-card-animation 0.5s;
-    padding: 1rem;
+    padding: 24px;
     text-align: left;
     background-color: white;
+    font-family: Roboto;
 }
 .dash-error-card--alerts-tray {
     position: absolute;

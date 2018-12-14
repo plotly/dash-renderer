@@ -16,6 +16,7 @@ const FrontEndError = ({e, resolve, inAlertsTray}) => {
     if(inAlertsTray) {
         cardClasses += ' dash-error-card--alerts-tray'
     }
+    window.console.log('e', e)
     return (
         <div className={cardClasses}>
             <div className="dash-fe-error-top">
