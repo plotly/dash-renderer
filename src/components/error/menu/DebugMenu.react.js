@@ -83,6 +83,7 @@ class DebugMenu extends Component {
                             src={GraphIcon}
                         />
                     </div>
+                    <label className="dash-debug-menu__button-label">Callback Graph</label>
                 </div>
                 <div className="dash-debug-menu__button-container">
                     <div className="dash-debug-menu__button">
@@ -91,6 +92,7 @@ class DebugMenu extends Component {
                             src={ReloadIcon}
                         />
                     </div>
+                    <label className="dash-debug-menu__button-label">Live Reload</label>
                 </div>
                 <div className="dash-debug-menu__button-container">
                     <div
@@ -110,6 +112,7 @@ class DebugMenu extends Component {
                             src={toastsEnabled ? BellIcon : BellIconGrey}
                         />
                     </div>
+                    <label className="dash-debug-menu__button-label">Notifications</label>
                 </div>
                 <div className="dash-debug-menu__button-container">
                     <div
