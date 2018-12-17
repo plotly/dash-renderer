@@ -24,10 +24,17 @@
     top: -300px;
     left: -1px;
     animation: none;
+    box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.25),
+        0px 1px 3px rgba(162, 177, 198, 0.32);
+    border-bottom-left-radius: 0px;
+    border-bottom-right-radius: 0px;
 }
 .dash-error-card--container {
     padding: 0px 8px;
     background-color: #f3f6fa;
+    max-height: 100px;
+    width:422px;
+    overflow: scroll;
 }
 
 .dash-error-card__topbar {
