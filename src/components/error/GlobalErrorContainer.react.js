@@ -5,7 +5,7 @@ import Radium from 'radium';
 import {isEmpty} from 'ramda';
 import {revert, resolveError} from '../../actions';
 import serverErrorCSS from './werkzueg.css';
-import { DebugMenu } from './menu/DebugMenu.react';
+import {DebugMenu} from './menu/DebugMenu.react';
 
 class UnconnectedGlobalErrorContainer extends Component {
     constructor(props) {
@@ -47,7 +47,11 @@ class UnconnectedGlobalErrorContainer extends Component {
                             : (() => this.serverError(error))()
                     }
                 />
-                <DebugMenu errors={error} dispatch={dispatch} resolveError={this.resolveError}>
+                <DebugMenu
+                    errors={error}
+                    dispatch={dispatch}
+                    resolveError={this.resolveError}
+                >
                     {this.props.children}
                 </DebugMenu>
             </div>

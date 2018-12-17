@@ -1,5 +1,6 @@
 import React, {Component} from 'react';
 import './DebugMenu.css';
+
 import InlineSVG from 'svg-inline-react';
 import DebugIcon from '../icons/DebugIcon.svg';
 import WhiteCloseIcon from '../icons/WhiteCloseIcon.svg';
@@ -7,6 +8,9 @@ import BellIcon from '../icons/BellIcon.svg';
 import BellIconGrey from '../icons/BellIconGrey.svg';
 import ReloadIcon from '../icons/ReloadIcon.svg';
 import GraphIcon from '../icons/GraphIcon.svg';
+import WarningIcon from '../icons/WarningIcon.svg';
+import ErrorIcon from '../icons/ErrorIcon.svg';
+
 import PropTypes from 'prop-types';
 import {DebugAlertContainer} from './DebugAlertContainer.react';
 import GlobalErrorOverlay from '../GlobalErrorOverlay.react';
@@ -126,8 +130,28 @@ class DebugMenu extends Component {
             <InlineSVG className="dash-debug-menu__icon dash-debug-menu__icon--debug" src={DebugIcon} />
         );
 
+        const alertsLabel = (errors.frontEnd.length > 0 && !opened) ? (
+            <div className="dash-debug-alert-label">
+                <div className="dash-debug-alert">
+                    <InlineSVG
+                        className="dash-debug-alert-container__icon"
+                        src={ErrorIcon}
+                    />
+                    {errors.frontEnd.length}
+                </div>
+                <div className="dash-debug-alert">
+                    <InlineSVG
+                        className="dash-debug-alert-container__icon dash-debug-alert-container__icon--warning"
+                        src={WarningIcon}
+                    />
+                    0
+                </div>
+            </div>
+        ) : null;
+
         return (
             <div>
+                {alertsLabel}
                 <div
                     className={menuClasses}
                     onClick={() => this.setState({opened: true})}
