@@ -6,6 +6,27 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 - Initial Dash 1.0 alpha release (bumps React version to 16.x) [#4](https://github.com/plotly/dash-core/issues/4)
 
+## [0.16.1] - 2018-12-14
+### Fixed
+- Added `key` to rendered components, fixing [#379](https://github.com/plotly/dash-core-components/issues/379)
+
+## [0.16.0] - 2018-12-07
+### Added
+- [Redux devtools](https://github.com/zalmoxisus/redux-devtools-extension) support [#107](https://github.com/plotly/dash-renderer/pull/107)
+
+## [0.15.2] - 2018-12-07
+### Added
+- Source map [#104](https://github.com/plotly/dash-renderer/issues/104)
+    Related Dash issue [#480](https://github.com/plotly/dash/issues/480)
+
+## [0.15.1] - 2018-11-17
+### Fixed
+- Fix a bug in the ON_PROP_CHANGE callback where history was not correctly set when acting on more than one component. In particular, the 'undo' button should now work as expected. Fixes [#66](https://github.com/plotly/dash-renderer/issues/66).
+
+## [0.15.0] - 2018-11-14
+### Added
+- Hot reload [#73](https://github.com/plotly/dash-renderer/pull/73)
+
 ## [0.14.3] - 2018-10-11
 ### Fixed
 - Included missing polyfills to restore Internet Explorer support [#87](https://github.com/plotly/dash-renderer/issues/87)
@@ -13,11 +34,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## [0.14.2] - 2018-10-11
 ### Fixed
 - Upgraded dependencies to remove warnings
-- Restored whatgw-fetch [#87](https://github.com/plotly/dash-renderer/issues/87)
+- Restored whatwg-fetch [#87](https://github.com/plotly/dash-renderer/issues/87)
 ### Added
 - Prettier support
 - Better ESLint configs
-
 
 ## [0.14.1] - 2018-09-20
 ### Fixed

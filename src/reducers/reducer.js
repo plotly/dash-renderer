@@ -20,6 +20,7 @@ const reducer = combineReducers({
     dependenciesRequest: API.dependenciesRequest,
     layoutRequest: API.layoutRequest,
     loginRequest: API.loginRequest,
+    reloadRequest: API.reloadRequest,
     history,
 });
 
@@ -50,10 +51,7 @@ function getInputHistoryState(itempath, props, state) {
 function recordHistory(reducer) {
     return function(state, action) {
         // Record initial state
-        if (
-            action.type === 'ON_PROP_CHANGE' &&
-            R.isEmpty(state.history.present)
-        ) {
+        if (action.type === 'ON_PROP_CHANGE') {
             const {itempath, props} = action.payload;
             const historyEntry = getInputHistoryState(itempath, props, state);
             if (historyEntry && !R.isEmpty(historyEntry.props)) {
@@ -81,7 +79,8 @@ function recordHistory(reducer) {
                 nextState.history = {
                     past: [
                         ...nextState.history.past,
-                        nextState.history.present,
+                        state.history.present
+
                     ],
                     present: historyEntry,
                     future: [],
@@ -93,4 +92,15 @@ function recordHistory(reducer) {
     };
 }
 
-export default recordHistory(reducer);
+function reloaderReducer(reducer) {
+    return function(state, action) {
+        if (action.type === 'RELOAD') {
+            const {history} = state;
+            // eslint-disable-next-line no-param-reassign
+            state = {history};
+        }
+        return reducer(state, action);
+    };
+}
+
+export default reloaderReducer(recordHistory(reducer));
