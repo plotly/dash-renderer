@@ -2,9 +2,11 @@
 
 .dash-error-card {
     box-sizing: border-box;
-    background: #FFFFFF;
+    background: #ffffff;
     /* shadow-1 */
-    box-shadow: 0px 6px 16px rgba(80, 103, 132, 0.165), 0px 2px 6px rgba(80, 103, 132, 0.12), 0px 0px 1px rgba(80, 103, 132, 0.32);
+    box-shadow: 0px 6px 16px rgba(80, 103, 132, 0.165),
+        0px 2px 6px rgba(80, 103, 132, 0.12),
+        0px 0px 1px rgba(80, 103, 132, 0.32);
     border-radius: 4px;
     position: fixed;
     top: 16px;
@@ -24,7 +26,8 @@
     animation: none;
 }
 .dash-error-card--container {
-    padding: 0rem;
+    padding: 0px 8px;
+    background-color: #f3f6fa;
 }
 
 .dash-error-card__topbar {
@@ -33,7 +36,6 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    border-bottom: 1px solid black;
 }
 .dash-error-card__message {
     font-weight: bold;
@@ -43,6 +45,22 @@
 .dash-error-card__content {
     box-sizing: border-box;
     padding: 1rem;
+    background-color: white;
+    box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.25),
+        0px 1px 3px rgba(162, 177, 198, 0.32);
+    border-radius: 2px;
+    margin-bottom: 8px;
+}
+
+.dash-error-card__list-item {
+    background: #ffffff;
+    box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.25),
+        0px 1px 3px rgba(162, 177, 198, 0.32);
+    border-radius: 2px;
+    padding: 8px 16px;
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
 }
 
 @keyframes dash-error-card-animation {

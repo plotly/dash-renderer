@@ -1,4 +1,4 @@
-.dash-fe-errors{
+.dash-fe-errors {
 }
 
 .dash-fe-error-top {
@@ -35,9 +35,22 @@
     margin: 0px;
     font-size: 18px;
 }
+.dash-fe-error__collapse {
+    width: 14px;
+    position: absolute;
+    right: 22px;
+}
+.dash-fe-error__collapse:hover {
+    cursor: pointer;
+}
+.dash-fe-error__collapse--flipped {
+    -webkit-transform: rotate(180deg);
+    -ms-transform: rotate(180deg);
+    transform: rotate(180deg);
+}
 
 .dash-fe-error__st {
-    background-color:#FDF3F4;
+    background-color: #fdf3f4;
     width: 386px;
     height: 200px;
     overflow: scroll;
