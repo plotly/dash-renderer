@@ -85,7 +85,7 @@ function recursivelyRender(component, loading = false) {
         ...children
     );
 
-    return <NotifyObservers id={componentProps.id} loading={loading}>{parent}</NotifyObservers>;
+    return <NotifyObservers key={componentProps.id} id={componentProps.id} loading={loading}>{parent}</NotifyObservers>;
 }
 
 recursivelyRender.propTypes = {
