@@ -1,4 +1,3 @@
-
 .dash-debug-menu {
     transition: width 0.05s, background-color 0.1s;
     position: fixed;
@@ -9,29 +8,39 @@
     align-items: center;
 }
 .dash-debug-menu--closed {
-    background-color: #C4C4C4;
+    background-color: #119dff;
     border-radius: 100%;
     width: 64px;
     height: 64px;
 }
 .dash-debug-menu--opened {
     height: 96px;
-    border: 1px solid black;
-    border-radius: 0px;
+    box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.25),
+        0px 1px 3px rgba(162, 177, 198, 0.32);
+    border-radius: 4px;
 }
 
 .dash-debug-menu--closed:hover {
     cursor: pointer;
-    background-color: #adadad;
+    background-color: #108de4;
 }
 
 .dash-debug-menu__icon {
     width: 28px;
-    height: 32px;
+    height: 36px;
 }
 .dash-debug-menu__icon--close {
     width: 12px;
     height: 12px;
+}
+.dash-debug-menu__icon--bell {
+    height: 24px;
+}
+.dash-debug-menu__icon--debug {
+    height: 20px;
+}
+.dash-debug-menu__icon--graph {
+    height: 29px;
 }
 
 .dash-debug-menu__content {
@@ -49,8 +58,9 @@
 }
 
 .dash-debug-menu__button {
-    background-color: #C4C4C4;
+    background-color: white;
     border-radius: 100%;
+    border: 1px solid #B9C2CE;
     width: 64px;
     height: 64px;
     font-size: 10px;
@@ -61,18 +71,22 @@
     color: black;
 }
 .dash-debug-menu__button--enabled {
-    background-color: #12DB0D;
+    background-color: #00CC96;
     color: white;
 }
 .dash-debug-menu__button--small {
     width: 32px;
     height: 32px;
+    background-color: #B9C2CE;
 }
 .dash-debug-menu__button:hover {
     cursor: pointer;
-    background-color: #adadad;
+    background-color: #f5f5f5;
+}
+.dash-debug-menu__button--small:hover {
+    background-color: #a1a9b5;
 }
 
 .dash-debug-menu__button--enabled:hover {
-    background-color: #11c50c;
+    background-color: #03bb8a;
 }

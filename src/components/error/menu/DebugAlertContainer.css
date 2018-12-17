@@ -1,6 +1,7 @@
 .dash-debug-alert-container {
     box-sizing: border-box;
-    border: 1px solid black;
+    background: #f3f6fa;
+    border-radius: 2px;
     padding: 8px;
     display: flex;
     flex-direction: column;
@@ -11,8 +12,8 @@
     cursor: pointer;
 }
 .dash-debug-alert-container--opened {
-    background-color: rgba(17, 157, 255, 0.12);
-    border: 1px solid #119DFF;
+    background-color: #119dff;
+    color: white;
 }
 .dash-debug-alert-container__icon {
     width: 12px;

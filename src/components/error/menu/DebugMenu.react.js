@@ -3,6 +3,10 @@ import './DebugMenu.css';
 import InlineSVG from 'svg-inline-react';
 import DebugIcon from '../icons/DebugIcon.svg';
 import WhiteCloseIcon from '../icons/WhiteCloseIcon.svg';
+import BellIcon from '../icons/BellIcon.svg';
+import BellIconGrey from '../icons/BellIconGrey.svg';
+import ReloadIcon from '../icons/ReloadIcon.svg';
+import GraphIcon from '../icons/GraphIcon.svg';
 import PropTypes from 'prop-types';
 import {DebugAlertContainer} from './DebugAlertContainer.react';
 import GlobalErrorOverlay from '../GlobalErrorOverlay.react';
@@ -70,12 +74,18 @@ class DebugMenu extends Component {
                 ) : null}
                 <div className="dash-debug-menu__button-container">
                     <div className="dash-debug-menu__button">
-                        Callback Graph
+                        <InlineSVG
+                            className="dash-debug-menu__icon dash-debug-menu__icon--graph"
+                            src={GraphIcon}
+                        />
                     </div>
                 </div>
                 <div className="dash-debug-menu__button-container">
                     <div className="dash-debug-menu__button">
-                        Live Reload (HMR)
+                        <InlineSVG
+                            className="dash-debug-menu__icon"
+                            src={ReloadIcon}
+                        />
                     </div>
                 </div>
                 <div className="dash-debug-menu__button-container">
@@ -91,7 +101,10 @@ class DebugMenu extends Component {
                             })
                         }
                     >
-                        Display Toasts
+                        <InlineSVG
+                            className="dash-debug-menu__icon dash-debug-menu__icon--bell"
+                            src={toastsEnabled ? BellIcon : BellIconGrey}
+                        />
                     </div>
                 </div>
                 <div className="dash-debug-menu__button-container">
@@ -110,7 +123,7 @@ class DebugMenu extends Component {
                 </div>
             </div>
         ) : (
-            <InlineSVG className="dash-debug-menu__icon" src={DebugIcon} />
+            <InlineSVG className="dash-debug-menu__icon dash-debug-menu__icon--debug" src={DebugIcon} />
         );
 
         return (
