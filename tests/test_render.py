@@ -1754,8 +1754,8 @@ class Tests(IntegrationTests):
             dash_renderer._js_dist_dependencies,
             [{
                 'external_url': [
-                    'https://unpkg.com/react@16.6.3/dist/react.production.min.js',
-                    'https://unpkg.com/react-dom@16.6.3/dist/react-dom.production.min.js',
+                    'https://unpkg.com/react@16.6.3/umd/react.production.min.js',
+                    'https://unpkg.com/react-dom@16.6.3/umd/react-dom.production.min.js',
                 ],
                 'relative_package_path': [
                     'react@16.6.3.production.min.js',
