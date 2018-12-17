@@ -24,8 +24,9 @@
     top: -300px;
     left: -1px;
     animation: none;
-    box-shadow: 0px 0px 1px rgba(0, 0, 0, 0.25),
-        0px 1px 3px rgba(162, 177, 198, 0.32);
+    box-shadow: none;
+    border: 1px solid #ececec;
+    border-bottom: 0;
     border-bottom-left-radius: 0px;
     border-bottom-right-radius: 0px;
 }
