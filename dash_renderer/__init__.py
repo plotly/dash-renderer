@@ -1,4 +1,6 @@
 import sys
+import os as _os
+import json
 
 # For reasons that I don't fully understand,
 # unless I include __file__ in here, the packaged version
@@ -61,24 +63,32 @@ def _set_react_version(react_version):
 _js_dist_dependencies = []
 _set_react_version(_DEFAULT_REACT_VERSION)
 
+_basepath = _os.path.dirname(__file__)
+_filepath = _os.path.abspath(_os.path.join(_basepath, 'package.json'))
+with open(_filepath) as f:
+    package = json.load(f)
+
+js_package_name = package['name']
+py_package_name = __name__
+js_version = package['version']
+
 _js_dist = [
     {
-        'relative_package_path': '{}.min.js'.format(__name__),
-        'dev_package_path': '{}.dev.js'.format(__name__),
+        'relative_package_path': '{}.min.js'.format(py_package_name),
+        'dev_package_path': '{}.dev.js'.format(py_package_name),
         "external_url": (
-            'https://unpkg.com/dash-renderer@{}'
-            '/dash_renderer/dash_renderer.min.js'
-        ).format(__version__),
-        'namespace': 'dash_renderer'
+            'https://unpkg.com/{}@{}/{}/{}.min.js'
+        ).format(js_package_name, js_version, py_package_name, py_package_name),
+        'namespace': py_package_name
     },
     {
-        'relative_package_path': '{}.min.js.map'.format(__name__),
-        'dev_package_path': '{}.dev.js.map'.format(__name__),
+        'relative_package_path': '{}.min.js.map'.format(py_package_name),
+        'dev_package_path': '{}.dev.js.map'.format(py_package_name),
         "external_url": (
-            'https://unpkg.com/dash-renderer@{}'
-            '/dash_renderer/dash_renderer.min.js.map'
-        ).format(__version__),
-        'namespace': 'dash_renderer',
+            'https://unpkg.com/{}@{}'
+            '/{}/{}.min.js.map'
+        ).format(js_package_name, js_version, py_package_name, py_package_name),
+        'namespace': py_package_name,
         'dynamic': True
     }
 ]
