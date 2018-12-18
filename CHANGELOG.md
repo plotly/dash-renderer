@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## [1.0.0a1] - 2018-12-17
+### Changed
+- Initial Dash 1.0 alpha release (bumps React version to 16.x) [#4](https://github.com/plotly/dash-core/issues/4)
+
 ## [0.16.1] - 2018-12-14
 ### Fixed
 - Added `key` to rendered components, fixing [#379](https://github.com/plotly/dash-core-components/issues/379)

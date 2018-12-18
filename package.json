@@ -1,6 +1,6 @@
 {
   "name": "dash-renderer",
-  "version": "0.16.1",
+  "version": "1.0.0-alpha1",
   "description": "render dash components in react",
   "main": "src/index.js",
   "scripts": {
@@ -34,8 +34,8 @@
     "query-string": "^4.3.2",
     "radium": "^0.22.1",
     "ramda": "^0.23.0",
-    "react": "^15.6.2",
-    "react-dom": "^15.6.2",
+    "react": "^16.6.3",
+    "react-dom": "^16.6.3",
     "react-redux": "^4.4.9",
     "redux": "^3.4.0",
     "redux-actions": "^0.9.1",
