@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 import Radium from 'radium';
 import {isEmpty} from 'ramda';
 import {revert, resolveError} from '../../actions';
-import serverErrorCSS from './werkzeug.css';
+import './werkzeug.css';
 import {DebugMenu} from './menu/DebugMenu.react';
 
 class UnconnectedGlobalErrorContainer extends Component {
@@ -21,32 +21,25 @@ class UnconnectedGlobalErrorContainer extends Component {
         }
     }
 
-    serverError(error) {
-        var newWin = open('error.html', 'werkzeug', 'height=1024,width=1280');
-        newWin.document.write(error.backEnd.errorPage);
-        var debugger_css = newWin.document.getElementsByTagName('link')[0];
-        debugger_css.parentNode.removeChild(debugger_css);
-        var style = newWin.document.createElement('style');
-        style.type = 'text/css';
-        style.innerHTML = serverErrorCSS;
-        newWin.document.getElementsByTagName('head')[0].appendChild(style);
-        newWin.document.close();
-    }
+    // serverError(error) {
+    //     var newWin = open('error.html', 'werkzeug', 'height=1024,width=1280');
+    //     newWin.document.write(error.backEnd.errorPage);
+    //     var debugger_css = newWin.document.getElementsByTagName('link')[0];
+    //     debugger_css.parentNode.removeChild(debugger_css);
+    //     var style = newWin.document.createElement('style');
+    //     style.type = 'text/css';
+    //     style.innerHTML = serverErrorCSS;
+    //     newWin.document.getElementsByTagName('head')[0].appendChild(style);
+    //     newWin.document.close();
+    // }
 
     render() {
         const {error, dispatch} = this.props;
-        return (
-            <div id="_dash-global-error-container">
-                <img
-                    src="http://placehold.it/1x1"
-                    onLoad={
-                        isEmpty(error.backEnd)
-                            ? (() => {
-                                  return;
-                              })()
-                            : (() => this.serverError(error))()
-                    }
-                />
+        if(!isEmpty(error.backEnd)) {
+            return <div className='dash-backend-error' dangerouslySetInnerHTML={{__html: error.backEnd.errorPage}}></div>
+        }
+            return (
+            <div id="dash-global-error-container">
                 <DebugMenu
                     errors={error}
                     dispatch={dispatch}
