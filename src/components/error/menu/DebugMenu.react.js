@@ -1,7 +1,6 @@
 import React, {Component} from 'react';
 import './DebugMenu.css';
 
-import InlineSVG from 'svg-inline-react';
 import DebugIcon from '../icons/DebugIcon.svg';
 import WhiteCloseIcon from '../icons/WhiteCloseIcon.svg';
 import BellIcon from '../icons/BellIcon.svg';
@@ -78,21 +77,19 @@ class DebugMenu extends Component {
                 ) : null}
                 <div className="dash-debug-menu__button-container">
                     <div className="dash-debug-menu__button">
-                        <InlineSVG
-                            className="dash-debug-menu__icon dash-debug-menu__icon--graph"
-                            src={GraphIcon}
-                        />
+                        <GraphIcon className="dash-debug-menu__icon dash-debug-menu__icon--graph" />
                     </div>
-                    <label className="dash-debug-menu__button-label">Callback Graph</label>
+                    <label className="dash-debug-menu__button-label">
+                        Callback Graph
+                    </label>
                 </div>
                 <div className="dash-debug-menu__button-container">
                     <div className="dash-debug-menu__button">
-                        <InlineSVG
-                            className="dash-debug-menu__icon"
-                            src={ReloadIcon}
-                        />
+                        <ReloadIcon className="dash-debug-menu__icon" />
                     </div>
-                    <label className="dash-debug-menu__button-label">Live Reload</label>
+                    <label className="dash-debug-menu__button-label">
+                        Live Reload
+                    </label>
                 </div>
                 <div className="dash-debug-menu__button-container">
                     <div
@@ -107,12 +104,15 @@ class DebugMenu extends Component {
                             })
                         }
                     >
-                        <InlineSVG
-                            className="dash-debug-menu__icon dash-debug-menu__icon--bell"
-                            src={toastsEnabled ? BellIcon : BellIconGrey}
-                        />
+                        {toastsEnabled ? (
+                            <BellIcon className="dash-debug-menu__icon dash-debug-menu__icon--bell" />
+                        ) : (
+                            <BellIconGrey className="dash-debug-menu__icon dash-debug-menu__icon--bell" />
+                        )}
                     </div>
-                    <label className="dash-debug-menu__button-label">Notifications</label>
+                    <label className="dash-debug-menu__button-label">
+                        Notifications
+                    </label>
                 </div>
                 <div className="dash-debug-menu__button-container">
                     <div
@@ -122,35 +122,35 @@ class DebugMenu extends Component {
                             this.setState({opened: false});
                         }}
                     >
-                        <InlineSVG
+                        <WhiteCloseIcon
                             className="dash-debug-menu__icon--close"
-                            src={WhiteCloseIcon}
                         />
                     </div>
                 </div>
             </div>
         ) : (
-            <InlineSVG className="dash-debug-menu__icon dash-debug-menu__icon--debug" src={DebugIcon} />
+            <DebugIcon
+                className="dash-debug-menu__icon dash-debug-menu__icon--debug"
+            />
         );
 
-        const alertsLabel = (errors.frontEnd.length > 0 && !opened) ? (
-            <div className="dash-debug-alert-label">
-                <div className="dash-debug-alert">
-                    <InlineSVG
-                        className="dash-debug-alert-container__icon"
-                        src={ErrorIcon}
-                    />
-                    {errors.frontEnd.length}
+        const alertsLabel =
+            errors.frontEnd.length > 0 && !opened ? (
+                <div className="dash-debug-alert-label">
+                    <div className="dash-debug-alert">
+                        <ErrorIcon
+                            className="dash-debug-alert-container__icon"
+                        />
+                        {errors.frontEnd.length}
+                    </div>
+                    <div className="dash-debug-alert">
+                        <WarningIcon
+                            className="dash-debug-alert-container__icon dash-debug-alert-container__icon--warning"
+                        />
+                        0
+                    </div>
                 </div>
-                <div className="dash-debug-alert">
-                    <InlineSVG
-                        className="dash-debug-alert-container__icon dash-debug-alert-container__icon--warning"
-                        src={WarningIcon}
-                    />
-                    0
-                </div>
-            </div>
-        ) : null;
+            ) : null;
 
         return (
             <div>

@@ -4,7 +4,6 @@ import ErrorIcon from '../icons/ErrorIcon.svg';
 import CloseIcon from '../icons/CloseIcon.svg';
 import CollapseIcon from '../icons/CollapseIcon.svg';
 import PropTypes from 'prop-types';
-import InlineSVG from 'svg-inline-react';
 
 class FrontEndError extends Component {
     constructor(props) {
@@ -22,9 +21,8 @@ class FrontEndError extends Component {
         // if resolve is defined, the error should be a standalone card
         if (resolve) {
             closeButton = (
-                <InlineSVG
+                <CloseIcon
                     className="dash-fe-error__icon-close"
-                    src={CloseIcon}
                     onClick={() => resolve('frontEnd', e.myUID)}
                 />
             );
@@ -37,34 +35,30 @@ class FrontEndError extends Component {
         }
         return collapsed ? (
             <div className="dash-error-card__list-item">
-                <InlineSVG
+                <ErrorIcon
                     className="dash-fe-error__icon-error"
-                    src={ErrorIcon}
                 />
                 <h6 className="dash-fe-error__title">
                     {e.error.message ||
                         'An error was thrown that was not an Error object, so info could not be gathered.'}
                 </h6>
-                <InlineSVG
+                <CollapseIcon
                     className="dash-fe-error__collapse"
-                    src={CollapseIcon}
                     onClick={() => this.setState({collapsed: false})}
                 />
             </div>
         ) : (
             <div className={cardClasses}>
                 <div className="dash-fe-error-top">
-                    <InlineSVG
+                    <ErrorIcon
                         className="dash-fe-error__icon-error"
-                        src={ErrorIcon}
                     />
                     <h6 className="dash-fe-error__title">
                         {e.error.message ||
                             'An error was thrown that was not an Error object, so info could not be gathered.'}
                     </h6>
-                    {this.props.isListItem ? <InlineSVG
+                    {this.props.isListItem ? <CollapseIcon
                         className="dash-fe-error__collapse dash-fe-error__collapse--flipped"
-                        src={CollapseIcon}
                         onClick={() => this.setState({collapsed: true})}
                     /> : closeButton}
                 </div>

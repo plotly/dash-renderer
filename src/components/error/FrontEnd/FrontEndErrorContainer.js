@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import './FrontEndError.css';
 import CloseIcon from '../icons/CloseIcon.svg';
 import PropTypes from 'prop-types';
-import InlineSVG from 'svg-inline-react';
 import {FrontEndError} from './FrontEndError.react';
 
 class FrontEndErrorContainer extends Component {
@@ -27,9 +26,8 @@ class FrontEndErrorContainer extends Component {
                     <h6 className="dash-error-card__message">
                         New Alerts ({errorsLength} errors)
                     </h6>
-                    <InlineSVG
+                    <CloseIcon
                         className="dash-fe-error__icon-close"
-                        src={CloseIcon}
                         onClick={() =>
                             this.props.errors.forEach(error => {
                                 this.props.resolve('frontEnd', error.myUID);

@@ -5,7 +5,6 @@ import WarningIcon from '../icons/WarningIcon.svg';
 import WarningIconWhite from '../icons/WarningIconWhite.svg';
 import ErrorIcon from '../icons/ErrorIcon.svg';
 import ErrorIconWhite from '../icons/ErrorIconWhite.svg';
-import InlineSVG from 'svg-inline-react';
 
 class DebugAlertContainer extends Component {
     constructor(props) {
@@ -21,17 +20,21 @@ class DebugAlertContainer extends Component {
                 onClick={this.props.onClick}
             >
                 <div className="dash-debug-alert">
-                    <InlineSVG
-                        className="dash-debug-alert-container__icon"
-                        src={alertsOpened ? ErrorIconWhite : ErrorIcon}
-                    />
+                    {alertsOpened ? (
+                        <ErrorIconWhite className="dash-debug-alert-container__icon" />
+                    ) : (
+                        <ErrorIcon className="dash-debug-alert-container__icon" />
+                    )}
                     {this.props.errors.length}
                 </div>
                 <div className="dash-debug-alert">
-                    <InlineSVG
-                        className="dash-debug-alert-container__icon dash-debug-alert-container__icon--warning"
-                        src={alertsOpened ? WarningIconWhite : WarningIcon}
-                    />
+                    {alertsOpened ? (
+                        <WarningIconWhite
+                            className="dash-debug-alert-container__icon dash-debug-alert-container__icon--warning"
+                        />
+                    ) : (
+                        <WarningIcon className="dash-debug-alert-container__icon dash-debug-alert-container__icon--warning" />
+                    )}
                     0
                 </div>
             </div>

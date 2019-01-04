@@ -26,21 +26,23 @@
 }
 
 .dash-debug-menu__icon {
-    width: 28px;
-    height: 36px;
+    width: 24px;
+    height: 28px;
 }
 .dash-debug-menu__icon--close {
-    width: 12px;
-    height: 12px;
+    width: 14px;
+    height: 14px;
 }
 .dash-debug-menu__icon--bell {
     height: 24px;
+    width: 28px;
 }
 .dash-debug-menu__icon--debug {
-    height: 20px;
+    height: 24px;
+    width: auto;
 }
 .dash-debug-menu__icon--graph {
-    height: 29px;
+    height: 24px;
 }
 
 .dash-debug-menu__content {
