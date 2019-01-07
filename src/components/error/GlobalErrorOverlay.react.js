@@ -1,9 +1,9 @@
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import {isEmpty} from 'ramda';
-import {FrontEndError} from './frontend/FrontEndError.react.js';
+import {FrontEndError} from './frontend/FrontEndError.react';
 import './GlobalErrorOverlay.css';
-import {FrontEndErrorContainer} from './frontend/FrontEndErrorContainer.react.js';
+import {FrontEndErrorContainer} from './frontend/FrontEndErrorContainer.react';
 
 export default class GlobalErrorOverlay extends Component {
     constructor(props) {

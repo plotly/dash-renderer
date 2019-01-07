@@ -14,8 +14,8 @@ import PropTypes from 'prop-types';
 import {DebugAlertContainer} from './DebugAlertContainer.react';
 import GlobalErrorOverlay from '../GlobalErrorOverlay.react';
 import {isEmpty} from 'ramda';
-import {FrontEndError} from '../frontend/FrontEndError.react.js';
-import {FrontEndErrorContainer} from '../frontend/FrontEndErrorContainer.react.js';
+import {FrontEndError} from '../frontend/FrontEndError.react';
+import {FrontEndErrorContainer} from '../frontend/FrontEndErrorContainer.react';
 
 class DebugMenu extends Component {
     constructor(props) {
@@ -122,31 +122,23 @@ class DebugMenu extends Component {
                             this.setState({opened: false});
                         }}
                     >
-                        <WhiteCloseIcon
-                            className="dash-debug-menu__icon--close"
-                        />
+                        <WhiteCloseIcon className="dash-debug-menu__icon--close" />
                     </div>
                 </div>
             </div>
         ) : (
-            <DebugIcon
-                className="dash-debug-menu__icon dash-debug-menu__icon--debug"
-            />
+            <DebugIcon className="dash-debug-menu__icon dash-debug-menu__icon--debug" />
         );
 
         const alertsLabel =
             errors.frontEnd.length > 0 && !opened ? (
                 <div className="dash-debug-alert-label">
                     <div className="dash-debug-alert">
-                        <ErrorIcon
-                            className="dash-debug-alert-container__icon"
-                        />
+                        <ErrorIcon className="dash-debug-alert-container__icon" />
                         {errors.frontEnd.length}
                     </div>
                     <div className="dash-debug-alert">
-                        <WarningIcon
-                            className="dash-debug-alert-container__icon dash-debug-alert-container__icon--warning"
-                        />
+                        <WarningIcon className="dash-debug-alert-container__icon dash-debug-alert-container__icon--warning" />
                         0
                     </div>
                 </div>
