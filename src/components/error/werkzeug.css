@@ -1,3 +1,6 @@
+.dash-backend-error {
+    font-family: Roboto;
+}
 .dash-backend-error .traceback {
     background-color: white;
     border: 2px solid #dfe8f3;
@@ -17,10 +20,16 @@
     color: #506784;
     font-weight: 100;
 }
+.dash-backend-error .traceback pre{
+    background-color: #F3F6FA;
+}
 .dash-backend-error .debugger {
     width: 60%;
 }
 .dash-backend-error .debugger h1{
     color: #506784;
     font-family: Roboto;
+}
+.dash-backend-error .explanation {
+    color: #A2B1C6;
 }
