@@ -20,7 +20,7 @@
     color: #506784;
     font-weight: 100;
 }
-.dash-backend-error .traceback pre{
+.dash-backend-error .traceback pre, .dash-backend-error .debugger textarea{
     background-color: #F3F6FA;
 }
 .dash-backend-error .debugger {
@@ -33,3 +33,7 @@
 .dash-backend-error .explanation {
     color: #A2B1C6;
 }
+ /* Hide the Don't Panic! footer */
+ .dash-backend-error .debugger .footer {
+     display: none;
+ }
