@@ -14,8 +14,8 @@ import PropTypes from 'prop-types';
 import {DebugAlertContainer} from './DebugAlertContainer.react';
 import GlobalErrorOverlay from '../GlobalErrorOverlay.react';
 import {isEmpty} from 'ramda';
-import {FrontEndError} from '../frontend/FrontEndError.react';
-import {FrontEndErrorContainer} from '../frontend/FrontEndErrorContainer.react';
+import {FrontEndError} from '../FrontEnd/FrontEndError.react';
+import {FrontEndErrorContainer} from '../FrontEnd/FrontEndErrorContainer.react';
 
 class DebugMenu extends Component {
     constructor(props) {
