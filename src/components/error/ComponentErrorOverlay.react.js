@@ -3,18 +3,13 @@ import PropTypes from 'prop-types';
 import './ComponentErrorOverlay.css';
 
 export default class ComponentErrorOverlay extends Component {
-    constructor(props) {
-        super(props);
-    }
-
     render() {
         const {
             componentId,
             componentType,
         } = this.props;
         const errorLocationString =
-            'Error in ' + componentType + '(id=' + componentId + ')';
-        // const errorString = error.name + ' -- ' + error.message;
+            `Error in ${componentType} (id=${componentId})`;
 
         return (
             <div
