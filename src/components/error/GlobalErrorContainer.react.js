@@ -21,24 +21,17 @@ class UnconnectedGlobalErrorContainer extends Component {
         }
     }
 
-    // serverError(error) {
-    //     var newWin = open('error.html', 'werkzeug', 'height=1024,width=1280');
-    //     newWin.document.write(error.backEnd.errorPage);
-    //     var debugger_css = newWin.document.getElementsByTagName('link')[0];
-    //     debugger_css.parentNode.removeChild(debugger_css);
-    //     var style = newWin.document.createElement('style');
-    //     style.type = 'text/css';
-    //     style.innerHTML = serverErrorCSS;
-    //     newWin.document.getElementsByTagName('head')[0].appendChild(style);
-    //     newWin.document.close();
-    // }
-
     render() {
         const {error, dispatch} = this.props;
-        if(!isEmpty(error.backEnd)) {
-            return <div className='dash-backend-error' dangerouslySetInnerHTML={{__html: error.backEnd.errorPage}}></div>
-        }
+        if (!isEmpty(error.backEnd)) {
             return (
+                <div
+                    className="dash-backend-error"
+                    dangerouslySetInnerHTML={{__html: error.backEnd.errorPage}}
+                />
+            );
+        }
+        return (
             <div id="dash-global-error-container">
                 <DebugMenu
                     errors={error}
