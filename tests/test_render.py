@@ -1,5 +1,9 @@
+import os
+import textwrap
+
 from dash import Dash
-from dash.dependencies import Input, Output, State, Event
+from dash.dependencies import Input, Output, State
+from dash.exceptions import PreventUpdate
 import dash
 from dash.development.base_component import Component
 import dash_html_components as html
@@ -11,7 +15,6 @@ import time
 import re
 import itertools
 import json
-import unittest
 
 
 class Tests(IntegrationTests):
@@ -41,6 +44,24 @@ class Tests(IntegrationTests):
             except Exception as e:
                 exception = e
                 pass
+            time.sleep(0.25)
+
+        raise exception
+
+    def wait_for_style_to_equal(self, selector, style, assertion_style,
+                                timeout=20):
+        start = time.time()
+        exception = Exception('Time ran out, {} on {} not found'.format(
+            assertion_style, selector))
+        while time.time() < start + timeout:
+            element = self.wait_for_element_by_css_selector(selector)
+            try:
+                self.assertEqual(assertion_style,
+                                 element.value_of_css_property(style))
+            except Exception as e:
+                exception = e
+            else:
+                return
             time.sleep(0.25)
 
         raise exception
@@ -350,11 +371,6 @@ class Tests(IntegrationTests):
             ),
             {
               "InputGraph": {
-                "nodes": {},
-                "outgoingEdges": {},
-                "incomingEdges": {}
-              },
-              "EventGraph": {
                 "nodes": {},
                 "outgoingEdges": {},
                 "incomingEdges": {}
@@ -951,8 +967,7 @@ class Tests(IntegrationTests):
 
         assert_clean_console(self)
 
-    @unittest.skip("button events are temporarily broken")
-    def test_events(self):
+    def test_event_properties(self):
         app = Dash(__name__)
         app.layout = html.Div([
             html.Button('Click Me', id='button'),
@@ -962,8 +977,10 @@ class Tests(IntegrationTests):
         call_count = Value('i', 0)
 
         @app.callback(Output('output', 'children'),
-                      events=[Event('button', 'click')])
-        def update_output():
+                      [Input('button', 'n_clicks')])
+        def update_output(n_clicks):
+            if(not n_clicks):
+                raise PreventUpdate
             call_count.value += 1
             return 'Click'
 
@@ -977,8 +994,7 @@ class Tests(IntegrationTests):
         wait_for(lambda: output().text == 'Click')
         self.assertEqual(call_count.value, 1)
 
-    @unittest.skip("button events are temporarily broken")
-    def test_events_and_state(self):
+    def test_event_properties_and_state(self):
         app = Dash(__name__)
         app.layout = html.Div([
             html.Button('Click Me', id='button'),
@@ -989,9 +1005,11 @@ class Tests(IntegrationTests):
         call_count = Value('i', 0)
 
         @app.callback(Output('output', 'children'),
-                      state=[State('state', 'value')],
-                      events=[Event('button', 'click')])
-        def update_output(value):
+                      [Input('button', 'n_clicks')],
+                      [State('state', 'value')])
+        def update_output(n_clicks, value):
+            if(not n_clicks):
+                raise PreventUpdate
             call_count.value += 1
             return value
 
@@ -1017,8 +1035,7 @@ class Tests(IntegrationTests):
         wait_for(lambda: output().text == 'Initial Statex')
         self.assertEqual(call_count.value, 2)
 
-    @unittest.skip("button events are temporarily broken")
-    def test_events_state_and_inputs(self):
+    def test_event_properties_state_and_inputs(self):
         app = Dash(__name__)
         app.layout = html.Div([
             html.Button('Click Me', id='button'),
@@ -1030,10 +1047,9 @@ class Tests(IntegrationTests):
         call_count = Value('i', 0)
 
         @app.callback(Output('output', 'children'),
-                      inputs=[Input('input', 'value')],
-                      state=[State('state', 'value')],
-                      events=[Event('button', 'click')])
-        def update_output(input, state):
+                      [Input('input', 'value'), Input('button', 'n_clicks')],
+                      [State('state', 'value')])
+        def update_output(input, n_clicks, state):
             call_count.value += 1
             return 'input="{}", state="{}"'.format(input, state)
 
@@ -1123,7 +1139,7 @@ class Tests(IntegrationTests):
             output().text,
             'input="Initial Inputxy", state="Initial Statex"')
 
-    def test_event_creating_inputs(self):
+    def test_event_properties_creating_inputs(self):
         app = Dash(__name__)
 
         ids = {
@@ -1145,8 +1161,10 @@ class Tests(IntegrationTests):
 
         @app.callback(
             Output(ids['button-output'], 'children'),
-            events=[Event(ids['button'], 'click')])
-        def display():
+            [Input(ids['button'], 'n_clicks')])
+        def display(n_clicks):
+            if(not n_clicks):
+                raise PreventUpdate
             call_counts['button-output'].value += 1
             return html.Div([
                 dcc.Input(id=ids['input'], value='initial state'),
@@ -1332,8 +1350,12 @@ class Tests(IntegrationTests):
 
         @app.callback(
             Output('button-output', 'children'),
-            events=[Event('button', 'click')])
-        def this_callback_takes_forever():
+            [Input('button', 'n_clicks')])
+        def this_callback_takes_forever(n_clicks):
+            if not n_clicks:
+                # initial value is quick, only new value is slow
+                # also don't let the initial value increment call_counts
+                return 'Initial Value'
             time.sleep(5)
             call_counts['button-output'].value += 1
             return 'New value!'
@@ -1396,8 +1418,9 @@ class Tests(IntegrationTests):
             'input[type="radio"]'
         )[1]).click()
         chapter2_assertions()
+        self.assertEqual(call_counts['button-output'].value, 0)
         time.sleep(5)
-        wait_for(lambda: call_counts['button-output'].value == 1)
+        wait_for(lambda: call_counts['button-output'].value, expected_value=1)
         time.sleep(2)  # liberally wait for the front-end to process request
         chapter2_assertions()
         assert_clean_console(self)
@@ -1603,13 +1626,13 @@ class Tests(IntegrationTests):
                       [Input('outer-controls', 'value')])
         def display_tab1_output(value):
             call_counts['tab1'].value += 1
-            return 'You have selected "{}"'.format(value)
+            return 'Selected "{}" in tab 1'.format(value)
 
         @app.callback(Output('tab-2-output', 'children'),
                       [Input('outer-controls', 'value')])
         def display_tab2_output(value):
             call_counts['tab2'].value += 1
-            return 'You have selected "{}"'.format(value)
+            return 'Selected "{}" in tab 2'.format(value)
 
         self.startServer(app)
         self.wait_for_element_by_css_selector('#tab-output')
@@ -1617,16 +1640,16 @@ class Tests(IntegrationTests):
 
         self.assertEqual(call_counts['tab1'].value, 1)
         self.assertEqual(call_counts['tab2'].value, 0)
-        self.wait_for_text_to_equal('#tab-output', 'You have selected "a"')
-        self.wait_for_text_to_equal('#tab-1-output', 'You have selected "a"')
+        self.wait_for_text_to_equal('#tab-output', 'Selected "a" in tab 1')
+        self.wait_for_text_to_equal('#tab-1-output', 'Selected "a" in tab 1')
 
         (self.driver.find_elements_by_css_selector(
             'input[type="radio"]'
         )[1]).click()
         time.sleep(2)
 
-        self.wait_for_text_to_equal('#tab-output', 'You have selected "a"')
-        self.wait_for_text_to_equal('#tab-2-output', 'You have selected "a"')
+        self.wait_for_text_to_equal('#tab-output', 'Selected "a" in tab 2')
+        self.wait_for_text_to_equal('#tab-2-output', 'Selected "a" in tab 2')
         self.assertEqual(call_counts['tab1'].value, 1)
         self.assertEqual(call_counts['tab2'].value, 1)
 
@@ -1944,3 +1967,41 @@ class Tests(IntegrationTests):
         )[0].click()
 
         self.wait_for_text_to_equal('#graph2_info', json.dumps(graph_2_expected_clickdata))
+
+    def test_hot_reload(self):
+        app = dash.Dash(__name__, assets_folder='tests/test_assets')
+
+        app.layout = html.Div([
+            html.H3('Hot reload')
+        ], id='hot-reload-content')
+
+        self.startServer(
+            app,
+            dev_tools_hot_reload=True,
+            dev_tools_hot_reload_interval=500,
+            dev_tools_hot_reload_max_retry=30,
+        )
+
+        hot_reload_file = os.path.join(
+            os.path.dirname(__file__), 'test_assets', 'hot_reload.css')
+
+        self.wait_for_style_to_equal(
+            '#hot-reload-content', 'background-color', 'rgba(0, 0, 255, 1)'
+        )
+
+        with open(hot_reload_file, 'r+') as f:
+            old_content = f.read()
+            f.truncate(0)
+            f.seek(0)
+            f.write(textwrap.dedent('''
+            #hot-reload-content {
+                background-color: red;
+            }
+            '''))
+        try:
+            self.wait_for_style_to_equal(
+                '#hot-reload-content', 'background-color', 'rgba(255, 0, 0, 1)'
+            )
+        finally:
+            with open(hot_reload_file, 'w') as f:
+                f.write(old_content)

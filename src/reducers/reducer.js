@@ -19,7 +19,6 @@ const reducer = combineReducers({
     config,
     dependenciesRequest: API.dependenciesRequest,
     layoutRequest: API.layoutRequest,
-    loginRequest: API.loginRequest,
     reloadRequest: API.reloadRequest,
     history,
 });
@@ -95,9 +94,9 @@ function recordHistory(reducer) {
 function reloaderReducer(reducer) {
     return function(state, action) {
         if (action.type === 'RELOAD') {
-            const {history} = state;
+            const {history, config} = state;
             // eslint-disable-next-line no-param-reassign
-            state = {history};
+            state = {history, config};
         }
         return reducer(state, action);
     };
