@@ -32,13 +32,15 @@ class UnconnectedGlobalErrorContainer extends Component {
             );
         }
         return (
-            <div id="dash-global-error-container">
+            <div id="_dash-global-error-container">
                 <DebugMenu
                     errors={error}
                     dispatch={dispatch}
                     resolveError={this.resolveError}
                 >
-                    {this.props.children}
+                    <div id='_dash-app-content'>
+                        {this.props.children}
+                    </div>
                 </DebugMenu>
             </div>
         );
