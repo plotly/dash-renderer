@@ -1,51 +1,65 @@
 'use strict';
 
-import R from 'ramda';
 import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import Registry from './registry';
 import NotifyObservers from './components/core/NotifyObservers.react';
+import {connect} from 'react-redux';
+import {
+    isNil,
+    omit,
+    contains,
+    isEmpty,
+    forEach,
+    propOr,
+    type,
+    has,
+} from 'ramda';
+import {STATUS} from './constants/constants';
 
-export default class TreeContainer extends Component {
+class TreeContainer extends Component {
     shouldComponentUpdate(nextProps) {
         return nextProps.layout !== this.props.layout;
     }
 
     render() {
-        return recursivelyRender(this.props.layout, this.props.loading);
+        return recursivelyRender(
+            this.props.layout,
+            this.props.loading,
+            this.props.requestQueue
+        );
     }
 }
 
 TreeContainer.propTypes = {
     layout: PropTypes.object,
-    loading: PropTypes.bool
+    loading: PropTypes.bool,
+    requestQueue: PropTypes.object,
 };
 
-function recursivelyRender(component, loading = false) {
-    if (
-        R.contains(R.type(component), ['String', 'Number', 'Null', 'Boolean'])
-    ) {
+function recursivelyRender(component, loading, requestQueue) {
+    if (contains(type(component), ['String', 'Number', 'Null', 'Boolean'])) {
         return component;
     }
 
-    if(R.isEmpty(component)) {
+    if (isEmpty(component)) {
         return null;
     }
 
     // Create list of child elements
     let children;
 
-    const componentProps = R.propOr({}, 'props', component);
+    const componentProps = propOr({}, 'props', component);
 
     if (
-        !R.has('props', component) ||
-        !R.has('children', component.props) ||
+        !has('props', component) ||
+        !has('children', component.props) ||
         typeof component.props.children === 'undefined'
     ) {
         // No children
         children = [];
     } else if (
-        R.contains(R.type(component.props.children), [
+        contains(type(component.props.children), [
             'String',
             'Number',
             'Null',
@@ -61,19 +75,20 @@ function recursivelyRender(component, loading = false) {
             ? componentProps.children
             : [componentProps.children]
         ).map(child => {
-            return recursivelyRender(child, loading);
+            const newChild = recursivelyRender(child, loading, requestQueue);
+            return newChild;
         });
     }
 
     if (!component.type) {
         /* eslint-disable no-console */
-        console.error(R.type(component), component);
+        console.error(type(component), component);
         /* eslint-enable no-console */
         throw new Error('component.type is undefined');
     }
     if (!component.namespace) {
         /* eslint-disable no-console */
-        console.error(R.type(component), component);
+        console.error(type(component), component);
         /* eslint-enable no-console */
         throw new Error('component.namespace is undefined');
     }
@@ -81,13 +96,60 @@ function recursivelyRender(component, loading = false) {
 
     const parent = React.createElement(
         element,
-        R.omit(['children'], component.props),
+        omit(['children'], component.props),
         ...children
     );
 
-    return <NotifyObservers key={componentProps.id} id={componentProps.id} loading={loading}>{parent}</NotifyObservers>;
+    // loading prop coming from TreeContainer
+    let isLoading = loading;
+    let loadingProp;
+    let loadingComponent;
+
+    const id = componentProps.id;
+
+    if (requestQueue && requestQueue.filter) {
+        forEach(r => {
+            const controllerId = isNil(r.controllerId) ? '' : r.controllerId;
+            if (r.status === 'loading' && contains(id, controllerId)) {
+                isLoading = true;
+                [loadingComponent, loadingProp] = r.controllerId.split('.');
+            }
+        }, requestQueue);
+
+        const thisRequest = requestQueue.filter(r => {
+            const controllerId = isNil(r.controllerId) ? '' : r.controllerId;
+            return contains(id, controllerId);
+        });
+        if (thisRequest.status === STATUS.OK) {
+            isLoading = false;
+        }
+    }
+
+    // Set loading state
+    const loading_state = {
+        is_loading: isLoading,
+        prop_name: loadingProp,
+        component_name: loadingComponent,
+    };
+
+    return (
+        <NotifyObservers
+            key={componentProps.id}
+            id={componentProps.id}
+            loading={loading}
+            loading_state={loading_state}
+        >
+            {parent}
+        </NotifyObservers>
+    );
 }
 
-recursivelyRender.propTypes = {
-    children: PropTypes.object,
-};
+function mapStateToProps(state, ownProps) {
+    return {
+        layout: ownProps.layout,
+        loading: ownProps.loading,
+        requestQueue: state.requestQueue
+    }
+}
+
+export default connect(mapStateToProps)(TreeContainer);

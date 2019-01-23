@@ -94,23 +94,24 @@ class UnconnectedContainer extends Component {
                     {'Error loading dependencies'}
                 </div>
             );
-        } else if (appLifecycle === getAppState('HYDRATED')) {
+        }
+        if (appLifecycle === getAppState('HYDRATED')) {
             return (
                 <div id="_dash-app-content">
-                    <TreeContainer layout={layout} loading={false} />
+                    <TreeContainer key='hydrated-layout' layout={layout} loading={false} />
                 </div>
             );
         }
         if (isEmpty(layout)) {
             return (
                 <div id="_dash-app-content">
-                    <TreeContainer layout={layout} loading={true} />
+                    <TreeContainer key='started-layout'layout={layout} loading={true} />
                 </div>
             );
         }
         return (
             <div id="_dash-app-content">
-                <TreeContainer layout={layout} loading={true} />
+                <TreeContainer key='started-layout' layout={layout} loading={true} />
             </div>
         );
     }

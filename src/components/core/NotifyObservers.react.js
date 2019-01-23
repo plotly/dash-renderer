@@ -1,9 +1,7 @@
 import {connect} from 'react-redux';
-import {isNil, contains, isEmpty, forEach} from 'ramda';
 import {notifyObservers, updateProps} from '../../actions';
 import React from 'react';
 import PropTypes from 'prop-types';
-import {STATUS} from '../../constants/constants';
 
 /*
  * NotifyObservers passes a connected `setProps` handler down to
@@ -14,7 +12,6 @@ function mapStateToProps(state) {
     return {
         dependencies: state.dependenciesRequest.content,
         paths: state.paths,
-        requestQueue: state.requestQueue,
     };
 }
 
@@ -29,7 +26,7 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
         children: ownProps.children,
         dependencies: stateProps.dependencies,
         paths: stateProps.paths,
-        loading: ownProps.loading,
+        loading_state: ownProps.loading_state,
         requestQueue: stateProps.requestQueue,
 
         fireEvent: function fireEvent({event}) {
@@ -58,31 +55,10 @@ function NotifyObserversComponent({
     id,
     paths,
     dependencies,
-    loading,
     fireEvent,
     setProps,
-    requestQueue,
+    loading_state
 }) {
-    // loading prop coming from TreeContainer
-    let isLoading = loading;
-    let loadingProp;
-    let loadingComponent;
-
-    forEach(r => {
-        const controllerId = isNil(r.controllerId) ? '' : r.controllerId;
-        if (r.status === 'loading' && contains(id, controllerId)) {
-            isLoading = true;
-            [loadingComponent, loadingProp] = r.controllerId.split('.');
-        }
-    }, requestQueue);
-
-    const thisRequest = requestQueue.filter(r => {
-        const controllerId = isNil(r.controllerId) ? '' : r.controllerId;
-        return contains(id, controllerId);
-    });
-    if (thisRequest.status === STATUS.OK) {
-        isLoading = false;
-    }
 
     const thisComponentTriggersEvents =
         dependencies &&
@@ -127,24 +103,16 @@ function NotifyObserversComponent({
         extraProps.fireEvent = fireEvent;
     }
 
-    // Set loading state
-    extraProps.loading_state = {
-        is_loading: isLoading,
-        prop_name: loadingProp,
-        component_name: loadingComponent,
-    };
+    extraProps.loading_state = loading_state;
 
-    if (!isEmpty(extraProps)) {
-        return React.cloneElement(children, extraProps);
-    }
-    return children;
+    return React.cloneElement(children, extraProps);
 }
 
 NotifyObserversComponent.propTypes = {
     id: PropTypes.string.isRequired,
     children: PropTypes.node.isRequired,
     path: PropTypes.array.isRequired,
-    loading: PropTypes.bool,
+    loading_state: PropTypes.object
 };
 
 export default connect(

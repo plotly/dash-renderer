@@ -632,10 +632,10 @@ function updateOutput(
                                     ) {
                                         newProps[componentIdAndProp] = {
                                             id: child.props.id,
-                                            props: {
-                                                [childProp]:
-                                                    child.props[childProp],
-                                            },
+                                            props: Object.assign({
+                                                // [childProp]:
+                                                //     child.props[childProp],
+                                            }, child.props),
                                         };
                                     }
                                 });
