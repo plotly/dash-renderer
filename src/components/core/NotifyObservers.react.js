@@ -29,11 +29,6 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
         loading_state: ownProps.loading_state,
         requestQueue: stateProps.requestQueue,
 
-        fireEvent: function fireEvent({event}) {
-            // Update this component's observers with the updated props
-            dispatch(notifyObservers({event, id: ownProps.id}));
-        },
-
         setProps: function setProps(newProps) {
             const payload = {
                 props: newProps,
@@ -55,16 +50,9 @@ function NotifyObserversComponent({
     id,
     paths,
     dependencies,
-    fireEvent,
     setProps,
     loading_state
 }) {
-
-    const thisComponentTriggersEvents =
-        dependencies &&
-        dependencies.find(dependency =>
-            dependency.events.find(event => event.id === id)
-        );
     const thisComponentSharesState =
         dependencies &&
         dependencies.find(
@@ -73,19 +61,17 @@ function NotifyObserversComponent({
                 dependency.state.find(state => state.id === id)
         );
     /*
-     * Only pass in `setProps` and `fireEvent` if they are actually
-     * necessary.
-     * This allows component authors to skip computing data
-     * for `setProps` or `fireEvent` (which can be expensive)
-     * in the case when they aren't actually used.
+     * Only pass in `setProps` if necessary.
+     * This allows component authors to skip computing unneeded data
+     * for `setProps`, which can be expensive.
      * For example, consider `hoverData` for graphs. If it isn't
      * actually used, then the component author can skip binding
      * the events for the component.
      *
-     * TODO - A nice enhancement would be to pass in the actual events
-     * and properties that are used into the component so that the
-     * component author can check for something like `subscribed_events`
-     * or `subscribed_properties` instead of `fireEvent` and `setProps`.
+     * TODO - A nice enhancement would be to pass in the actual
+     * properties that are used into the component so that the
+     * component author can check for something like
+     * `subscribed_properties` instead of just `setProps`.
      */
     const extraProps = {};
     if (
@@ -98,9 +84,6 @@ function NotifyObserversComponent({
         paths[id]
     ) {
         extraProps.setProps = setProps;
-    }
-    if (thisComponentTriggersEvents && paths[id]) {
-        extraProps.fireEvent = fireEvent;
     }
 
     extraProps.loading_state = loading_state;

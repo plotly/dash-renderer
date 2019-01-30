@@ -14234,223 +14234,6 @@ module.exports = ReactPropTypesSecret;
 
 /***/ }),
 
-/***/ "./node_modules/query-string/index.js":
-/*!********************************************!*\
-  !*** ./node_modules/query-string/index.js ***!
-  \********************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-var strictUriEncode = __webpack_require__(/*! strict-uri-encode */ "./node_modules/strict-uri-encode/index.js");
-var objectAssign = __webpack_require__(/*! object-assign */ "./node_modules/object-assign/index.js");
-
-function encoderForArrayFormat(opts) {
-	switch (opts.arrayFormat) {
-		case 'index':
-			return function (key, value, index) {
-				return value === null ? [
-					encode(key, opts),
-					'[',
-					index,
-					']'
-				].join('') : [
-					encode(key, opts),
-					'[',
-					encode(index, opts),
-					']=',
-					encode(value, opts)
-				].join('');
-			};
-
-		case 'bracket':
-			return function (key, value) {
-				return value === null ? encode(key, opts) : [
-					encode(key, opts),
-					'[]=',
-					encode(value, opts)
-				].join('');
-			};
-
-		default:
-			return function (key, value) {
-				return value === null ? encode(key, opts) : [
-					encode(key, opts),
-					'=',
-					encode(value, opts)
-				].join('');
-			};
-	}
-}
-
-function parserForArrayFormat(opts) {
-	var result;
-
-	switch (opts.arrayFormat) {
-		case 'index':
-			return function (key, value, accumulator) {
-				result = /\[(\d*)\]$/.exec(key);
-
-				key = key.replace(/\[\d*\]$/, '');
-
-				if (!result) {
-					accumulator[key] = value;
-					return;
-				}
-
-				if (accumulator[key] === undefined) {
-					accumulator[key] = {};
-				}
-
-				accumulator[key][result[1]] = value;
-			};
-
-		case 'bracket':
-			return function (key, value, accumulator) {
-				result = /(\[\])$/.exec(key);
-				key = key.replace(/\[\]$/, '');
-
-				if (!result) {
-					accumulator[key] = value;
-					return;
-				} else if (accumulator[key] === undefined) {
-					accumulator[key] = [value];
-					return;
-				}
-
-				accumulator[key] = [].concat(accumulator[key], value);
-			};
-
-		default:
-			return function (key, value, accumulator) {
-				if (accumulator[key] === undefined) {
-					accumulator[key] = value;
-					return;
-				}
-
-				accumulator[key] = [].concat(accumulator[key], value);
-			};
-	}
-}
-
-function encode(value, opts) {
-	if (opts.encode) {
-		return opts.strict ? strictUriEncode(value) : encodeURIComponent(value);
-	}
-
-	return value;
-}
-
-function keysSorter(input) {
-	if (Array.isArray(input)) {
-		return input.sort();
-	} else if (typeof input === 'object') {
-		return keysSorter(Object.keys(input)).sort(function (a, b) {
-			return Number(a) - Number(b);
-		}).map(function (key) {
-			return input[key];
-		});
-	}
-
-	return input;
-}
-
-exports.extract = function (str) {
-	return str.split('?')[1] || '';
-};
-
-exports.parse = function (str, opts) {
-	opts = objectAssign({arrayFormat: 'none'}, opts);
-
-	var formatter = parserForArrayFormat(opts);
-
-	// Create an object with no prototype
-	// https://github.com/sindresorhus/query-string/issues/47
-	var ret = Object.create(null);
-
-	if (typeof str !== 'string') {
-		return ret;
-	}
-
-	str = str.trim().replace(/^(\?|#|&)/, '');
-
-	if (!str) {
-		return ret;
-	}
-
-	str.split('&').forEach(function (param) {
-		var parts = param.replace(/\+/g, ' ').split('=');
-		// Firefox (pre 40) decodes `%3D` to `=`
-		// https://github.com/sindresorhus/query-string/pull/37
-		var key = parts.shift();
-		var val = parts.length > 0 ? parts.join('=') : undefined;
-
-		// missing `=` should be `null`:
-		// http://w3.org/TR/2012/WD-url-20120524/#collect-url-parameters
-		val = val === undefined ? null : decodeURIComponent(val);
-
-		formatter(decodeURIComponent(key), val, ret);
-	});
-
-	return Object.keys(ret).sort().reduce(function (result, key) {
-		var val = ret[key];
-		if (Boolean(val) && typeof val === 'object' && !Array.isArray(val)) {
-			// Sort object keys, not values
-			result[key] = keysSorter(val);
-		} else {
-			result[key] = val;
-		}
-
-		return result;
-	}, Object.create(null));
-};
-
-exports.stringify = function (obj, opts) {
-	var defaults = {
-		encode: true,
-		strict: true,
-		arrayFormat: 'none'
-	};
-
-	opts = objectAssign(defaults, opts);
-
-	var formatter = encoderForArrayFormat(opts);
-
-	return obj ? Object.keys(obj).sort().map(function (key) {
-		var val = obj[key];
-
-		if (val === undefined) {
-			return '';
-		}
-
-		if (val === null) {
-			return encode(key, opts);
-		}
-
-		if (Array.isArray(val)) {
-			var result = [];
-
-			val.slice().forEach(function (val2) {
-				if (val2 === undefined) {
-					return;
-				}
-
-				result.push(formatter(key, val2, result.length));
-			});
-
-			return result.join('&');
-		}
-
-		return encode(key, opts) + '=' + encode(val, opts);
-	}).filter(function (x) {
-		return x.length > 0;
-	}).join('&') : '';
-};
-
-
-/***/ }),
-
 /***/ "./node_modules/radium/es/append-important-to-each-value.js":
 /*!******************************************************************!*\
   !*** ./node_modules/radium/es/append-important-to-each-value.js ***!
@@ -33521,24 +33304,6 @@ function warning(message) {
 
 /***/ }),
 
-/***/ "./node_modules/strict-uri-encode/index.js":
-/*!*************************************************!*\
-  !*** ./node_modules/strict-uri-encode/index.js ***!
-  \*************************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-module.exports = function (str) {
-	return encodeURIComponent(str).replace(/[!'()*]/g, function (c) {
-		return '%' + c.charCodeAt(0).toString(16).toUpperCase();
-	});
-};
-
-
-/***/ }),
-
 /***/ "./node_modules/symbol-observable/index.js":
 /*!*************************************************!*\
   !*** ./node_modules/symbol-observable/index.js ***!
@@ -34376,15 +34141,17 @@ Object.defineProperty(exports, "__esModule", {
     value: true
 });
 
+var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
 var _reactRedux = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/lib/index.js");
 
 var _react = __webpack_require__(/*! react */ "react");
 
 var _react2 = _interopRequireDefault(_react);
 
-var _Authentication = __webpack_require__(/*! ./Authentication.react */ "./src/Authentication.react.js");
+var _propTypes = __webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js");
 
-var _Authentication2 = _interopRequireDefault(_Authentication);
+var _propTypes2 = _interopRequireDefault(_propTypes);
 
 var _APIController = __webpack_require__(/*! ./APIController.react */ "./src/APIController.react.js");
 
@@ -34406,27 +34173,70 @@ var _Reloader = __webpack_require__(/*! ./components/core/Reloader.react */ "./s
 
 var _Reloader2 = _interopRequireDefault(_Reloader);
 
+var _actions = __webpack_require__(/*! ./actions */ "./src/actions/index.js");
+
+var _ramda = __webpack_require__(/*! ramda */ "./node_modules/ramda/index.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-function UnconnectedAppContainer() {
-    return _react2.default.createElement(
-        _Authentication2.default,
-        null,
-        _react2.default.createElement(
-            'div',
-            null,
-            _react2.default.createElement(_Toolbar2.default, null),
-            _react2.default.createElement(_APIController2.default, null),
-            _react2.default.createElement(_DocumentTitle2.default, null),
-            _react2.default.createElement(_Loading2.default, null),
-            _react2.default.createElement(_Reloader2.default, null)
-        )
-    );
-}
+function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
+
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
+
+var UnconnectedAppContainer = function (_React$Component) {
+    _inherits(UnconnectedAppContainer, _React$Component);
+
+    function UnconnectedAppContainer() {
+        _classCallCheck(this, UnconnectedAppContainer);
+
+        return _possibleConstructorReturn(this, (UnconnectedAppContainer.__proto__ || Object.getPrototypeOf(UnconnectedAppContainer)).apply(this, arguments));
+    }
+
+    _createClass(UnconnectedAppContainer, [{
+        key: 'componentWillMount',
+        value: function componentWillMount() {
+            var dispatch = this.props.dispatch;
+
+            dispatch((0, _actions.readConfig)());
+        }
+    }, {
+        key: 'render',
+        value: function render() {
+            var config = this.props.config;
+
+            if ((0, _ramda.type)(config) === 'Null') {
+                return _react2.default.createElement(
+                    'div',
+                    { className: '_dash-loading' },
+                    'Loading...'
+                );
+            }
+            return _react2.default.createElement(
+                'div',
+                null,
+                _react2.default.createElement(_Toolbar2.default, null),
+                _react2.default.createElement(_APIController2.default, null),
+                _react2.default.createElement(_DocumentTitle2.default, null),
+                _react2.default.createElement(_Loading2.default, null),
+                _react2.default.createElement(_Reloader2.default, null)
+            );
+        }
+    }]);
+
+    return UnconnectedAppContainer;
+}(_react2.default.Component);
+
+UnconnectedAppContainer.propTypes = {
+    dispatch: _propTypes2.default.func,
+    config: _propTypes2.default.object
+};
 
 var AppContainer = (0, _reactRedux.connect)(function (state) {
     return {
-        history: state.history
+        history: state.history,
+        config: state.config
     };
 }, function (dispatch) {
     return { dispatch: dispatch };
@@ -34477,371 +34287,6 @@ var AppProvider = function AppProvider() {
 };
 
 exports.default = AppProvider;
-
-/***/ }),
-
-/***/ "./src/Authentication.react.js":
-/*!*************************************!*\
-  !*** ./src/Authentication.react.js ***!
-  \*************************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-
-var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
-
-var _react = __webpack_require__(/*! react */ "react");
-
-var _react2 = _interopRequireDefault(_react);
-
-var _propTypes = __webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js");
-
-var _propTypes2 = _interopRequireDefault(_propTypes);
-
-var _reactRedux = __webpack_require__(/*! react-redux */ "./node_modules/react-redux/lib/index.js");
-
-var _queryString = __webpack_require__(/*! query-string */ "./node_modules/query-string/index.js");
-
-var _queryString2 = _interopRequireDefault(_queryString);
-
-var _api = __webpack_require__(/*! ./actions/api */ "./src/actions/api.js");
-
-var _index = __webpack_require__(/*! ./actions/index */ "./src/actions/index.js");
-
-var _ramda = __webpack_require__(/*! ramda */ "./node_modules/ramda/index.js");
-
-var _styles = __webpack_require__(/*! ./styles/styles.js */ "./src/styles/styles.js");
-
-var styles = _interopRequireWildcard(_styles);
-
-var _constants = __webpack_require__(/*! ./constants/constants */ "./src/constants/constants.js");
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
-
-function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
-
-function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; } /* global window:true, document:true */
-
-
-// http://stackoverflow.com/questions/4068373/center-a-popup-window-on-screen
-var popupCenter = function popupCenter(url, title, w, h) {
-    // Fixes dual-screen position
-    var screenLeft = window.screenLeft;
-    var screenTop = window.screenTop;
-
-    var width = window.innerWidth;
-    var height = window.innerHeight;
-
-    var left = width / 2 - w / 2 + screenLeft;
-    var top = height / 2 - h / 2 + screenTop;
-    var popupWindow = window.open(url, title, 'scrollbars=yes,width=' + w + ', height=' + h + ', top=' + top + ', left=' + left);
-    return popupWindow;
-};
-
-/**
- * Login displays an interface that guides the user through an oauth flow.
- * - Clicking on a login button will launch a new window with the plot.ly
- *   oauth url
- * - plot.ly will redirect that window to defined redirect URL when complete
- * - The <OauthRedirect/> component will render the oauth redirect page
- * - When the <OauthRedirect/> window is closed, <Login/> will call its
- *   `onClosed` prop
- */
-
-var UnconnectedLogin = function (_Component) {
-    _inherits(UnconnectedLogin, _Component);
-
-    function UnconnectedLogin(props) {
-        _classCallCheck(this, UnconnectedLogin);
-
-        var _this = _possibleConstructorReturn(this, (UnconnectedLogin.__proto__ || Object.getPrototypeOf(UnconnectedLogin)).call(this, props));
-
-        _this.buildOauthUrl = _this.buildOauthUrl.bind(_this);
-        _this.oauthPopUp = _this.oauthPopUp.bind(_this);
-        return _this;
-    }
-
-    _createClass(UnconnectedLogin, [{
-        key: 'buildOauthUrl',
-        value: function buildOauthUrl() {
-            var _props$config = this.props.config,
-                oauth_client_id = _props$config.oauth_client_id,
-                plotly_domain = _props$config.plotly_domain;
-
-            return plotly_domain + '/o/authorize/?response_type=token&' + ('client_id=' + oauth_client_id + '&') + ('redirect_uri=' + window.location.origin + _constants.REDIRECT_URI_PATHNAME);
-        }
-    }, {
-        key: 'oauthPopUp',
-        value: function oauthPopUp() {
-            var _this2 = this;
-
-            var popupWindow = popupCenter(this.buildOauthUrl(), 'Authorization', '500', '500');
-            if (window.focus) {
-                popupWindow.focus();
-            }
-            window.popupWindow = popupWindow;
-            var interval = setInterval(function () {
-                if (popupWindow.closed) {
-                    _this2.props.onClosed();
-                    clearInterval(interval);
-                }
-            }, 100);
-        }
-    }, {
-        key: 'render',
-        value: function render() {
-            var plotly_domain = this.props.config.plotly_domain;
-
-            return _react2.default.createElement(
-                'div',
-                { style: (0, _ramda.merge)(styles.base.html, styles.base.container) },
-                _react2.default.createElement(
-                    'div',
-                    { style: styles.base.h2 },
-                    'Dash'
-                ),
-                _react2.default.createElement(
-                    'div',
-                    { style: styles.base.h4 },
-                    'Log in to Plotly to continue'
-                ),
-                _react2.default.createElement(
-                    'button',
-                    { style: styles.base.button, onClick: this.oauthPopUp },
-                    'Log in'
-                ),
-                _react2.default.createElement(
-                    'div',
-                    { style: styles.base.caption },
-                    _react2.default.createElement(
-                        'span',
-                        null,
-                        'This dash app requires a plotly login to view.\n                          Don\'t have an account yet?'
-                    ),
-                    _react2.default.createElement(
-                        'a',
-                        {
-                            style: styles.base.a,
-                            href: plotly_domain + '/accounts/login/?action=signup'
-                        },
-                        ' Create an account '
-                    ),
-                    _react2.default.createElement(
-                        'span',
-                        null,
-                        ' (it\'s free)\n                      and then request access from the owner of this app.'
-                    )
-                )
-            );
-        }
-    }]);
-
-    return UnconnectedLogin;
-}(_react.Component);
-
-UnconnectedLogin.propTypes = {
-    onClosed: _propTypes2.default.func,
-    config: _propTypes2.default.object
-};
-var Login = (0, _reactRedux.connect)(function (state) {
-    return { config: state.config };
-})(UnconnectedLogin);
-
-/**
- * OAuth redirect component
- * - Looks for an oauth token in the URL as provided by the plot.ly redirect
- * - Make an API call to dash with that oauth token
- * - In response, Dash will set the oauth token as a cookie
- *   if it is valid
- * Parent is component is responsible for rendering
- * this component in the appropriate context
- * (the URL redirect)
- */
-
-var UnconnectedOauthRedirect = function (_Component2) {
-    _inherits(UnconnectedOauthRedirect, _Component2);
-
-    function UnconnectedOauthRedirect(props) {
-        _classCallCheck(this, UnconnectedOauthRedirect);
-
-        return _possibleConstructorReturn(this, (UnconnectedOauthRedirect.__proto__ || Object.getPrototypeOf(UnconnectedOauthRedirect)).call(this, props));
-    }
-
-    _createClass(UnconnectedOauthRedirect, [{
-        key: 'componentDidMount',
-        value: function componentDidMount() {
-            var params = _queryString2.default.parse(window.location.hash);
-            var access_token = params.access_token;
-            var dispatch = this.props.dispatch;
-
-            dispatch((0, _api.login)(access_token));
-        }
-    }, {
-        key: 'render',
-        value: function render() {
-            var loginRequest = this.props.loginRequest;
-
-            var content = void 0;
-            if ((0, _ramda.isEmpty)(loginRequest) || loginRequest.status === 'loading') {
-                content = _react2.default.createElement(
-                    'div',
-                    { className: '_dash-loading' },
-                    'Loading...'
-                );
-            } else if (loginRequest.status === _constants.STATUS.OK) {
-                window.close();
-            } else {
-                content = _react2.default.createElement(
-                    'div',
-                    null,
-                    _react2.default.createElement(
-                        'h3',
-                        null,
-                        'Yikes! An error occurred trying to log in.'
-                    ),
-                    loginRequest.content ? _react2.default.createElement(
-                        'pre',
-                        null,
-                        JSON.stringify(loginRequest.content)
-                    ) : null
-                );
-            }
-            return _react2.default.createElement(
-                'div',
-                null,
-                content
-            );
-        }
-    }]);
-
-    return UnconnectedOauthRedirect;
-}(_react.Component);
-
-UnconnectedOauthRedirect.propTypes = {
-    loginRequest: _propTypes2.default.object,
-    login: _propTypes2.default.func,
-    dispatch: _propTypes2.default.func
-};
-var OauthRedirect = (0, _reactRedux.connect)(function (state) {
-    return { loginRequest: state.loginRequest };
-}, function (dispatch) {
-    return { dispatch: dispatch };
-})(UnconnectedOauthRedirect);
-
-/**
- * Authentication component renders the children if the user is
- * logged in or doesn't need to login.
- * Otherwise, it renders an interface that allows a user to log in.
- *
- * Log in is checked through the presence of an oauth token as a cookie.
- * Log in is only required for apps that have a `fid` in the `config`
- * API response
- *
- * Note that a user that is logged in does not necessarily have have
- * view access to the app.
- *
- * This component also renders the OAuth redirect URL
- */
-
-var Authentication = function (_Component3) {
-    _inherits(Authentication, _Component3);
-
-    function Authentication(props) {
-        _classCallCheck(this, Authentication);
-
-        var _this4 = _possibleConstructorReturn(this, (Authentication.__proto__ || Object.getPrototypeOf(Authentication)).call(this, props));
-
-        _this4.state = {
-            oauth_flow_counter: 0
-        };
-        return _this4;
-    }
-
-    _createClass(Authentication, [{
-        key: 'componentDidMount',
-        value: function componentDidMount() {
-            this.initialization(this.props);
-        }
-    }, {
-        key: 'componentWillReceiveProps',
-        value: function componentWillReceiveProps(props) {
-            this.initialization(props);
-        }
-    }, {
-        key: 'initialization',
-        value: function initialization(props) {
-            var config = props.config,
-                dispatch = props.dispatch;
-
-            if ((0, _ramda.type)(config) === 'Null') {
-                dispatch((0, _index.readConfig)());
-            }
-        }
-    }, {
-        key: 'render',
-        value: function render() {
-            var _this5 = this;
-
-            var _props = this.props,
-                children = _props.children,
-                config = _props.config;
-
-            // OAuth redirect
-
-            if (window.location.pathname === _constants.REDIRECT_URI_PATHNAME) {
-                return _react2.default.createElement(OauthRedirect, null);
-            }
-
-            if ((0, _ramda.type)(config) === 'Null') {
-                return _react2.default.createElement(
-                    'div',
-                    { className: '_dash-loading' },
-                    'Loading...'
-                );
-            } else if (config.fid) {
-                if ((0, _ramda.contains)('plotly_oauth_token=', document.cookie)) {
-                    return children;
-                }
-
-                // Set oauth token cookie through an oauth flow
-                return _react2.default.createElement(Login, {
-                    onClosed: function onClosed() {
-                        return _this5.setState({
-                            oauth_flow_counter: _this5.state.oauth_flow_counter + 1
-                        });
-                    }
-                });
-            }
-
-            return children;
-        }
-    }]);
-
-    return Authentication;
-}(_react.Component);
-
-Authentication.propTypes = {
-    children: _propTypes2.default.object,
-    config: _propTypes2.default.object
-};
-
-exports.default = (0, _reactRedux.connect)(function (state) {
-    return {
-        config: state.config
-    };
-}, function (dispatch) {
-    return { dispatch: dispatch };
-})(Authentication);
 
 /***/ }),
 
@@ -35047,7 +34492,6 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.getLayout = getLayout;
 exports.getDependencies = getDependencies;
-exports.login = login;
 exports.getReloadHash = getReloadHash;
 
 var _cookie = __webpack_require__(/*! cookie */ "./node_modules/cookie/index.js");
@@ -35144,12 +34588,6 @@ function getLayout() {
 
 function getDependencies() {
     return apiThunk('_dash-dependencies', 'GET', 'dependenciesRequest');
-}
-
-function login(oauth_token) {
-    return apiThunk('_dash-login', 'POST', 'loginRequest', '', '', {
-        Authorization: 'Bearer ' + oauth_token
-    });
 }
 
 function getReloadHash() {
@@ -35375,7 +34813,6 @@ function reduceInputIds(nodeIds, InputGraph) {
 function notifyObservers(payload) {
     return function (dispatch, getState) {
         var id = payload.id,
-            event = payload.event,
             props = payload.props,
             excludedOutputs = payload.excludedOutputs;
 
@@ -35383,42 +34820,36 @@ function notifyObservers(payload) {
             graphs = _getState2.graphs,
             requestQueue = _getState2.requestQueue;
 
-        var EventGraph = graphs.EventGraph,
-            InputGraph = graphs.InputGraph;
+        var InputGraph = graphs.InputGraph;
         /*
-         * Figure out all of the output id's that depend on this
-         * event or input.
+         * Figure out all of the output id's that depend on this input.
          * This includes id's that are direct children as well as
          * grandchildren.
          * grandchildren will get filtered out in a later stage.
          */
 
-        var outputObservers = void 0;
-        if (event) {
-            outputObservers = EventGraph.dependenciesOf(id + '.' + event);
-        } else {
-            var changedProps = (0, _ramda.keys)(props);
-            outputObservers = [];
-            changedProps.forEach(function (propName) {
-                var node = id + '.' + propName;
-                if (!InputGraph.hasNode(node)) {
-                    return;
+        var outputObservers = [];
+
+        var changedProps = (0, _ramda.keys)(props);
+        changedProps.forEach(function (propName) {
+            var node = id + '.' + propName;
+            if (!InputGraph.hasNode(node)) {
+                return;
+            }
+            InputGraph.dependenciesOf(node).forEach(function (outputId) {
+                /*
+                 * Multiple input properties that update the same
+                 * output can change at once.
+                 * For example, `n_clicks` and `n_clicks_previous`
+                 * on a button component.
+                 * We only need to update the output once for this
+                 * update, so keep outputObservers unique.
+                 */
+                if (!(0, _ramda.contains)(outputId, outputObservers)) {
+                    outputObservers.push(outputId);
                 }
-                InputGraph.dependenciesOf(node).forEach(function (outputId) {
-                    /*
-                     * Multiple input properties that update the same
-                     * output can change at once.
-                     * For example, `n_clicks` and `n_clicks_previous`
-                     * on a button component.
-                     * We only need to update the output once for this
-                     * update, so keep outputObservers unique.
-                     */
-                    if (!(0, _ramda.contains)(outputId, outputObservers)) {
-                        outputObservers.push(outputId);
-                    }
-                });
             });
-        }
+        });
 
         if (excludedOutputs) {
             outputObservers = (0, _ramda.reject)((0, _ramda.flip)(_ramda.contains)(excludedOutputs), outputObservers);
@@ -35460,11 +34891,7 @@ function notifyObservers(payload) {
              * this loop hits C because of the overallOrder sorting logic
              */
 
-            /*
-              * if the output just listens to events, then it won't be in
-              * the InputGraph
-              */
-            var controllers = InputGraph.hasNode(outputIdAndProp) ? InputGraph.dependantsOf(outputIdAndProp) : [];
+            var controllers = InputGraph.dependantsOf(outputIdAndProp);
 
             var controllersInFutureQueue = (0, _ramda.intersection)(queuedObservers, controllers);
 
@@ -35536,7 +34963,7 @@ function notifyObservers(payload) {
 
             var requestUid = newRequestQueue[i].uid;
 
-            promises.push(updateOutput(outputComponentId, outputProp, event, getState, requestUid, dispatch));
+            promises.push(updateOutput(outputComponentId, outputProp, getState, requestUid, dispatch));
         }
 
         /* eslint-disable consistent-return */
@@ -35545,7 +34972,7 @@ function notifyObservers(payload) {
     };
 }
 
-function updateOutput(outputComponentId, outputProp, event, getState, requestUid, dispatch) {
+function updateOutput(outputComponentId, outputProp, getState, requestUid, dispatch) {
     var _getState3 = getState(),
         config = _getState3.config,
         layout = _getState3.layout,
@@ -35556,29 +34983,17 @@ function updateOutput(outputComponentId, outputProp, event, getState, requestUid
     var InputGraph = graphs.InputGraph;
 
     /*
-     * Construct a payload of the input, state, and event.
+     * Construct a payload of the input and state.
      * For example:
-     * If the input triggered this update, then:
      * {
      *      inputs: [{'id': 'input1', 'property': 'new value'}],
      *      state: [{'id': 'state1', 'property': 'existing value'}]
      * }
-     *
-     * If an event triggered this udpate, then:
-     * {
-     *      state: [{'id': 'state1', 'property': 'existing value'}],
-     *      event: {'id': 'graph', 'event': 'click'}
-     * }
-     *
      */
 
     var payload = {
         output: { id: outputComponentId, property: outputProp }
     };
-
-    if (event) {
-        payload.event = event;
-    }
 
     var _dependenciesRequest$ = dependenciesRequest.content.find(function (dependency) {
         return dependency.output.id === outputComponentId && dependency.output.property === outputProp;
@@ -35587,20 +35002,20 @@ function updateOutput(outputComponentId, outputProp, event, getState, requestUid
         state = _dependenciesRequest$.state;
 
     var validKeys = (0, _ramda.keys)(paths);
-    if (inputs.length > 0) {
-        payload.inputs = inputs.map(function (inputObject) {
-            // Make sure the component id exists in the layout
-            if (!(0, _ramda.contains)(inputObject.id, validKeys)) {
-                throw new ReferenceError('An invalid input object was used in an ' + '`Input` of a Dash callback. ' + 'The id of this object is `' + inputObject.id + '` and the property is `' + inputObject.property + '`. The list of ids in the current layout is ' + '`[' + validKeys.join(', ') + ']`');
-            }
-            var propLens = (0, _ramda.lensPath)((0, _ramda.concat)(paths[inputObject.id], ['props', inputObject.property]));
-            return {
-                id: inputObject.id,
-                property: inputObject.property,
-                value: (0, _ramda.view)(propLens, layout)
-            };
-        });
-    }
+
+    payload.inputs = inputs.map(function (inputObject) {
+        // Make sure the component id exists in the layout
+        if (!(0, _ramda.contains)(inputObject.id, validKeys)) {
+            throw new ReferenceError('An invalid input object was used in an ' + '`Input` of a Dash callback. ' + 'The id of this object is `' + inputObject.id + '` and the property is `' + inputObject.property + '`. The list of ids in the current layout is ' + '`[' + validKeys.join(', ') + ']`');
+        }
+        var propLens = (0, _ramda.lensPath)((0, _ramda.concat)(paths[inputObject.id], ['props', inputObject.property]));
+        return {
+            id: inputObject.id,
+            property: inputObject.property,
+            value: (0, _ramda.view)(propLens, layout)
+        };
+    });
+
     if (state.length > 0) {
         payload.state = state.map(function (stateObject) {
             // Make sure the component id exists in the layout
@@ -35827,7 +35242,7 @@ function updateOutput(outputComponentId, outputProp, event, getState, requestUid
                             uid: requestUid,
                             requestTime: Date.now()
                         }, getState().requestQueue)));
-                        updateOutput(idAndProp.split('.')[0], idAndProp.split('.')[1], null, getState, requestUid, dispatch);
+                        updateOutput(idAndProp.split('.')[0], idAndProp.split('.')[1], getState, requestUid, dispatch);
                     });
                 }
             }
@@ -36058,13 +35473,6 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
         loading_state: ownProps.loading_state,
         requestQueue: stateProps.requestQueue,
 
-        fireEvent: function fireEvent(_ref) {
-            var event = _ref.event;
-
-            // Update this component's observers with the updated props
-            dispatch((0, _actions.notifyObservers)({ event: event, id: ownProps.id }));
-        },
-
         setProps: function setProps(newProps) {
             var payload = {
                 props: newProps,
@@ -36081,21 +35489,14 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
     };
 }
 
-function NotifyObserversComponent(_ref2) {
-    var children = _ref2.children,
-        id = _ref2.id,
-        paths = _ref2.paths,
-        dependencies = _ref2.dependencies,
-        fireEvent = _ref2.fireEvent,
-        setProps = _ref2.setProps,
-        loading_state = _ref2.loading_state;
+function NotifyObserversComponent(_ref) {
+    var children = _ref.children,
+        id = _ref.id,
+        paths = _ref.paths,
+        dependencies = _ref.dependencies,
+        setProps = _ref.setProps,
+        loading_state = _ref.loading_state;
 
-
-    var thisComponentTriggersEvents = dependencies && dependencies.find(function (dependency) {
-        return dependency.events.find(function (event) {
-            return event.id === id;
-        });
-    });
     var thisComponentSharesState = dependencies && dependencies.find(function (dependency) {
         return dependency.inputs.find(function (input) {
             return input.id === id;
@@ -36104,19 +35505,17 @@ function NotifyObserversComponent(_ref2) {
         });
     });
     /*
-     * Only pass in `setProps` and `fireEvent` if they are actually
-     * necessary.
-     * This allows component authors to skip computing data
-     * for `setProps` or `fireEvent` (which can be expensive)
-     * in the case when they aren't actually used.
+     * Only pass in `setProps` if necessary.
+     * This allows component authors to skip computing unneeded data
+     * for `setProps`, which can be expensive.
      * For example, consider `hoverData` for graphs. If it isn't
      * actually used, then the component author can skip binding
      * the events for the component.
      *
-     * TODO - A nice enhancement would be to pass in the actual events
-     * and properties that are used into the component so that the
-     * component author can check for something like `subscribed_events`
-     * or `subscribed_properties` instead of `fireEvent` and `setProps`.
+     * TODO - A nice enhancement would be to pass in the actual
+     * properties that are used into the component so that the
+     * component author can check for something like
+     * `subscribed_properties` instead of just `setProps`.
      */
     var extraProps = {};
     if (thisComponentSharesState &&
@@ -36127,9 +35526,6 @@ function NotifyObserversComponent(_ref2) {
     // if the item's path exists for now.
     paths[id]) {
         extraProps.setProps = setProps;
-    }
-    if (thisComponentTriggersEvents && paths[id]) {
-        extraProps.fireEvent = fireEvent;
     }
 
     extraProps.loading_state = loading_state;
@@ -36243,6 +35639,7 @@ var Reloader = function (_React$Component) {
                     }, reloadRequest.content.packages))) {
                         // Look if it was a css file.
                         var was_css = false;
+                        // eslint-disable-next-line prefer-const
                         var _iteratorNormalCompletion = true;
                         var _didIteratorError = false;
                         var _iteratorError = undefined;
@@ -36588,7 +35985,7 @@ _reactDom2.default.render(_react2.default.createElement(_AppProvider2.default, n
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.reloadRequest = exports.loginRequest = exports.layoutRequest = exports.dependenciesRequest = undefined;
+exports.reloadRequest = exports.layoutRequest = exports.dependenciesRequest = undefined;
 
 var _ramda = __webpack_require__(/*! ramda */ "./node_modules/ramda/index.js");
 
@@ -36624,7 +36021,6 @@ function createApiReducer(store) {
 
 var dependenciesRequest = exports.dependenciesRequest = createApiReducer('dependenciesRequest');
 var layoutRequest = exports.layoutRequest = createApiReducer('layoutRequest');
-var loginRequest = exports.loginRequest = createApiReducer('loginRequest');
 var reloadRequest = exports.reloadRequest = createApiReducer('reloadRequest');
 
 /***/ }),
@@ -36746,12 +36142,10 @@ var graphs = function graphs() {
             {
                 var dependencies = action.payload;
                 var inputGraph = new _dependencyGraph.DepGraph();
-                var eventGraph = new _dependencyGraph.DepGraph();
 
                 dependencies.forEach(function registerDependency(dependency) {
                     var output = dependency.output,
-                        inputs = dependency.inputs,
-                        events = dependency.events;
+                        inputs = dependency.inputs;
 
                     var outputId = output.id + '.' + output.property;
                     inputs.forEach(function (inputObject) {
@@ -36760,15 +36154,9 @@ var graphs = function graphs() {
                         inputGraph.addNode(inputId);
                         inputGraph.addDependency(inputId, outputId);
                     });
-                    events.forEach(function (eventObject) {
-                        var eventId = eventObject.id + '.' + eventObject.event;
-                        eventGraph.addNode(outputId);
-                        eventGraph.addNode(eventId);
-                        eventGraph.addDependency(eventId, outputId);
-                    });
                 });
 
-                return { InputGraph: inputGraph, EventGraph: eventGraph };
+                return { InputGraph: inputGraph };
             }
 
         default:
@@ -37007,9 +36395,9 @@ var _api = __webpack_require__(/*! ./api */ "./src/reducers/api.js");
 
 var API = _interopRequireWildcard(_api);
 
-var _config = __webpack_require__(/*! ./config */ "./src/reducers/config.js");
+var _config2 = __webpack_require__(/*! ./config */ "./src/reducers/config.js");
 
-var _config2 = _interopRequireDefault(_config);
+var _config3 = _interopRequireDefault(_config2);
 
 function _interopRequireWildcard(obj) { if (obj && obj.__esModule) { return obj; } else { var newObj = {}; if (obj != null) { for (var key in obj) { if (Object.prototype.hasOwnProperty.call(obj, key)) newObj[key] = obj[key]; } } newObj.default = obj; return newObj; } }
 
@@ -37023,10 +36411,9 @@ var reducer = (0, _redux.combineReducers)({
     graphs: _dependencyGraph2.default,
     paths: _paths2.default,
     requestQueue: _requestQueue2.default,
-    config: _config2.default,
+    config: _config3.default,
     dependenciesRequest: API.dependenciesRequest,
     layoutRequest: API.layoutRequest,
-    loginRequest: API.loginRequest,
     reloadRequest: API.reloadRequest,
     history: _history3.default
 });
@@ -37095,10 +36482,11 @@ function reloaderReducer(reducer) {
     return function (state, action) {
         if (action.type === 'RELOAD') {
             var _state = state,
-                _history = _state.history;
+                _history = _state.history,
+                _config = _state.config;
             // eslint-disable-next-line no-param-reassign
 
-            state = { history: _history };
+            state = { history: _history, config: _config };
         }
         return reducer(state, action);
     };
@@ -37298,94 +36686,6 @@ var initializeStore = function initializeStore() {
 };
 
 exports.default = initializeStore;
-
-/***/ }),
-
-/***/ "./src/styles/styles.js":
-/*!******************************!*\
-  !*** ./src/styles/styles.js ***!
-  \******************************/
-/*! no static exports found */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-Object.defineProperty(exports, "__esModule", {
-    value: true
-});
-/*
- * dash renderer is purposely style-free
- * Dash apps should be styled through
- * CSS style sheets on the app level,
- * in component-suites, or as inline styles
- * in the component layouts.
- *
- * The styles contained in dash-renderer are
- * just for a couple of interfaces:
- * - Loading messages
- * - Login screens
- *
- */
-
-var base = exports.base = {
-    html: {
-        fontFamily: "'Open Sans', Helvetica, sans-serif",
-        fontWeight: 400,
-        color: '#2A3F5F'
-    },
-
-    h2: {
-        fontFamily: 'Dosis, Helvetica, sans-serif',
-        fontWeight: '600',
-        fontSize: '28px',
-        marginTop: '14px',
-        marginBottom: '14px'
-    },
-
-    h4: {
-        fontSize: '18px',
-        marginTop: '9px',
-        marginBottom: '18px'
-    },
-
-    button: {
-        border: '1px solid #119DFF',
-        fontSize: '14px',
-        color: '#ffffff',
-        backgroundColor: '#119DFF',
-        padding: '9px 18px',
-        borderRadius: '5px',
-        textAlign: 'center',
-        textTransform: 'capitalize',
-        letterSpacing: '0.5px',
-        lineHeight: '1',
-        cursor: 'pointer',
-        outline: 'none',
-        margin: '0px'
-    },
-
-    a: {
-        color: '#119DFF',
-        textDecoration: 'none',
-        cursor: 'pointer'
-    },
-
-    caption: {
-        fontSize: '13px',
-        marginTop: '20px',
-        color: '#A2B1C6'
-    },
-
-    container: {
-        marginLeft: 'auto',
-        marginRight: 'auto',
-        width: '90%',
-        maxWidth: '300px'
-    }
-};
-
-exports.default = base;
 
 /***/ }),
 

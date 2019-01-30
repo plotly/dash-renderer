@@ -2,9 +2,21 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## [0.17.0] - 2018-12-17
+## [0.18.0] - 2019-01-30
 ### Added
 - Loading states API [#267](https://github.com/plotly/dash/issues/267)
+## [0.17.0] - 2019-01-25
+### Removed
+- Obsolete Event system [#114](https://github.com/plotly/dash-renderer/pull/114)
+
+## [0.16.2] - 2019-01-11
+### Fixed
+[#110](https://github.com/plotly/dash-renderer/pull/110)
+- Keep the config store state on soft reload.
+- AppProvider returns `Loading...` if no configs as before #108
+
+### Removed - 2018-12-17
+- Unused login api and Authentication component [#108](https://github.com/plotly/dash-renderer/pull/108)
 
 ## [0.16.1] - 2018-12-14
 ### Fixed
