@@ -1985,6 +1985,36 @@ class Tests(IntegrationTests):
 
         self.wait_for_text_to_equal('#graph2_info', json.dumps(graph_2_expected_clickdata))
 
+    def test_confirm_dialog_doesnt_break(self):
+        app = dash.Dash()
+
+        app.config.suppress_callback_exceptions = True
+
+        app.layout = html.Div([
+            html.Button(id='button', children='Send confirm'),
+            html.Div(id='confirm-container'),
+            dcc.Location(id='dummy-location')
+        ])
+
+        @app.callback(Output('confirm-container', 'children'),
+                      [Input('button', 'n_clicks')])
+        def on_click(n_clicks):
+            if n_clicks:
+                return dcc.ConfirmDialog(
+                    displayed=True,
+                    id='confirm',
+                    key='confirm-{}'.format(time.time()),
+                    message='Please confirm.')
+
+        self.startServer(app)
+
+        button = self.wait_for_element_by_css_selector('#button')
+
+        button.click()
+        time.sleep(2)
+
+        self.driver.switch_to.alert.accept()
+
     def test_hot_reload(self):
         app = dash.Dash(__name__, assets_folder='tests/test_assets')
 
