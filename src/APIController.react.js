@@ -105,7 +105,7 @@ class UnconnectedContainer extends Component {
         if (isEmpty(layout)) {
             return (
                 <div id="_dash-app-content">
-                    <TreeContainer key='started-layout'layout={layout} loading={true} />
+                    <TreeContainer key='started-layout' layout={layout} loading={true} />
                 </div>
             );
         }
