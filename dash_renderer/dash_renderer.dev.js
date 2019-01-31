@@ -34352,7 +34352,7 @@ var TreeContainer = function (_Component) {
     _createClass(TreeContainer, [{
         key: 'shouldComponentUpdate',
         value: function shouldComponentUpdate(nextProps) {
-            return nextProps.layout !== this.props.layout;
+            return nextProps.layout !== this.props.layout || nextProps.loading !== this.props.loading || nextProps.requestQueue !== this.props.requestQueue;
         }
     }, {
         key: 'render',
@@ -34458,7 +34458,6 @@ function recursivelyRender(component, loading, requestQueue) {
         {
             key: componentProps.id,
             id: componentProps.id,
-            loading: loading,
             loading_state: loading_state
         },
         parent
@@ -35169,10 +35168,7 @@ function updateOutput(outputComponentId, outputProp, getState, requestUid, dispa
                                 if ((0, _ramda.has)(componentIdAndProp, InputGraph.nodes)) {
                                     newProps[componentIdAndProp] = {
                                         id: child.props.id,
-                                        props: Object.assign({
-                                            // [childProp]:
-                                            //     child.props[childProp],
-                                        }, child.props)
+                                        props: _defineProperty({}, childProp, child.props[childProp])
                                     };
                                 }
                             });

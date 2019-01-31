@@ -19,7 +19,11 @@ import {STATUS} from './constants/constants';
 
 class TreeContainer extends Component {
     shouldComponentUpdate(nextProps) {
-        return nextProps.layout !== this.props.layout;
+        return (
+            nextProps.layout !== this.props.layout ||
+            nextProps.loading !== this.props.loading ||
+            nextProps.requestQueue !== this.props.requestQueue
+        );
     }
 
     render() {
@@ -136,7 +140,6 @@ function recursivelyRender(component, loading, requestQueue) {
         <NotifyObservers
             key={componentProps.id}
             id={componentProps.id}
-            loading={loading}
             loading_state={loading_state}
         >
             {parent}
@@ -148,8 +151,8 @@ function mapStateToProps(state, ownProps) {
     return {
         layout: ownProps.layout,
         loading: ownProps.loading,
-        requestQueue: state.requestQueue
-    }
+        requestQueue: state.requestQueue,
+    };
 }
 
 export default connect(mapStateToProps)(TreeContainer);
