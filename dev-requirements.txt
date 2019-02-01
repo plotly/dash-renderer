@@ -1,5 +1,5 @@
 git+git://github.com/plotly/dash@master#egg=dash
-git+git://github.com/plotly/dash-core-components/tree/d004b29fa78643867658a273d3a4fab14a28ce0f#egg=dash_core_components
+git+git://github.com/plotly/dash-core-components.gitd004b29fa78643867658a273d3a4fab14a28ce0f#egg=dash_core_components
 git+git://github.com/plotly/dash-html-components@master#egg=dash_html_components
 percy
 selenium
