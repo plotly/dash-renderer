@@ -20,9 +20,7 @@ import {STATUS} from './constants/constants';
 class TreeContainer extends Component {
     shouldComponentUpdate(nextProps) {
         return (
-            nextProps.layout !== this.props.layout ||
-            nextProps.loading !== this.props.loading ||
-            nextProps.requestQueue !== this.props.requestQueue
+            nextProps.layout !== this.props.layout
         );
     }
 

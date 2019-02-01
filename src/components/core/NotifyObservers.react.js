@@ -2,6 +2,7 @@ import {connect} from 'react-redux';
 import {notifyObservers, updateProps} from '../../actions';
 import React from 'react';
 import PropTypes from 'prop-types';
+import {isEmpty} from "ramda";
 
 /*
  * NotifyObservers passes a connected `setProps` handler down to
@@ -51,7 +52,7 @@ function NotifyObserversComponent({
     paths,
     dependencies,
     setProps,
-    loading_state
+    loading_state,
 }) {
     const thisComponentSharesState =
         dependencies &&
@@ -86,16 +87,21 @@ function NotifyObserversComponent({
         extraProps.setProps = setProps;
     }
 
-    extraProps.loading_state = loading_state;
+    if (children.props && !children.props.loading_state) {
+        extraProps.loading_state = loading_state;
+    }
 
-    return React.cloneElement(children, extraProps);
+    if (!isEmpty(extraProps)) {
+        return React.cloneElement(children, extraProps);
+    }
+    return children;
 }
 
 NotifyObserversComponent.propTypes = {
     id: PropTypes.string.isRequired,
     children: PropTypes.node.isRequired,
     path: PropTypes.array.isRequired,
-    loading_state: PropTypes.object
+    loading_state: PropTypes.object,
 };
 
 export default connect(

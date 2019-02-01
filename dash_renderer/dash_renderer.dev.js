@@ -34352,7 +34352,7 @@ var TreeContainer = function (_Component) {
     _createClass(TreeContainer, [{
         key: 'shouldComponentUpdate',
         value: function shouldComponentUpdate(nextProps) {
-            return nextProps.layout !== this.props.layout || nextProps.loading !== this.props.loading || nextProps.requestQueue !== this.props.requestQueue;
+            return nextProps.layout !== this.props.layout;
         }
     }, {
         key: 'render',
@@ -35440,6 +35440,8 @@ var _propTypes = __webpack_require__(/*! prop-types */ "./node_modules/prop-type
 
 var _propTypes2 = _interopRequireDefault(_propTypes);
 
+var _ramda = __webpack_require__(/*! ramda */ "./node_modules/ramda/index.js");
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /*
@@ -35524,9 +35526,14 @@ function NotifyObserversComponent(_ref) {
         extraProps.setProps = setProps;
     }
 
-    extraProps.loading_state = loading_state;
+    if (children.props && !children.props.loading_state) {
+        extraProps.loading_state = loading_state;
+    }
 
-    return _react2.default.cloneElement(children, extraProps);
+    if (!(0, _ramda.isEmpty)(extraProps)) {
+        return _react2.default.cloneElement(children, extraProps);
+    }
+    return children;
 }
 
 NotifyObserversComponent.propTypes = {
