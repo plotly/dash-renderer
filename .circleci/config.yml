@@ -30,6 +30,7 @@ jobs:
               python -m venv venv || virtualenv venv
               . venv/bin/activate
               pip install -r dev-requirements.txt --quiet
+              pip install -e .
               npm install --ignore-scripts
 
       - run:
@@ -51,6 +52,7 @@ jobs:
           command: |
               . venv/bin/activate
               python --version
+              pip list | grep dash
               npm run test:py
 
   "python-3.6":

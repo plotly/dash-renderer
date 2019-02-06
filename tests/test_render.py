@@ -1986,7 +1986,7 @@ class Tests(IntegrationTests):
         self.wait_for_text_to_equal('#graph2_info', json.dumps(graph_2_expected_clickdata))
 
     def test_hot_reload(self):
-        app = dash.Dash(__name__, assets_folder='tests/test_assets')
+        app = dash.Dash(__name__, assets_folder='test_assets')
 
         app.layout = html.Div([
             html.H3('Hot reload')
