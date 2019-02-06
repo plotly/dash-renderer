@@ -15,7 +15,7 @@ import time
 import re
 import itertools
 import json
-
+from selenium.webdriver.common.keys import Keys
 
 class Tests(IntegrationTests):
     def setUp(self):
@@ -486,7 +486,8 @@ class Tests(IntegrationTests):
         self.percy_snapshot(name='simple-callback-1')
 
         input1 = self.wait_for_element_by_css_selector('#input')
-        input1.clear()
+        input1.send_keys(Keys.CONTROL + "a")
+        input1.send_keys(Keys.DELETE);
 
         input1.send_keys('hello world')
 
@@ -496,6 +497,8 @@ class Tests(IntegrationTests):
         self.assertEqual(
             call_count.value,
             # an initial call to retrieve the first value
+            1 +
+            # the delete
             1 +
             # one for each hello world character
             len('hello world')
@@ -757,7 +760,7 @@ class Tests(IntegrationTests):
                     self.driver.execute_script(
                         'return document.'
                         'getElementById("{}-graph").'.format(chapter) +
-                        'layout.title'
+                        'layout.title.text'
                     ) == value
                 )
             )
