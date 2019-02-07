@@ -502,7 +502,7 @@ class Tests(IntegrationTests):
             call_count.value,
             # an initial call to retrieve the first value
             1 +
-            # the delete
+            # delete the initial value
             len(initialValue) +
             # one for each hello world character
             len('hello world')
