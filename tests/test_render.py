@@ -16,6 +16,7 @@ import re
 import itertools
 import json
 from selenium.webdriver.common.keys import Keys
+from selenium.webdriver import ActionChains
 
 class Tests(IntegrationTests):
     def setUp(self):
@@ -486,10 +487,13 @@ class Tests(IntegrationTests):
         self.percy_snapshot(name='simple-callback-1')
 
         input1 = self.wait_for_element_by_css_selector('#input')
-        input1.send_keys(Keys.CONTROL + "a")
-        input1.send_keys(Keys.DELETE);
+        initialValue = input1.get_attribute('value')
 
-        input1.send_keys('hello world')
+        action = ActionChains(self.driver)
+        action.click(input1)
+        action = action.send_keys(Keys.BACKSPACE * len(initialValue))
+
+        action.send_keys('hello world').perform()
 
         self.wait_for_text_to_equal('#output-1', 'hello world')
         self.percy_snapshot(name='simple-callback-2')
@@ -499,7 +503,7 @@ class Tests(IntegrationTests):
             # an initial call to retrieve the first value
             1 +
             # the delete
-            1 +
+            len(initialValue) +
             # one for each hello world character
             len('hello world')
         )
