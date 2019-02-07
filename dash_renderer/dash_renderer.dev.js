@@ -34059,6 +34059,7 @@ var UnconnectedContainer = function (_Component) {
                 layoutRequest = _props.layoutRequest,
                 layout = _props.layout;
 
+
             if (layoutRequest.status && !(0, _ramda.contains)(layoutRequest.status, [_constants2.STATUS.OK, 'loading'])) {
                 return _react2.default.createElement(
                     'div',
@@ -34071,25 +34072,18 @@ var UnconnectedContainer = function (_Component) {
                     { className: '_dash-error' },
                     'Error loading dependencies'
                 );
-            }
-            if (appLifecycle === (0, _constants.getAppState)('HYDRATED')) {
+            } else if (appLifecycle === (0, _constants.getAppState)('HYDRATED')) {
                 return _react2.default.createElement(
                     'div',
                     { id: '_dash-app-content' },
-                    _react2.default.createElement(_TreeContainer2.default, { key: 'hydrated-layout', layout: layout, loading: false })
+                    _react2.default.createElement(_TreeContainer2.default, { layout: layout })
                 );
             }
-            if ((0, _ramda.isEmpty)(layout)) {
-                return _react2.default.createElement(
-                    'div',
-                    { id: '_dash-app-content' },
-                    _react2.default.createElement(_TreeContainer2.default, { key: 'started-layout', layout: layout, loading: true })
-                );
-            }
+
             return _react2.default.createElement(
                 'div',
-                { id: '_dash-app-content' },
-                _react2.default.createElement(_TreeContainer2.default, { key: 'started-layout', layout: layout, loading: true })
+                { className: '_dash-loading' },
+                'Loading...'
             );
         }
     }]);
@@ -34357,7 +34351,7 @@ var TreeContainer = function (_Component) {
     }, {
         key: 'render',
         value: function render() {
-            return recursivelyRender(this.props.layout, this.props.loading, this.props.requestQueue);
+            return recursivelyRender(this.props.layout, this.props.requestQueue);
         }
     }]);
 
@@ -34366,11 +34360,10 @@ var TreeContainer = function (_Component) {
 
 TreeContainer.propTypes = {
     layout: _propTypes2.default.object,
-    loading: _propTypes2.default.bool,
     requestQueue: _propTypes2.default.object
 };
 
-function recursivelyRender(component, loading, requestQueue) {
+function recursivelyRender(component, requestQueue) {
     if ((0, _ramda.contains)((0, _ramda.type)(component), ['String', 'Number', 'Null', 'Boolean'])) {
         return component;
     }
@@ -34394,7 +34387,7 @@ function recursivelyRender(component, loading, requestQueue) {
         // Recursively render the tree
         // TODO - I think we should pass in `key` here.
         children = (Array.isArray(componentProps.children) ? componentProps.children : [componentProps.children]).map(function (child) {
-            var newChild = recursivelyRender(child, loading, requestQueue);
+            var newChild = recursivelyRender(child, requestQueue);
             return newChild;
         });
     }
@@ -34416,7 +34409,7 @@ function recursivelyRender(component, loading, requestQueue) {
     var parent = _react2.default.createElement.apply(_react2.default, [element, (0, _ramda.omit)(['children'], component.props)].concat(_toConsumableArray(children)));
 
     // loading prop coming from TreeContainer
-    var isLoading = loading;
+    var isLoading = false;
     var loadingProp = void 0;
     var loadingComponent = void 0;
 

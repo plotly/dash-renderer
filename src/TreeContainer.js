@@ -27,7 +27,6 @@ class TreeContainer extends Component {
     render() {
         return recursivelyRender(
             this.props.layout,
-            this.props.loading,
             this.props.requestQueue
         );
     }
@@ -35,11 +34,10 @@ class TreeContainer extends Component {
 
 TreeContainer.propTypes = {
     layout: PropTypes.object,
-    loading: PropTypes.bool,
     requestQueue: PropTypes.object,
 };
 
-function recursivelyRender(component, loading, requestQueue) {
+function recursivelyRender(component, requestQueue) {
     if (contains(type(component), ['String', 'Number', 'Null', 'Boolean'])) {
         return component;
     }
@@ -77,7 +75,7 @@ function recursivelyRender(component, loading, requestQueue) {
             ? componentProps.children
             : [componentProps.children]
         ).map(child => {
-            const newChild = recursivelyRender(child, loading, requestQueue);
+            const newChild = recursivelyRender(child, requestQueue);
             return newChild;
         });
     }
@@ -103,7 +101,7 @@ function recursivelyRender(component, loading, requestQueue) {
     );
 
     // loading prop coming from TreeContainer
-    let isLoading = loading;
+    let isLoading = false;
     let loadingProp;
     let loadingComponent;
 

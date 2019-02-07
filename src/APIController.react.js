@@ -1,6 +1,6 @@
-import {connect} from 'react-redux';
-import {contains, isEmpty, isNil} from 'ramda';
-import React, {Component} from 'react';
+import { connect } from 'react-redux';
+import { contains, isEmpty, isNil } from 'ramda';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import TreeContainer from './TreeContainer';
 import {
@@ -9,9 +9,9 @@ import {
     hydrateInitialOutputs,
     setLayout,
 } from './actions/index';
-import {getDependencies, getLayout} from './actions/api';
-import {getAppState} from './reducers/constants';
-import {STATUS} from './constants/constants';
+import { getDependencies, getLayout } from './actions/api';
+import { getAppState } from './reducers/constants';
+import { STATUS } from './constants/constants';
 
 /**
  * Fire off API calls for initialization
@@ -46,7 +46,7 @@ class UnconnectedContainer extends Component {
             if (isEmpty(layout)) {
                 dispatch(setLayout(layoutRequest.content));
             } else if (isNil(paths)) {
-                dispatch(computePaths({subTree: layout, startingPath: []}));
+                dispatch(computePaths({ subTree: layout, startingPath: [] }));
             }
         }
 
@@ -73,6 +73,7 @@ class UnconnectedContainer extends Component {
             dispatch(hydrateInitialOutputs());
         }
     }
+
     render() {
         const {
             appLifecycle,
@@ -80,6 +81,7 @@ class UnconnectedContainer extends Component {
             layoutRequest,
             layout,
         } = this.props;
+
         if (
             layoutRequest.status &&
             !contains(layoutRequest.status, [STATUS.OK, 'loading'])
@@ -94,26 +96,15 @@ class UnconnectedContainer extends Component {
                     {'Error loading dependencies'}
                 </div>
             );
-        }
-        if (appLifecycle === getAppState('HYDRATED')) {
+        } else if (appLifecycle === getAppState('HYDRATED')) {
             return (
                 <div id="_dash-app-content">
-                    <TreeContainer key='hydrated-layout' layout={layout} loading={false} />
+                    <TreeContainer layout={layout} />
                 </div>
             );
         }
-        if (isEmpty(layout)) {
-            return (
-                <div id="_dash-app-content">
-                    <TreeContainer key='started-layout' layout={layout} loading={true} />
-                </div>
-            );
-        }
-        return (
-            <div id="_dash-app-content">
-                <TreeContainer key='started-layout' layout={layout} loading={true} />
-            </div>
-        );
+
+        return <div className="_dash-loading">{'Loading...'}</div>;
     }
 }
 UnconnectedContainer.propTypes = {
@@ -140,7 +131,7 @@ const Container = connect(
         paths: state.paths,
         history: state.history,
     }),
-    dispatch => ({dispatch})
+    dispatch => ({ dispatch })
 )(UnconnectedContainer);
 
 export default Container;
