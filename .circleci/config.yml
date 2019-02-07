@@ -31,6 +31,7 @@ jobs:
               . venv/bin/activate
               pip install -e .
               pip install -r dev-requirements.txt --quiet
+              pip list | grep dash
               npm install --ignore-scripts
 
       - run:
