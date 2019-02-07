@@ -31,6 +31,8 @@ jobs:
               . venv/bin/activate
               pip install -e .
               pip install -r dev-requirements.txt --quiet
+              pip uninstall dash_core_components -y
+              pip install git+git://github.com/plotly/dash-core-components@fix-tests-in-renderer#egg=dash_core_components
               npm install --ignore-scripts
 
       - run:

@@ -1,5 +1,4 @@
 git+git://github.com/plotly/dash@master#egg=dash
-git+git://github.com/plotly/dash-core-components@fix-tests-in-renderer#egg=dash_core_components
 percy
 selenium
 mock
