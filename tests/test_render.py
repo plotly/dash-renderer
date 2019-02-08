@@ -619,8 +619,6 @@ class Tests(IntegrationTests):
     def test_radio_buttons_callbacks_generating_children(self):
         self.maxDiff = 100 * 1000
         app = Dash(__name__)
-        app.scripts.config.serve_locally = True
-        app.css.config.serve_locally = True
 
         app.layout = html.Div([
             dcc.RadioItems(

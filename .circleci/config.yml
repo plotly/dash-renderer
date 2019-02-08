@@ -31,8 +31,6 @@ jobs:
               . venv/bin/activate
               pip install -e .
               pip install -r dev-requirements.txt --quiet
-              pip uninstall dash-core-components -y
-              pip install git+git://github.com/plotly/dash-core-components@fix-tests-in-renderer#egg=dash_core_components
               pip list | grep dash
               npm install --ignore-scripts
 
@@ -57,8 +55,34 @@ jobs:
               python --version
               npm run test:py
 
+  "python-3.6":
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.6-stretch-node-browsers
+    environment:
+      PERCY_ENABLE: 0
+
+  "python-3.7":
+    <<: *test-template
+    docker:
+      - image: circleci/python:3.7-stretch-node-browsers
+    environment:
+      PERCY_ENABLE: 0
+
+
 workflows:
   version: 2
   build:
     jobs:
       - "python-2.7"
+      - "python-3.6"
+      - "python-3.7"
+
+
+ workflows:	workflows:
+  version: 2	  version: 2
+  build:	  build:
+    jobs:	    jobs:
+      - "python-2.7"
+      - "python-3.6"
+      - "python-3.7"
