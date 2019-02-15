@@ -6,20 +6,28 @@ function createApiReducer(store) {
         if (action.type === store) {
             const {payload} = action;
             if (Array.isArray(payload.id)) {
-                newState = assocPath(payload.id, {
-                    status: payload.status,
-                    content: payload.content
-                }, state);
-            } else if (payload.id) {
-                newState = assoc(payload.id, {
-                    status: payload.status,
-                    content: payload.content
-                }, state);
-            } else {
-                newState = merge(
-                    state,
-                    {status: payload.status, content: payload.content}
+                newState = assocPath(
+                    payload.id,
+                    {
+                        status: payload.status,
+                        content: payload.content,
+                    },
+                    state
                 );
+            } else if (payload.id) {
+                newState = assoc(
+                    payload.id,
+                    {
+                        status: payload.status,
+                        content: payload.content,
+                    },
+                    state
+                );
+            } else {
+                newState = merge(state, {
+                    status: payload.status,
+                    content: payload.content,
+                });
             }
         }
         return newState;
@@ -28,4 +36,4 @@ function createApiReducer(store) {
 
 export const dependenciesRequest = createApiReducer('dependenciesRequest');
 export const layoutRequest = createApiReducer('layoutRequest');
-export const loginRequest = createApiReducer('loginRequest');
+export const reloadRequest = createApiReducer('reloadRequest');
