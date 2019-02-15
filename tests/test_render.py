@@ -1952,13 +1952,9 @@ class Tests(IntegrationTests):
             )
         ])
 
-        call_count = Value('i', 0)
-
         @app.callback(Output('output-1', 'children'), [Input('input', 'value')])
         def update_output(value):
-            call_count.value = call_count.value + 1
             return value
-        call_count = Value('i', 0)
 
         self.startServer(app)
 
