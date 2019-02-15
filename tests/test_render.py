@@ -1959,9 +1959,13 @@ class Tests(IntegrationTests):
         self.startServer(app)
 
         input1 = self.wait_for_element_by_css_selector('#input')
-        input1.clear()
+        initialValue = input1.get_attribute('value')
 
-        input1.send_keys('fire request hooks')
+        action = ActionChains(self.driver)
+        action.click(input1)
+        action = action.send_keys(Keys.BACKSPACE * len(initialValue))
+
+        action.send_keys('fire request hooks').perform()
 
         self.wait_for_text_to_equal('#output-1', 'fire request hooks')
         self.wait_for_text_to_equal('#output-pre', 'request_pre changed this text!')
