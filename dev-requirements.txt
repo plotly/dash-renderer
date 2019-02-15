@@ -1,5 +1,5 @@
 # git+git://github.com/plotly/dash@master#egg=dash
-dash-0.26.4.tar.gz
+dash-0.38.0rc1.tar.gz
 percy
 selenium
 mock

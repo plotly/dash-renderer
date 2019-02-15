@@ -33,6 +33,7 @@ import cookie from 'cookie';
 import {uid, urlBase} from '../utils';
 import {STATUS} from '../constants/constants';
 
+export const updateProps = createAction(getAction('ON_PROP_CHANGE'));
 export const setRequestQueue = createAction(getAction('SET_REQUEST_QUEUE'));
 export const computeGraphs = createAction(getAction('COMPUTE_GRAPHS'));
 export const computePaths = createAction(getAction('COMPUTE_PATHS'));

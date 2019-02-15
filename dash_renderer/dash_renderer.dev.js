@@ -33752,7 +33752,7 @@ var getAction = exports.getAction = function getAction(action) {
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-exports.setHooks = exports.readConfig = exports.setAppLifecycle = exports.setLayout = exports.computePaths = exports.computeGraphs = exports.setRequestQueue = undefined;
+exports.setHooks = exports.readConfig = exports.setAppLifecycle = exports.setLayout = exports.computePaths = exports.computeGraphs = exports.setRequestQueue = exports.updateProps = undefined;
 
 var _slicedToArray = function () { function sliceIterator(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i["return"]) _i["return"](); } finally { if (_d) throw _e; } } return _arr; } return function (arr, i) { if (Array.isArray(arr)) { return arr; } else if (Symbol.iterator in Object(arr)) { return sliceIterator(arr, i); } else { throw new TypeError("Invalid attempt to destructure non-iterable instance"); } }; }(); /* global fetch:true, Promise:true, document:true */
 
@@ -33785,6 +33785,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
 
+var updateProps = exports.updateProps = (0, _reduxActions.createAction)((0, _constants2.getAction)('ON_PROP_CHANGE'));
 var setRequestQueue = exports.setRequestQueue = (0, _reduxActions.createAction)((0, _constants2.getAction)('SET_REQUEST_QUEUE'));
 var computeGraphs = exports.computeGraphs = (0, _reduxActions.createAction)((0, _constants2.getAction)('COMPUTE_GRAPHS'));
 var computePaths = exports.computePaths = (0, _reduxActions.createAction)((0, _constants2.getAction)('COMPUTE_PATHS'));
