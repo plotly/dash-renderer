@@ -19,16 +19,11 @@ import {STATUS} from './constants/constants';
 
 class TreeContainer extends Component {
     shouldComponentUpdate(nextProps) {
-        return (
-            nextProps.layout !== this.props.layout
-        );
+        return nextProps.layout !== this.props.layout;
     }
 
     render() {
-        return recursivelyRender(
-            this.props.layout,
-            this.props.requestQueue
-        );
+        return recursivelyRender(this.props.layout, this.props.requestQueue);
     }
 }
 
@@ -74,10 +69,7 @@ function recursivelyRender(component, requestQueue) {
         children = (Array.isArray(componentProps.children)
             ? componentProps.children
             : [componentProps.children]
-        ).map(child => {
-            const newChild = recursivelyRender(child, requestQueue);
-            return newChild;
-        });
+        ).map(child => recursivelyRender(child, requestQueue));
     }
 
     if (!component.type) {
