@@ -365,7 +365,7 @@ function updateOutput(
         graphs,
         paths,
         dependenciesRequest,
-        hooks
+        hooks,
     } = getState();
     const {InputGraph} = graphs;
 
@@ -442,16 +442,15 @@ function updateOutput(
         });
     }
 
-    if(hooks.request_pre !== null) {
-        if(type(hooks.request_pre) === 'Function') {
+    if (hooks.request_pre !== null) {
+        if (type(hooks.request_pre) === 'Function') {
             hooks.request_pre(payload);
-        }
-        else {
+        } else {
             /* eslint-disable no-console */
             // Throwing an Error or TypeError etc here will cause an infinite loop for some reason
             console.error(
-                "The request_pre hook provided was not of type function, preventing Dash from firing it. Please make sure the request_pre hook is a function"
-            )
+                'The request_pre hook provided was not of type function, preventing Dash from firing it. Please make sure the request_pre hook is a function'
+            );
             /* eslint-enable no-console */
         }
     }
@@ -577,20 +576,18 @@ function updateOutput(
             );
 
             // Fire custom request_post hook if any
-            if(hooks.request_post !== null) {
-                if(type(hooks.request_post) === 'Function') {
+            if (hooks.request_post !== null) {
+                if (type(hooks.request_post) === 'Function') {
                     hooks.request_post(payload, data.response);
-                }
-                else {
+                } else {
                     /* eslint-disable no-console */
                     // Throwing an Error or TypeError etc here will cause an infinite loop for some reason
                     console.error(
-                        "The request_post hook provided was not of type function, preventing Dash from firing it. Please make sure the request_post hook is a function"
-                    )
+                        'The request_post hook provided was not of type function, preventing Dash from firing it. Please make sure the request_post hook is a function'
+                    );
                     /* eslint-enable no-console */
                 }
             }
-
 
             /*
              * If the response includes children, then we need to update our
@@ -746,7 +743,8 @@ function updateOutput(
                 }
             }
         });
-    })}
+    });
+}
 
 export function serialize(state) {
     // Record minimal input state in the url

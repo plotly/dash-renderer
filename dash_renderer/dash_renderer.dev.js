@@ -33422,7 +33422,7 @@ exports.default = AppProvider;
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
-/*eslint-env browser */
+/* eslint-env browser */
 
 
 
@@ -34151,7 +34151,7 @@ function updateOutput(outputComponentId, outputProp, getState, requestUid, dispa
         } else {
             /* eslint-disable no-console */
             // Throwing an Error or TypeError etc here will cause an infinite loop for some reason
-            console.error("The request_pre hook provided was not of type function, preventing Dash from firing it. Please make sure the request_pre hook is a function");
+            console.error('The request_pre hook provided was not of type function, preventing Dash from firing it. Please make sure the request_pre hook is a function');
             /* eslint-enable no-console */
         }
     }
@@ -34268,7 +34268,7 @@ function updateOutput(outputComponentId, outputProp, getState, requestUid, dispa
                 } else {
                     /* eslint-disable no-console */
                     // Throwing an Error or TypeError etc here will cause an infinite loop for some reason
-                    console.error("The request_post hook provided was not of type function, preventing Dash from firing it. Please make sure the request_post hook is a function");
+                    console.error('The request_post hook provided was not of type function, preventing Dash from firing it. Please make sure the request_post hook is a function');
                     /* eslint-enable no-console */
                 }
             }
@@ -35370,7 +35370,6 @@ exports.default = history;
 Object.defineProperty(exports, "__esModule", {
     value: true
 });
-
 var customHooks = function customHooks() {
     var state = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { request_pre: null, request_post: null, bear: false };
     var action = arguments[1];

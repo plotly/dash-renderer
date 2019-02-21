@@ -122,7 +122,7 @@ UnconnectedContainer.propTypes = {
 
 const Container = connect(
     // map state to props
-    (state) => ({
+    state => ({
         appLifecycle: state.appLifecycle,
         dependenciesRequest: state.dependenciesRequest,
         layoutRequest: state.layoutRequest,

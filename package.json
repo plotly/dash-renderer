@@ -11,8 +11,8 @@
     "build:dev": "webpack --mode development",
     "build:prod": "webpack --mode production",
     "start": "webpack-serve ./webpack.serve.config.js",
-    "format": "prettier --config .prettierrc --write src/**/*.js",
-    "format:test": "prettier --config .prettierrc src/**/*.js --list-different",
+    "format": "prettier --config .prettierrc --write src/**/*.js src/**/*.react.js",
+    "format:test": "prettier --config .prettierrc src/**/*.js src/**/*.react.js --list-different",
     "test": "npm run lint",
     "test:py": "python -m unittest tests.test_render tests.test_race_conditions"
   },
