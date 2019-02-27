@@ -19,8 +19,6 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver import ActionChains
 
 class Tests(IntegrationTests):
-    maxDiff = None
-
     def setUp(self):
         pass
 

@@ -1,6 +1,6 @@
-import { connect } from 'react-redux';
-import { filter, keysIn, pick } from 'ramda';
-import { notifyObservers, updateProps } from '../../actions';
+import {connect} from 'react-redux';
+import {filter, keysIn, pick} from 'ramda';
+import {notifyObservers, updateProps} from '../../actions';
 import React from 'react';
 import PropTypes from 'prop-types';
 
@@ -17,11 +17,11 @@ function mapStateToProps(state) {
 }
 
 function mapDispatchToProps(dispatch) {
-    return { dispatch };
+    return {dispatch};
 }
 
 function mergeProps(stateProps, dispatchProps, ownProps) {
-    const { dispatch } = dispatchProps;
+    const {dispatch} = dispatchProps;
 
     return {
         id: ownProps.id,
