@@ -39,15 +39,15 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
                 )
             )(keysIn(newProps));
 
-            // Always update this component's props
-            dispatch(updateProps({
-                props: newProps,
-                id: ownProps.id,
-                itempath: stateProps.paths[ownProps.id]
-            }));
-
             // Only dispatch changes to Dash if a watched prop changed
             if (watchedKeys.length) {
+                // Always update this component's props
+                dispatch(updateProps({
+                    props: newProps,
+                    id: ownProps.id,
+                    itempath: stateProps.paths[ownProps.id]
+                }));
+
                 dispatch(notifyObservers({
                     id: ownProps.id,
                     props: pick(watchedKeys)(newProps)
