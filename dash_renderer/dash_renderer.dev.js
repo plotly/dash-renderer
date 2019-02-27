@@ -33017,7 +33017,17 @@ var AppProvider = function AppProvider(_ref) {
 };
 
 AppProvider.propTypes = {
-    hooks: _propTypes2.default.object
+    hooks: _propTypes2.default.shape({
+        request_pre: _propTypes2.default.func,
+        request_post: _propTypes2.default.func
+    })
+};
+
+AppProvider.defaultProps = {
+    hooks: {
+        request_pre: null,
+        request_post: null
+    }
 };
 
 exports.default = AppProvider;
@@ -33053,10 +33063,6 @@ var _AppProvider = __webpack_require__(/*! ./AppProvider.react */ "./src/AppProv
 
 var _AppProvider2 = _interopRequireDefault(_AppProvider);
 
-var _propTypes = __webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js");
-
-var _propTypes2 = _interopRequireDefault(_propTypes);
-
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
@@ -33066,20 +33072,6 @@ var DashRenderer = function DashRenderer(hooks) {
 
     // render Dash Renderer upon initialising!
     _reactDom2.default.render(_react2.default.createElement(_AppProvider2.default, { hooks: hooks }), document.getElementById('react-entry-point'));
-};
-
-DashRenderer.propTypes = {
-    hooks: _propTypes2.default.shape({
-        request_pre: _propTypes2.default.func,
-        request_post: _propTypes2.default.func
-    })
-};
-
-DashRenderer.defaultProps = {
-    hooks: {
-        request_pre: null,
-        request_post: null
-    }
 };
 
 exports.DashRenderer = DashRenderer;

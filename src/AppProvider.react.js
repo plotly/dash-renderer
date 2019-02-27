@@ -17,7 +17,17 @@ const AppProvider = ({hooks}) => {
 };
 
 AppProvider.propTypes = {
-    hooks: PropTypes.object,
+    hooks: PropTypes.shape({
+        request_pre: PropTypes.func,
+        request_post: PropTypes.func
+    })
 };
+
+AppProvider.defaultProps = {
+    hooks: {
+        request_pre: null,
+        request_post: null
+    }
+}
 
 export default AppProvider;

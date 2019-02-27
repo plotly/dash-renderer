@@ -1928,14 +1928,18 @@ class Tests(IntegrationTests):
                                     outputPayload.innerHTML = JSON.stringify(payload);
                                 }
                             },
-                            request_post: (payload) => {
+                            request_post: (payload, response) => {
                                 var output = document.getElementById('output-post')
                                 var outputPayload = document.getElementById('output-post-payload')
+                                var outputResponse = document.getElementById('output-post-response')
                                 if(output) {
                                     output.innerHTML = 'request_post changed this text!';
                                 }
                                 if(outputPayload) {
                                     outputPayload.innerHTML = JSON.stringify(payload);
+                                }
+                                if(outputResponse) {
+                                    outputResponse.innerHTML = JSON.stringify(response);
                                 }
                             }
                         })
@@ -1957,7 +1961,8 @@ class Tests(IntegrationTests):
                     html.Div(id='output-pre'),
                     html.Div(id='output-pre-payload'),
                     html.Div(id='output-post'),
-                    html.Div(id='output-post-payload')
+                    html.Div(id='output-post-payload'),
+                    html.Div(id='output-post-response')
                 ])
             )
         ])
@@ -1982,7 +1987,9 @@ class Tests(IntegrationTests):
         self.wait_for_text_to_equal('#output-pre-payload', '{"output":{"id":"output-1","property":"children"},"inputs":[{"id":"input","property":"value","value":"fire request hooks"}]}')
         self.wait_for_text_to_equal('#output-post', 'request_post changed this text!')
         self.wait_for_text_to_equal('#output-post-payload', '{"output":{"id":"output-1","property":"children"},"inputs":[{"id":"input","property":"value","value":"fire request hooks"}]}')
+        self.wait_for_text_to_equal('#output-post-response', '{"props":{"children":"fire request hooks"}}')
         self.percy_snapshot(name='request-hooks')
+
     def test_graphs_in_tabs_do_not_share_state(self):
         app = dash.Dash()
 
