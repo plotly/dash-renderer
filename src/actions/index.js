@@ -442,7 +442,7 @@ function updateOutput(
         });
     }
 
-    if(hooks.request_pre !== null) {
+    if (hooks.request_pre !== null) {
         hooks.request_pre(payload);
     }
     return fetch(`${urlBase(config)}_dash-update-component`, {
@@ -567,7 +567,7 @@ function updateOutput(
             );
 
             // Fire custom request_post hook if any
-            if(hooks.request_post !== null) {
+            if (hooks.request_post !== null) {
                 hooks.request_post(payload, data.response);
             }
 
