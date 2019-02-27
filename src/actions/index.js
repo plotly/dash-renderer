@@ -365,7 +365,7 @@ function updateOutput(
         graphs,
         paths,
         dependenciesRequest,
-        hooks
+        hooks,
     } = getState();
     const {InputGraph} = graphs;
 
@@ -571,7 +571,6 @@ function updateOutput(
                 hooks.request_post(payload, data.response);
             }
 
-
             /*
              * If the response includes children, then we need to update our
              * paths store.
@@ -726,7 +725,8 @@ function updateOutput(
                 }
             }
         });
-    })}
+    });
+}
 
 export function serialize(state) {
     // Record minimal input state in the url

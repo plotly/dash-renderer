@@ -11,13 +11,13 @@ const store = initializeStore();
 const AppProvider = ({hooks}) => {
     return (
         <Provider store={store}>
-            <AppContainer hooks={hooks}/>
+            <AppContainer hooks={hooks} />
         </Provider>
     );
-}
+};
 
 AppProvider.propTypes = {
-    hooks: PropTypes.object
-}
+    hooks: PropTypes.object,
+};
 
 export default AppProvider;
