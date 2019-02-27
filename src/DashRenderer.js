@@ -16,4 +16,4 @@ class DashRenderer {
     }
 }
 
-export { DashRenderer };
+export {DashRenderer};
