@@ -1918,16 +1918,24 @@ class Tests(IntegrationTests):
                     {%scripts%}
                     <script id="_dash-renderer" type"application/json">
                         const renderer = new DashRenderer({
-                            request_pre: () => {
+                            request_pre: (payload) => {
                                 var output = document.getElementById('output-pre')
+                                var outputPayload = document.getElementById('output-pre-payload')
                                 if(output) {
                                     output.innerHTML = 'request_pre changed this text!';
                                 }
+                                if(outputPayload) {
+                                    outputPayload.innerHTML = JSON.stringify(payload);
+                                }
                             },
-                            request_post: () => {
+                            request_post: (payload) => {
                                 var output = document.getElementById('output-post')
+                                var outputPayload = document.getElementById('output-post-payload')
                                 if(output) {
                                     output.innerHTML = 'request_post changed this text!';
+                                }
+                                if(outputPayload) {
+                                    outputPayload.innerHTML = JSON.stringify(payload);
                                 }
                             }
                         })
@@ -1947,7 +1955,9 @@ class Tests(IntegrationTests):
                 html.Div([
                     html.Div(id='output-1'),
                     html.Div(id='output-pre'),
-                    html.Div(id='output-post')
+                    html.Div(id='output-pre-payload'),
+                    html.Div(id='output-post'),
+                    html.Div(id='output-post-payload')
                 ])
             )
         ])
@@ -1969,7 +1979,9 @@ class Tests(IntegrationTests):
 
         self.wait_for_text_to_equal('#output-1', 'fire request hooks')
         self.wait_for_text_to_equal('#output-pre', 'request_pre changed this text!')
+        self.wait_for_text_to_equal('#output-pre-payload', '{"output":{"id":"output-1","property":"children"},"inputs":[{"id":"input","property":"value","value":"fire request hooks"}]}')
         self.wait_for_text_to_equal('#output-post', 'request_post changed this text!')
+        self.wait_for_text_to_equal('#output-post-payload', '{"output":{"id":"output-1","property":"children"},"inputs":[{"id":"input","property":"value","value":"fire request hooks"}]}')
         self.percy_snapshot(name='request-hooks')
     def test_graphs_in_tabs_do_not_share_state(self):
         app = dash.Dash()

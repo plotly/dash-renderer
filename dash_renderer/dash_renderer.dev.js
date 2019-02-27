@@ -33443,17 +33443,33 @@ var _AppProvider = __webpack_require__(/*! ./AppProvider.react */ "./src/AppProv
 
 var _AppProvider2 = _interopRequireDefault(_AppProvider);
 
+var _propTypes = __webpack_require__(/*! prop-types */ "./node_modules/prop-types/index.js");
+
+var _propTypes2 = _interopRequireDefault(_propTypes);
+
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var DashRenderer = function DashRenderer() {
-    var hooks = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : { request_pre: null, request_post: null };
-
+var DashRenderer = function DashRenderer(hooks) {
     _classCallCheck(this, DashRenderer);
 
     // render Dash Renderer upon initialising!
     _reactDom2.default.render(_react2.default.createElement(_AppProvider2.default, { hooks: hooks }), document.getElementById('react-entry-point'));
+};
+
+DashRenderer.propTypes = {
+    hooks: _propTypes2.default.shape({
+        request_pre: _propTypes2.default.func,
+        request_post: _propTypes2.default.func
+    })
+};
+
+DashRenderer.defaultProps = {
+    hooks: {
+        request_pre: null,
+        request_post: null
+    }
 };
 
 exports.DashRenderer = DashRenderer;
@@ -34146,14 +34162,7 @@ function updateOutput(outputComponentId, outputProp, getState, requestUid, dispa
     }
 
     if (hooks.request_pre !== null) {
-        if ((0, _ramda.type)(hooks.request_pre) === 'Function') {
-            hooks.request_pre(payload);
-        } else {
-            /* eslint-disable no-console */
-            // Throwing an Error or TypeError etc here will cause an infinite loop for some reason
-            console.error("The request_pre hook provided was not of type function, preventing Dash from firing it. Please make sure the request_pre hook is a function");
-            /* eslint-enable no-console */
-        }
+        hooks.request_pre(payload);
     }
     return fetch((0, _utils2.urlBase)(config) + '_dash-update-component', {
         method: 'POST',
@@ -34263,14 +34272,7 @@ function updateOutput(outputComponentId, outputProp, getState, requestUid, dispa
 
             // Fire custom request_post hook if any
             if (hooks.request_post !== null) {
-                if ((0, _ramda.type)(hooks.request_post) === 'Function') {
-                    hooks.request_post(payload, data.response);
-                } else {
-                    /* eslint-disable no-console */
-                    // Throwing an Error or TypeError etc here will cause an infinite loop for some reason
-                    console.error("The request_post hook provided was not of type function, preventing Dash from firing it. Please make sure the request_post hook is a function");
-                    /* eslint-enable no-console */
-                }
+                hooks.request_post(payload, data.response);
             }
 
             /*
