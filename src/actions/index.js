@@ -550,6 +550,11 @@ function updateOutput(
                 return;
             }
 
+            // Fire custom request_post hook if any
+            if (hooks.request_post !== null) {
+                hooks.request_post(payload, data.response);
+            }
+
             // and update the props of the component
             const observerUpdatePayload = {
                 itempath: getState().paths[outputComponentId],
@@ -565,11 +570,6 @@ function updateOutput(
                     props: data.response.props,
                 })
             );
-
-            // Fire custom request_post hook if any
-            if (hooks.request_post !== null) {
-                hooks.request_post(payload, data.response);
-            }
 
             /*
              * If the response includes children, then we need to update our
