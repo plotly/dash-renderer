@@ -359,7 +359,7 @@ function updateOutput(
     getState,
     requestUid,
     dispatch,
-    changedPropIds,
+    changedPropIds
 ) {
     const {
         config,
@@ -381,7 +381,7 @@ function updateOutput(
      */
     const payload = {
         output: {id: outputComponentId, property: outputProp},
-        changedPropIds
+        changedPropIds,
     };
 
     const {inputs, state} = dependenciesRequest.content.find(
@@ -419,8 +419,8 @@ function updateOutput(
 
     const inputsPropIds = inputs.map(p => `${p.id}.${p.property}`);
 
-    payload.changedPropIds = changedPropIds.filter(
-        p => contains(p, inputsPropIds)
+    payload.changedPropIds = changedPropIds.filter(p =>
+        contains(p, inputsPropIds)
     );
 
     if (state.length > 0) {
