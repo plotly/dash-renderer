@@ -15,7 +15,8 @@ import time
 import re
 import itertools
 import json
-
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver import ActionChains
 
 class Tests(IntegrationTests):
     def setUp(self):
@@ -486,9 +487,13 @@ class Tests(IntegrationTests):
         self.percy_snapshot(name='simple-callback-1')
 
         input1 = self.wait_for_element_by_css_selector('#input')
-        input1.clear()
+        initialValue = input1.get_attribute('value')
 
-        input1.send_keys('hello world')
+        action = ActionChains(self.driver)
+        action.click(input1)
+        action = action.send_keys(Keys.BACKSPACE * len(initialValue))
+
+        action.send_keys('hello world').perform()
 
         self.wait_for_text_to_equal('#output-1', 'hello world')
         self.percy_snapshot(name='simple-callback-2')
@@ -497,6 +502,8 @@ class Tests(IntegrationTests):
             call_count.value,
             # an initial call to retrieve the first value
             1 +
+            # delete the initial value
+            len(initialValue) +
             # one for each hello world character
             len('hello world')
         )
@@ -612,6 +619,7 @@ class Tests(IntegrationTests):
     def test_radio_buttons_callbacks_generating_children(self):
         self.maxDiff = 100 * 1000
         app = Dash(__name__)
+
         app.layout = html.Div([
             dcc.RadioItems(
                 options=[
@@ -757,7 +765,7 @@ class Tests(IntegrationTests):
                     self.driver.execute_script(
                         'return document.'
                         'getElementById("{}-graph").'.format(chapter) +
-                        'layout.title'
+                        'layout.title.text'
                     ) == value
                 )
             )
@@ -1890,6 +1898,98 @@ class Tests(IntegrationTests):
         self.assertEqual(call_count.value, 4)
         self.percy_snapshot('button-2 click again')
 
+    def test_request_hooks(self):
+        app = Dash(__name__)
+
+        app.index_string = '''
+        <!DOCTYPE html>
+        <html>
+            <head>
+                {%metas%}
+                <title>{%title%}</title>
+                {%favicon%}
+                {%css%}
+            </head>
+            <body>
+                <div>Testing custom DashRenderer</div>
+                {%app_entry%}
+                <footer>
+                    {%config%}
+                    {%scripts%}
+                    <script id="_dash-renderer" type"application/json">
+                        const renderer = new DashRenderer({
+                            request_pre: (payload) => {
+                                var output = document.getElementById('output-pre')
+                                var outputPayload = document.getElementById('output-pre-payload')
+                                if(output) {
+                                    output.innerHTML = 'request_pre changed this text!';
+                                }
+                                if(outputPayload) {
+                                    outputPayload.innerHTML = JSON.stringify(payload);
+                                }
+                            },
+                            request_post: (payload, response) => {
+                                var output = document.getElementById('output-post')
+                                var outputPayload = document.getElementById('output-post-payload')
+                                var outputResponse = document.getElementById('output-post-response')
+                                if(output) {
+                                    output.innerHTML = 'request_post changed this text!';
+                                }
+                                if(outputPayload) {
+                                    outputPayload.innerHTML = JSON.stringify(payload);
+                                }
+                                if(outputResponse) {
+                                    outputResponse.innerHTML = JSON.stringify(response);
+                                }
+                            }
+                        })
+                    </script>
+                </footer>
+                <div>With request hooks</div>
+            </body>
+        </html>
+        '''
+
+        app.layout = html.Div([
+            dcc.Input(
+                id='input',
+                value='initial value'
+            ),
+            html.Div(
+                html.Div([
+                    html.Div(id='output-1'),
+                    html.Div(id='output-pre'),
+                    html.Div(id='output-pre-payload'),
+                    html.Div(id='output-post'),
+                    html.Div(id='output-post-payload'),
+                    html.Div(id='output-post-response')
+                ])
+            )
+        ])
+
+        @app.callback(Output('output-1', 'children'), [Input('input', 'value')])
+        def update_output(value):
+            return value
+
+        self.startServer(app)
+
+        input1 = self.wait_for_element_by_css_selector('#input')
+        initialValue = input1.get_attribute('value')
+
+        action = ActionChains(self.driver)
+        action.click(input1)
+        action = action.send_keys(Keys.BACKSPACE * len(initialValue))
+
+        action.send_keys('fire request hooks').perform()
+
+        self.wait_for_text_to_equal('#output-1', 'fire request hooks')
+        self.wait_for_text_to_equal('#output-pre', 'request_pre changed this text!')
+        self.wait_for_text_to_equal('#output-pre-payload', '{"output":{"id":"output-1","property":"children"},"changedPropIds":["input.value"],"inputs":[{"id":"input","property":"value","value":"fire request hooks"}]}')
+        self.wait_for_text_to_equal('#output-post', 'request_post changed this text!')
+        self.wait_for_text_to_equal('#output-post-payload', '{"output":{"id":"output-1","property":"children"},"changedPropIds":["input.value"],"inputs":[{"id":"input","property":"value","value":"fire request hooks"}]}')
+        self.wait_for_text_to_equal('#output-post-response', '{"props":{"children":"fire request hooks"}}')
+        self.percy_snapshot(name='request-hooks')
+
     def test_graphs_in_tabs_do_not_share_state(self):
         app = dash.Dash()
 
@@ -1986,7 +2086,7 @@ class Tests(IntegrationTests):
         self.wait_for_text_to_equal('#graph2_info', json.dumps(graph_2_expected_clickdata))
 
     def test_hot_reload(self):
-        app = dash.Dash(__name__, assets_folder='tests/test_assets')
+        app = dash.Dash(__name__, assets_folder='test_assets')
 
         app.layout = html.Div([
             html.H3('Hot reload')

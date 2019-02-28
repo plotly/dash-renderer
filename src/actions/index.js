@@ -40,6 +40,7 @@ export const computePaths = createAction(getAction('COMPUTE_PATHS'));
 export const setLayout = createAction(getAction('SET_LAYOUT'));
 export const setAppLifecycle = createAction(getAction('SET_APP_LIFECYCLE'));
 export const readConfig = createAction(getAction('READ_CONFIG'));
+export const setHooks = createAction(getAction('SET_HOOKS'));
 
 export function hydrateInitialOutputs() {
     return function(dispatch, getState) {
@@ -340,7 +341,8 @@ export function notifyObservers(payload) {
                     outputProp,
                     getState,
                     requestUid,
-                    dispatch
+                    dispatch,
+                    changedProps.map(prop => `${id}.${prop}`)
                 )
             );
         }
@@ -356,9 +358,17 @@ function updateOutput(
     outputProp,
     getState,
     requestUid,
-    dispatch
+    dispatch,
+    changedPropIds
 ) {
-    const {config, layout, graphs, paths, dependenciesRequest} = getState();
+    const {
+        config,
+        layout,
+        graphs,
+        paths,
+        dependenciesRequest,
+        hooks,
+    } = getState();
     const {InputGraph} = graphs;
 
     /*
@@ -371,6 +381,7 @@ function updateOutput(
      */
     const payload = {
         output: {id: outputComponentId, property: outputProp},
+        changedPropIds,
     };
 
     const {inputs, state} = dependenciesRequest.content.find(
@@ -406,6 +417,12 @@ function updateOutput(
         };
     });
 
+    const inputsPropIds = inputs.map(p => `${p.id}.${p.property}`);
+
+    payload.changedPropIds = changedPropIds.filter(p =>
+        contains(p, inputsPropIds)
+    );
+
     if (state.length > 0) {
         payload.state = state.map(stateObject => {
             // Make sure the component id exists in the layout
@@ -434,6 +451,9 @@ function updateOutput(
         });
     }
 
+    if (hooks.request_pre !== null) {
+        hooks.request_pre(payload);
+    }
     return fetch(`${urlBase(config)}_dash-update-component`, {
         method: 'POST',
         headers: {
@@ -537,6 +557,11 @@ function updateOutput(
              */
             if (!has(outputComponentId, getState().paths)) {
                 return;
+            }
+
+            // Fire custom request_post hook if any
+            if (hooks.request_post !== null) {
+                hooks.request_post(payload, data.response);
             }
 
             // and update the props of the component
@@ -703,7 +728,8 @@ function updateOutput(
                             idAndProp.split('.')[1],
                             getState,
                             requestUid,
-                            dispatch
+                            dispatch,
+                            changedPropIds
                         );
                     });
                 }

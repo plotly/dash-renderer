@@ -29,7 +29,9 @@ jobs:
               sudo pip install virtualenv --upgrade
               python -m venv venv || virtualenv venv
               . venv/bin/activate
+              pip install -e .
               pip install -r dev-requirements.txt --quiet
+              pip list | grep dash
               npm install --ignore-scripts
 
       - run:
@@ -43,8 +45,10 @@ jobs:
               - "node_modules"
 
       - run:
-          name: Npm lint
-          command:  npm run lint
+          name: Lint & format
+          command: |
+              npm run lint:test
+              npm run format:test
 
       - run:
           name: Run tests
