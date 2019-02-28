@@ -1,6 +1,6 @@
-import { connect } from 'react-redux';
-import { contains, isEmpty, isNil } from 'ramda';
-import React, { Component } from 'react';
+import {connect} from 'react-redux';
+import {contains, isEmpty, isNil} from 'ramda';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import TreeContainer from './TreeContainer';
 import {
@@ -9,9 +9,9 @@ import {
     hydrateInitialOutputs,
     setLayout,
 } from './actions/index';
-import { getDependencies, getLayout } from './actions/api';
-import { getAppState } from './reducers/constants';
-import { STATUS } from './constants/constants';
+import {getDependencies, getLayout} from './actions/api';
+import {getAppState} from './reducers/constants';
+import {STATUS} from './constants/constants';
 
 /**
  * Fire off API calls for initialization
@@ -46,7 +46,7 @@ class UnconnectedContainer extends Component {
             if (isEmpty(layout)) {
                 dispatch(setLayout(layoutRequest.content));
             } else if (isNil(paths)) {
-                dispatch(computePaths({ subTree: layout, startingPath: [] }));
+                dispatch(computePaths({subTree: layout, startingPath: []}));
             }
         }
 
@@ -131,7 +131,7 @@ const Container = connect(
         paths: state.paths,
         history: state.history,
     }),
-    dispatch => ({ dispatch })
+    dispatch => ({dispatch})
 )(UnconnectedContainer);
 
 export default Container;

@@ -2,7 +2,7 @@ import {connect} from 'react-redux';
 import {notifyObservers, updateProps} from '../../actions';
 import React from 'react';
 import PropTypes from 'prop-types';
-import {isEmpty} from "ramda";
+import {isEmpty} from 'ramda';
 
 /*
  * NotifyObservers passes a connected `setProps` handler down to
