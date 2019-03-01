@@ -28,6 +28,8 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
         children: ownProps.children,
         dependencies: stateProps.dependencies,
         paths: stateProps.paths,
+        loading_state: ownProps.loading_state,
+        requestQueue: stateProps.requestQueue,
 
         setProps: function setProps(newProps) {
             // Identify the modified props that are required for callbacks
@@ -60,12 +62,26 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 
 function NotifyObserversComponent({ children, setProps }) {
     return React.cloneElement(children, { setProps });
+    children,
+    loading_state,
+    setProps
+}) {
+    const extraProps = {
+        setProps
+    };
+
+    if (children.props && !children.props.loading_state) {
+        extraProps.loading_state = loading_state;
+    }
+
+    return React.cloneElement(children, extraProps);
 }
 
 NotifyObserversComponent.propTypes = {
     id: PropTypes.string.isRequired,
     children: PropTypes.node.isRequired,
     path: PropTypes.array.isRequired,
+    loading_state: PropTypes.object,
 };
 
 export default connect(
