@@ -8,6 +8,7 @@ import {
     keysIn,
     isNil,
     filter,
+    mergeAll,
     omit,
     contains,
     isEmpty,
@@ -68,29 +69,29 @@ class LayoutNode extends PureComponent {
         this.getChildren = memoizeOne(this.getChildren.bind(this));
         this.getComponent = memoizeOne(this.getComponent.bind(this));
         this.getLoadingState = memoizeOne(this.getLoadingState.bind(this));
-        this.getNode = memoizeOne(this.getNode.bind(this));
         this.getSetProps = memoizeOne(this.getSetProps.bind(this));
     }
 
     getChildren(components) {
         if (!components) {
-            return [];
+            return null;
         }
 
         if (contains(type(components), SIMPLE_COMPONENT_TYPES)) {
-            return [components];
+            return components;
         }
 
-        const children = Array.isArray(components) ?
-            components :
-            [components];
-
-        return children.map(
-            child => (<AugmentedLayoutNode layout={child} />)
-        );
+        return Array.isArray(components) ?
+            components.map(child => (<AugmentedLayoutNode
+                key={child && child.props && child.props.id}
+                layout={child}
+            />)) : (<AugmentedLayoutNode
+                key={components && components.props && components.props.id}
+                layout={components}
+            />);
     }
 
-    getComponent(layout) {
+    getComponent(layout, children, loading_state, setProps) {
         if (isEmpty(layout)) {
             return null;
         }
@@ -114,13 +115,23 @@ class LayoutNode extends PureComponent {
         }
         const element = Registry.resolve(layout.type, layout.namespace);
 
-        const component = React.createElement(
-            element,
-            omit(['children'], layout.props),
-            ...layout
-        );
-
-        return component;
+        return Array.isArray(children) ?
+            React.createElement(
+                element,
+                mergeAll([
+                    omit(['children'], layout.props),
+                    { loading_state, setProps }
+                ]),
+                ...children
+            ) :
+            React.createElement(
+                element,
+                mergeAll([
+                    omit(['children'], layout.props),
+                    { loading_state, setProps }
+                ]),
+                children
+            );
     }
 
     getLoadingState(id, requestQueue) {
@@ -155,16 +166,11 @@ class LayoutNode extends PureComponent {
         };
     }
 
-    getNode(id, component, children, loadingState, setProps) {
-        return React.cloneElement(component, {
-            key: id, children, loadingState, setProps
-        });
-    }
-
     getSetProps() {
         return newProps => {
             const { dependencies, dispatch, paths } = this.props;
             const id = this.getLayoutProps().id;
+            console.log('setProp!!', id, newProps);
 
             // Identify the modified props that are required for callbacks
             const watchedKeys = filter(key =>
@@ -184,6 +190,7 @@ class LayoutNode extends PureComponent {
 
             // Only dispatch changes to Dash if a watched prop changed
             if (watchedKeys.length) {
+                console.log('send to Dash', id, pick(watchedKeys)(newProps));
                 dispatch(notifyObservers({
                     id: id,
                     props: pick(watchedKeys)(newProps)
@@ -202,15 +209,15 @@ class LayoutNode extends PureComponent {
     }
 
     render() {
-        const { layout, requestQueue } = this.props;
+        console.log('render >>', this.props);
+        const { dispatch, layout, requestQueue } = this.props;
         const layoutProps = this.getLayoutProps();
 
-        const component = this.getComponent(layout);
         const children = this.getChildren(layoutProps.children);
         const loadingState = this.getLoadingState(layoutProps.id, requestQueue);
-        const setProps = this.getSetProps();
+        const setProps = this.getSetProps(dispatch);
 
-        return this.getNode(layoutProps.id, component, children, loadingState, setProps);
+        return this.getComponent(layout, children, loadingState, setProps);
     }
 }
 
