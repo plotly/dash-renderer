@@ -170,7 +170,6 @@ class LayoutNode extends PureComponent {
         return newProps => {
             const { dependencies, dispatch, paths } = this.props;
             const id = this.getLayoutProps().id;
-            console.log('setProp!!', id, newProps);
 
             // Identify the modified props that are required for callbacks
             const watchedKeys = filter(key =>
@@ -209,7 +208,6 @@ class LayoutNode extends PureComponent {
     }
 
     render() {
-        console.log('render >>', this.props);
         const { dispatch, layout, requestQueue } = this.props;
         const layoutProps = this.getLayoutProps();
 
