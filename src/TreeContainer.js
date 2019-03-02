@@ -5,6 +5,7 @@ import PropTypes from 'prop-types';
 import Registry from './registry';
 import {connect} from 'react-redux';
 import {
+    all,
     keysIn,
     isNil,
     filter,
@@ -77,18 +78,21 @@ class LayoutNode extends PureComponent {
             return null;
         }
 
-        if (contains(type(components), SIMPLE_COMPONENT_TYPES)) {
-            return components;
+        if (!Array.isArray(components)) {
+            return contains(type(components), SIMPLE_COMPONENT_TYPES) ?
+                components :
+                (<AugmentedLayoutNode
+                    key={components && components.props && components.props.id}
+                    layout={components}
+                />);
         }
 
-        return Array.isArray(components) ?
-            components.map(child => (<AugmentedLayoutNode
+        return components.map(child => contains(type(child), SIMPLE_COMPONENT_TYPES) ?
+            child :
+            (<AugmentedLayoutNode
                 key={child && child.props && child.props.id}
                 layout={child}
-            />)) : (<AugmentedLayoutNode
-                key={components && components.props && components.props.id}
-                layout={components}
-            />);
+            />));
     }
 
     getComponent(layout, children, loading_state, setProps) {
