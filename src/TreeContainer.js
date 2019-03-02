@@ -221,7 +221,7 @@ class TreeContainer extends PureComponent {
     }
 }
 
-LayoutNode.propTypes = {
+TreeContainer.propTypes = {
     dependencies: PropTypes.any,
     dispatch: PropTypes.func,
     __dashlayout__: PropTypes.object,
