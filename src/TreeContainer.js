@@ -61,8 +61,6 @@ function memoizeOne(fn) {
             (lastArgs = args) && (lastResult = fn(...args));
 }
 
-let renders = 0;
-
 class LayoutNode extends PureComponent {
     constructor(props) {
         super(props);
@@ -75,8 +73,6 @@ class LayoutNode extends PureComponent {
     }
 
     getChildren(components) {
-        console.log('TreeContainer >> getChildren');
-
         if (!components) {
             return [];
         }
@@ -95,8 +91,6 @@ class LayoutNode extends PureComponent {
     }
 
     getComponent(layout) {
-        console.log('TreeContainer >> getComponent');
-
         if (isEmpty(layout)) {
             return null;
         }
@@ -130,8 +124,6 @@ class LayoutNode extends PureComponent {
     }
 
     getLoadingState(id, requestQueue) {
-        console.log('TreeContainer >> getLoadingState');
-
         // loading prop coming from TreeContainer
         let isLoading = false;
         let loadingProp;
@@ -164,16 +156,12 @@ class LayoutNode extends PureComponent {
     }
 
     getNode(id, component, children, loadingState, setProps) {
-        console.log('TreeContainer >> getNode');
-
         return React.cloneElement(component, {
             key: id, children, loadingState, setProps
         });
     }
 
     getSetProps() {
-        console.log('TreeContainer >> getSetProps');
-
         return newProps => {
             const { dependencies, dispatch, paths } = this.props;
             const id = this.getLayoutProps().id;
@@ -216,8 +204,6 @@ class LayoutNode extends PureComponent {
     render() {
         const { layout, requestQueue } = this.props;
         const layoutProps = this.getLayoutProps();
-
-        console.log('TreeContainer >> render', layoutProps.id, ++renders);
 
         const component = this.getComponent(layout);
         const children = this.getChildren(layoutProps.children);
