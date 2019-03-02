@@ -189,7 +189,6 @@ class LayoutNode extends PureComponent {
 
             // Only dispatch changes to Dash if a watched prop changed
             if (watchedKeys.length) {
-                console.log('send to Dash', id, pick(watchedKeys)(newProps));
                 dispatch(notifyObservers({
                     id: id,
                     props: pick(watchedKeys)(newProps)
