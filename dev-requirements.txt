@@ -1,6 +1,6 @@
-dash-0.39.0rc1.tar.gz
 dash_html_components-0.14.0rc1.tar.gz
-dash-core-components=0.43.1
+dash_core_components-0.43.1.tar.gz
+dash-0.39.0rc1.tar.gz
 percy
 selenium
 mock

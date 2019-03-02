@@ -5,17 +5,16 @@ import PropTypes from 'prop-types';
 import Registry from './registry';
 import {connect} from 'react-redux';
 import {
-    all,
-    keysIn,
-    isNil,
+    contains,
     filter,
+    forEach,
+    isEmpty,
+    isNil,
+    keysIn,
     mergeAll,
     omit,
-    contains,
-    isEmpty,
-    forEach,
-    propOr,
     pick,
+    propOr,
     type
 } from 'ramda';
 import {STATUS} from './constants/constants';
@@ -63,7 +62,7 @@ function memoizeOne(fn) {
             (lastArgs = args) && (lastResult = fn(...args));
 }
 
-class LayoutNode extends PureComponent {
+class TreeContainer extends PureComponent {
     constructor(props) {
         super(props);
 
@@ -81,49 +80,49 @@ class LayoutNode extends PureComponent {
         if (!Array.isArray(components)) {
             return contains(type(components), SIMPLE_COMPONENT_TYPES) ?
                 components :
-                (<AugmentedLayoutNode
+                (<AugmentedTreeContainer
                     key={components && components.props && components.props.id}
-                    layout={components}
+                    __dashlayout__={components}
                 />);
         }
 
         return components.map(child => contains(type(child), SIMPLE_COMPONENT_TYPES) ?
             child :
-            (<AugmentedLayoutNode
+            (<AugmentedTreeContainer
                 key={child && child.props && child.props.id}
-                layout={child}
+                __dashlayout__={child}
             />));
     }
 
-    getComponent(layout, children, loading_state, setProps) {
-        if (isEmpty(layout)) {
+    getComponent(__dashlayout__, children, loading_state, setProps) {
+        if (isEmpty(__dashlayout__)) {
             return null;
         }
 
-        if (contains(type(layout), SIMPLE_COMPONENT_TYPES)) {
-            return layout;
+        if (contains(type(__dashlayout__), SIMPLE_COMPONENT_TYPES)) {
+            return __dashlayout__;
         }
 
 
-        if (!layout.type) {
+        if (!__dashlayout__.type) {
             /* eslint-disable no-console */
-            console.error(type(layout), layout);
+            console.error(type(__dashlayout__), __dashlayout__);
             /* eslint-enable no-console */
             throw new Error('component.type is undefined');
         }
-        if (!layout.namespace) {
+        if (!__dashlayout__.namespace) {
             /* eslint-disable no-console */
-            console.error(type(layout), layout);
+            console.error(type(__dashlayout__), __dashlayout__);
             /* eslint-enable no-console */
             throw new Error('component.namespace is undefined');
         }
-        const element = Registry.resolve(layout.type, layout.namespace);
+        const element = Registry.resolve(__dashlayout__.type, __dashlayout__.namespace);
 
         return Array.isArray(children) ?
             React.createElement(
                 element,
                 mergeAll([
-                    omit(['children'], layout.props),
+                    omit(['children'], __dashlayout__.props),
                     { loading_state, setProps }
                 ]),
                 ...children
@@ -131,10 +130,10 @@ class LayoutNode extends PureComponent {
             React.createElement(
                 element,
                 mergeAll([
-                    omit(['children'], layout.props),
+                    omit(['children'], __dashlayout__.props),
                     { loading_state, setProps }
                 ]),
-                children
+                ...[children]
             );
     }
 
@@ -203,29 +202,29 @@ class LayoutNode extends PureComponent {
     }
 
     shouldComponentUpdate(nextProps) {
-        return nextProps.layout !== this.props.layout;
+        return nextProps.__dashlayout__ !== this.props.__dashlayout__;
     }
 
     getLayoutProps() {
-        return propOr({}, 'props', this.props.layout);
+        return propOr({}, 'props', this.props.__dashlayout__);
     }
 
     render() {
-        const { dispatch, layout, requestQueue } = this.props;
+        const { dispatch, __dashlayout__, requestQueue } = this.props;
         const layoutProps = this.getLayoutProps();
 
         const children = this.getChildren(layoutProps.children);
         const loadingState = this.getLoadingState(layoutProps.id, requestQueue);
         const setProps = this.getSetProps(dispatch);
 
-        return this.getComponent(layout, children, loadingState, setProps);
+        return this.getComponent(__dashlayout__, children, loadingState, setProps);
     }
 }
 
 LayoutNode.propTypes = {
     dependencies: PropTypes.any,
     dispatch: PropTypes.func,
-    layout: PropTypes.object,
+    __dashlayout__: PropTypes.object,
     paths: PropTypes.any,
     requestQueue: PropTypes.object,
 };
@@ -245,13 +244,13 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
     return {
         dependencies: stateProps.dependencies,
         dispatch: dispatchProps.dispatch,
-        layout: ownProps.layout,
+        __dashlayout__: ownProps.__dashlayout__,
         loading: ownProps.loading,
         paths: stateProps.paths,
         requestQueue: stateProps.requestQueue,
     };
 }
 
-export const AugmentedLayoutNode = connect(mapStateToProps, mapDispatchToProps, mergeProps)(LayoutNode);
+export const AugmentedTreeContainer = connect(mapStateToProps, mapDispatchToProps, mergeProps)(TreeContainer);
 
-export default AugmentedLayoutNode;
+export default AugmentedTreeContainer;
