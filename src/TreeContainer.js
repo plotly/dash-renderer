@@ -1,146 +1,263 @@
 'use strict';
 
-import React, {Component} from 'react';
+import React, {PureComponent} from 'react';
 import PropTypes from 'prop-types';
 import Registry from './registry';
-import NotifyObservers from './components/core/NotifyObservers.react';
 import {connect} from 'react-redux';
 import {
+    keysIn,
     isNil,
+    filter,
     omit,
     contains,
     isEmpty,
     forEach,
     propOr,
-    type,
-    has,
+    pick,
+    type
 } from 'ramda';
 import {STATUS} from './constants/constants';
+import { notifyObservers, updateProps } from './actions';
 
-class TreeContainer extends Component {
+function isPlainObject(candidate) {
+    return candidate !== undefined &&
+        candidate !== null &&
+        typeof candidate === 'object' &&
+        candidate.constructor === Object;
+}
+
+function isEqual(obj1, obj2, deep: boolean = false) {
+    return obj1 === obj2 || isEqualArgs(
+        Object.values(obj1),
+        Object.values(obj2),
+        deep
+    );
+}
+
+function isEqualArgs(args1, args2, deep = false) {
+    return (
+        !!args1 &&
+        args1.length === args2.length &&
+        !!args1.every((arg1, index) => {
+            const arg2 = args2[index];
+
+            return arg1 === arg2 || (deep && (
+                (Array.isArray(arg1) && Array.isArray(arg2) && isEqualArgs(arg1, arg2, deep)) ||
+                (isPlainObject(arg1) && isPlainObject(arg2) && isEqual(arg1, arg2, deep))
+            ));
+        })
+    );
+}
+
+const SIMPLE_COMPONENT_TYPES = ['String', 'Number', 'Null', 'Boolean'];
+
+function memoizeOne(fn) {
+    let lastArgs: any[] | null = null;
+    let lastResult: any;
+
+    return (...args) =>
+        isEqualArgs(lastArgs, args) ?
+            lastResult :
+            (lastArgs = args) && (lastResult = fn(...args));
+}
+
+let renders = 0;
+
+class LayoutNode extends PureComponent {
+    constructor(props) {
+        super(props);
+
+        this.getChildren = memoizeOne(this.getChildren.bind(this));
+        this.getComponent = memoizeOne(this.getComponent.bind(this));
+        this.getLoadingState = memoizeOne(this.getLoadingState.bind(this));
+        this.getNode = memoizeOne(this.getNode.bind(this));
+        this.getSetProps = memoizeOne(this.getSetProps.bind(this));
+    }
+
+    getChildren(components) {
+        console.log('TreeContainer >> getChildren');
+
+        if (!components) {
+            return [];
+        }
+
+        if (contains(type(components), SIMPLE_COMPONENT_TYPES)) {
+            return [components];
+        }
+
+        const children = Array.isArray(components) ?
+            components :
+            [components];
+
+        return children.map(
+            child => (<AugmentedLayoutNode layout={child} />)
+        );
+    }
+
+    getComponent(layout) {
+        console.log('TreeContainer >> getComponent');
+
+        if (isEmpty(layout)) {
+            return null;
+        }
+
+        if (contains(type(layout), SIMPLE_COMPONENT_TYPES)) {
+            return layout;
+        }
+
+
+        if (!layout.type) {
+            /* eslint-disable no-console */
+            console.error(type(layout), layout);
+            /* eslint-enable no-console */
+            throw new Error('component.type is undefined');
+        }
+        if (!layout.namespace) {
+            /* eslint-disable no-console */
+            console.error(type(layout), layout);
+            /* eslint-enable no-console */
+            throw new Error('component.namespace is undefined');
+        }
+        const element = Registry.resolve(layout.type, layout.namespace);
+
+        const component = React.createElement(
+            element,
+            omit(['children'], layout.props),
+            ...layout
+        );
+
+        return component;
+    }
+
+    getLoadingState(id, requestQueue) {
+        console.log('TreeContainer >> getLoadingState');
+
+        // loading prop coming from TreeContainer
+        let isLoading = false;
+        let loadingProp;
+        let loadingComponent;
+
+        if (requestQueue && requestQueue.filter) {
+            forEach(r => {
+                const controllerId = isNil(r.controllerId) ? '' : r.controllerId;
+                if (r.status === 'loading' && contains(id, controllerId)) {
+                    isLoading = true;
+                    [loadingComponent, loadingProp] = r.controllerId.split('.');
+                }
+            }, requestQueue);
+
+            const thisRequest = requestQueue.filter(r => {
+                const controllerId = isNil(r.controllerId) ? '' : r.controllerId;
+                return contains(id, controllerId);
+            });
+            if (thisRequest.status === STATUS.OK) {
+                isLoading = false;
+            }
+        }
+
+        // Set loading state
+        return {
+            is_loading: isLoading,
+            prop_name: loadingProp,
+            component_name: loadingComponent,
+        };
+    }
+
+    getNode(id, component, children, loadingState, setProps) {
+        console.log('TreeContainer >> getNode');
+
+        return React.cloneElement(component, {
+            key: id, children, loadingState, setProps
+        });
+    }
+
+    getSetProps() {
+        console.log('TreeContainer >> getSetProps');
+
+        return newProps => {
+            const { dependencies, dispatch, paths } = this.props;
+            const id = this.getLayoutProps().id;
+
+            // Identify the modified props that are required for callbacks
+            const watchedKeys = filter(key =>
+                dependencies &&
+                dependencies.find(dependency =>
+                    dependency.inputs.find(input => input.id === id && input.property === key) ||
+                    dependency.state.find(state => state.id === id && state.property === key)
+                )
+            )(keysIn(newProps));
+
+            // Always update this component's props
+            dispatch(updateProps({
+                props: newProps,
+                id: id,
+                itempath: paths[id]
+            }));
+
+            // Only dispatch changes to Dash if a watched prop changed
+            if (watchedKeys.length) {
+                dispatch(notifyObservers({
+                    id: id,
+                    props: pick(watchedKeys)(newProps)
+                }));
+            }
+
+        };
+    }
+
     shouldComponentUpdate(nextProps) {
         return nextProps.layout !== this.props.layout;
     }
 
+    getLayoutProps() {
+        return propOr({}, 'props', this.props.layout);
+    }
+
     render() {
-        return recursivelyRender(this.props.layout, this.props.requestQueue);
+        const { layout, requestQueue } = this.props;
+        const layoutProps = this.getLayoutProps();
+
+        console.log('TreeContainer >> render', layoutProps.id, ++renders);
+
+        const component = this.getComponent(layout);
+        const children = this.getChildren(layoutProps.children);
+        const loadingState = this.getLoadingState(layoutProps.id, requestQueue);
+        const setProps = this.getSetProps();
+
+        return this.getNode(layoutProps.id, component, children, loadingState, setProps);
     }
 }
 
-TreeContainer.propTypes = {
+LayoutNode.propTypes = {
+    dependencies: PropTypes.any,
+    dispatch: PropTypes.func,
     layout: PropTypes.object,
+    paths: PropTypes.any,
     requestQueue: PropTypes.object,
 };
 
-function recursivelyRender(component, requestQueue) {
-    if (contains(type(component), ['String', 'Number', 'Null', 'Boolean'])) {
-        return component;
-    }
-
-    if (isEmpty(component)) {
-        return null;
-    }
-
-    // Create list of child elements
-    let children;
-
-    const componentProps = propOr({}, 'props', component);
-
-    if (
-        !has('props', component) ||
-        !has('children', component.props) ||
-        typeof component.props.children === 'undefined'
-    ) {
-        // No children
-        children = [];
-    } else if (
-        contains(type(component.props.children), [
-            'String',
-            'Number',
-            'Null',
-            'Boolean',
-        ])
-    ) {
-        children = [component.props.children];
-    } else {
-        // One or multiple objects
-        // Recursively render the tree
-        // TODO - I think we should pass in `key` here.
-        children = (Array.isArray(componentProps.children)
-            ? componentProps.children
-            : [componentProps.children]
-        ).map(child => recursivelyRender(child, requestQueue));
-    }
-
-    if (!component.type) {
-        /* eslint-disable no-console */
-        console.error(type(component), component);
-        /* eslint-enable no-console */
-        throw new Error('component.type is undefined');
-    }
-    if (!component.namespace) {
-        /* eslint-disable no-console */
-        console.error(type(component), component);
-        /* eslint-enable no-console */
-        throw new Error('component.namespace is undefined');
-    }
-    const element = Registry.resolve(component.type, component.namespace);
-
-    const parent = React.createElement(
-        element,
-        omit(['children'], component.props),
-        ...children
-    );
-
-    // loading prop coming from TreeContainer
-    let isLoading = false;
-    let loadingProp;
-    let loadingComponent;
-
-    const id = componentProps.id;
-
-    if (requestQueue && requestQueue.filter) {
-        forEach(r => {
-            const controllerId = isNil(r.controllerId) ? '' : r.controllerId;
-            if (r.status === 'loading' && contains(id, controllerId)) {
-                isLoading = true;
-                [loadingComponent, loadingProp] = r.controllerId.split('.');
-            }
-        }, requestQueue);
-
-        const thisRequest = requestQueue.filter(r => {
-            const controllerId = isNil(r.controllerId) ? '' : r.controllerId;
-            return contains(id, controllerId);
-        });
-        if (thisRequest.status === STATUS.OK) {
-            isLoading = false;
-        }
-    }
-
-    // Set loading state
-    const loading_state = {
-        is_loading: isLoading,
-        prop_name: loadingProp,
-        component_name: loadingComponent,
-    };
-
-    return (
-        <NotifyObservers
-            key={componentProps.id}
-            id={componentProps.id}
-            loading_state={loading_state}
-        >
-            {parent}
-        </NotifyObservers>
-    );
+function mapDispatchToProps(dispatch) {
+    return { dispatch };
 }
 
-function mapStateToProps(state, ownProps) {
+function mapStateToProps(state) {
     return {
+        dependencies: state.dependenciesRequest.content,
+        paths: state.paths,
+    };
+}
+
+function mergeProps(stateProps, dispatchProps, ownProps) {
+    return {
+        dependencies: stateProps.dependencies,
+        dispatch: dispatchProps.dispatch,
         layout: ownProps.layout,
         loading: ownProps.loading,
-        requestQueue: state.requestQueue,
+        paths: stateProps.paths,
+        requestQueue: stateProps.requestQueue,
     };
 }
 
-export default connect(mapStateToProps)(TreeContainer);
+export const AugmentedLayoutNode = connect(mapStateToProps, mapDispatchToProps, mergeProps)(LayoutNode);
+
+export default AugmentedLayoutNode;
