@@ -24,12 +24,6 @@ jobs:
           name: Install dependencies
           command: |
               sudo pip install --upgrade pip
-              sudo pip install --upgrade virtualenv
-              python -m venv venv || virtualenv venv
-              . venv/bin/activate
-              pip install -r requirements-base.txt --quiet
-              pip list | grep dash
-              npm install --ignore-scripts
 
       - run:
           name: Install dependencies (transient)
