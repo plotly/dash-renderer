@@ -39,9 +39,8 @@ jobs:
           name: Install dependencies (transient)
           command: |
               . venv/bin/activate
-              pip install -e . --quiet
               git clone git@github.com:plotly/dash.git
-              pip install -e ./dash --no-dependencies --quiet
+              pip install -e ./dash --quiet
               git clone git@github.com:plotly/dash-core-components.git
               cd dash-core-components && npm i && cd ..
               cd dash-core-components && npm run build && cd ..
@@ -51,7 +50,10 @@ jobs:
 
       - run:
           name: Build
-          command: npm run build
+          command: |
+              npm run build
+              pip uninstall dash-renderer -y
+              pip install -e . --quiet
 
       - run:
           name: Run tests
