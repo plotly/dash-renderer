@@ -35,7 +35,7 @@ jobs:
               . venv/bin/activate
               pip install -e . --quiet
               git clone git@github.com:plotly/dash.git
-              pip install -e ./dash
+              pip install -e ./dash --quiet
               npm install --ignore-scripts
               git clone git@github.com:plotly/dash-core-components.git
               cd dash-core-components && npm i && cd ..
