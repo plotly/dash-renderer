@@ -26,7 +26,7 @@ jobs:
               sudo pip install --upgrade virtualenv
               python -m venv venv || virtualenv venv
               . venv/bin/activate
-              pip install -r requirements-base.txt --quiet
+              pip install -r dev-requirements.txt --quiet
               npm install --ignore-scripts
 
       - run:
