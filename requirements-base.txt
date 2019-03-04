@@ -1,4 +1,0 @@
-percy
-selenium
-mock
-six

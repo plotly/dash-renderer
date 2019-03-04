@@ -1,2 +1,4 @@
--r requirements-dash.txt
--r requirements-base.txt
+percy
+selenium
+mock
+six
