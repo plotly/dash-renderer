@@ -51,6 +51,7 @@ jobs:
       - run:
           name: Build
           command: |
+              . venv/bin/activate
               npm run build
               pip uninstall dash-renderer -y
               pip install -e . --quiet
