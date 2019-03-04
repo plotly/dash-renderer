@@ -27,6 +27,13 @@ jobs:
               python -m venv venv || virtualenv venv
               . venv/bin/activate
               pip install -r requirements-base.txt --quiet
+              npm install --ignore-scripts
+
+      - run:
+          name: Lint & format
+          command: |
+              npm run lint:test
+              npm run format:test
 
       - run:
           name: Install dependencies (transient)
@@ -34,8 +41,7 @@ jobs:
               . venv/bin/activate
               pip install -e . --quiet
               git clone git@github.com:plotly/dash.git
-              pip install -e ./dash --quiet
-              npm install --ignore-scripts
+              pip install -e ./dash --no-dependencies --quiet
               git clone git@github.com:plotly/dash-core-components.git
               cd dash-core-components && npm i && cd ..
               cd dash-core-components && npm run build && cd ..
@@ -46,12 +52,6 @@ jobs:
       - run:
           name: Build
           command: npm run build
-
-      - run:
-          name: Lint & format
-          command: |
-              npm run lint:test
-              npm run format:test
 
       - run:
           name: Run tests
