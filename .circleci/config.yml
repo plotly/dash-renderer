@@ -37,7 +37,7 @@ jobs:
               pip install -e ./dash
               git clone git@github.com:plotly/dash-core-components.git
               cd dash-core-components && npm i && cd ..
-              cd dash-core-components && n build && cd ..
+              cd dash-core-components && npm run build && cd ..
               pip uninstall dash-core-components -y
               pip install -e ./dash-core-components
 
