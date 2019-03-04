@@ -26,6 +26,7 @@ jobs:
               sudo pip install --upgrade pip
               sudo pip install --upgrade virtualenv
               python -m venv venv || virtualenv venv
+              . venv/bin/activate
 
       - run:
           name: Install dependencies (transient)
