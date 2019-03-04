@@ -20,9 +20,6 @@ jobs:
           name: Write Job name
           command: echo $CIRCLE_JOB > circlejob.txt
 
-      - restore_cache:
-          key: deps1-{{ .Branch }}-{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}-{{ checksum "circlejob.txt" }}
-
       - run:
           name: Install dependencies
           command: |
@@ -32,16 +29,6 @@ jobs:
               pip install -r requirements-base.txt --quiet
               pip list | grep dash
               npm install --ignore-scripts
-
-      - run:
-          name: Build
-          command: npm run build
-
-      - save_cache:
-          key: deps1-{{ .Branch }}-{{ checksum "package.json" }}-{{ checksum ".circleci/config.yml" }}-{{ checksum "circlejob.txt" }}
-          paths:
-              - "venv"
-              - "node_modules"
 
       - run:
           name: Install dependencies (transient)
@@ -55,6 +42,10 @@ jobs:
               cd dash-core-components && n build && cd ..
               pip uninstall dash-core-components -y
               pip install -e ./dash-core-components
+
+      - run:
+          name: Build
+          command: npm run build
 
       - run:
           name: Lint & format
