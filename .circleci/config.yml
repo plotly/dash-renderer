@@ -46,7 +46,6 @@ jobs:
               cd dash-core-components && npm run build && cd ..
               pip uninstall dash-core-components -y
               pip install -e ./dash-core-components --quiet
-              pip list | grep dash
 
       - run:
           name: Build
@@ -55,6 +54,7 @@ jobs:
               npm run build
               pip uninstall dash-renderer -y
               pip install -e . --quiet
+              pip list | grep dash
 
       - run:
           name: Run tests
