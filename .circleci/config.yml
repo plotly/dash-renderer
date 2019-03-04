@@ -46,7 +46,7 @@ jobs:
               cd dash-core-components && npm run build && cd ..
               pip uninstall dash-core-components -y
               pip install -e ./dash-core-components --quiet
-              git clone git@github.com:plotly/dash-html-components.git
+              git clone git@github.com:plotly/dash-html-components.git@renderer-setprops-20rc1
               cd dash-html-components && npm install --ignore-scripts && cd ..
               cd dash-html-components && npm run build && cd ..
               pip uninstall dash-html-components -y
