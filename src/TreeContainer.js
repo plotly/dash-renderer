@@ -23,10 +23,6 @@ import { notifyObservers, updateProps } from './actions';
 const SIMPLE_COMPONENT_TYPES = ['String', 'Number', 'Null', 'Boolean'];
 
 class TreeContainer extends Component {
-    constructor(props) {
-        super(props);
-    }
-
     getChildren(components) {
         if (!components) {
             return null;
