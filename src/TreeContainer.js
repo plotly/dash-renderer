@@ -1,6 +1,6 @@
 'use strict';
 
-import React, {PureComponent} from 'react';
+import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import Registry from './registry';
 import {connect} from 'react-redux';
@@ -20,56 +20,11 @@ import {
 import {STATUS} from './constants/constants';
 import { notifyObservers, updateProps } from './actions';
 
-function isPlainObject(candidate) {
-    return candidate !== undefined &&
-        candidate !== null &&
-        typeof candidate === 'object' &&
-        candidate.constructor === Object;
-}
-
-function isEqual(obj1, obj2, deep: boolean = false) {
-    return obj1 === obj2 || isEqualArgs(
-        Object.values(obj1),
-        Object.values(obj2),
-        deep
-    );
-}
-
-function isEqualArgs(args1, args2, deep = false) {
-    return (
-        !!args1 &&
-        args1.length === args2.length &&
-        !!args1.every((arg1, index) => {
-            const arg2 = args2[index];
-
-            return arg1 === arg2 || (deep && (
-                (Array.isArray(arg1) && Array.isArray(arg2) && isEqualArgs(arg1, arg2, deep)) ||
-                (isPlainObject(arg1) && isPlainObject(arg2) && isEqual(arg1, arg2, deep))
-            ));
-        })
-    );
-}
-
 const SIMPLE_COMPONENT_TYPES = ['String', 'Number', 'Null', 'Boolean'];
 
-function memoizeOne(fn) {
-    let lastArgs: any[] | null = null;
-    let lastResult: any;
-
-    return (...args) =>
-        isEqualArgs(lastArgs, args) ?
-            lastResult :
-            (lastArgs = args) && (lastResult = fn(...args));
-}
-
-class TreeContainer extends PureComponent {
+class TreeContainer extends Component {
     constructor(props) {
         super(props);
-
-        this.getChildren = memoizeOne(this.getChildren.bind(this));
-        this.getComponent = memoizeOne(this.getComponent.bind(this));
-        this.getLoadingState = memoizeOne(this.getLoadingState.bind(this));
-        this.getSetProps = memoizeOne(this.getSetProps.bind(this));
     }
 
     getChildren(components) {
@@ -82,7 +37,7 @@ class TreeContainer extends PureComponent {
                 components :
                 (<AugmentedTreeContainer
                     key={components && components.props && components.props.id}
-                    __dashlayout__={components}
+                    _dashprivate_layout={components}
                 />);
         }
 
@@ -90,39 +45,39 @@ class TreeContainer extends PureComponent {
             child :
             (<AugmentedTreeContainer
                 key={child && child.props && child.props.id}
-                __dashlayout__={child}
+                _dashprivate_layout={child}
             />));
     }
 
-    getComponent(__dashlayout__, children, loading_state, setProps) {
-        if (isEmpty(__dashlayout__)) {
+    getComponent(_dashprivate_layout, children, loading_state, setProps) {
+        if (isEmpty(_dashprivate_layout)) {
             return null;
         }
 
-        if (contains(type(__dashlayout__), SIMPLE_COMPONENT_TYPES)) {
-            return __dashlayout__;
+        if (contains(type(_dashprivate_layout), SIMPLE_COMPONENT_TYPES)) {
+            return _dashprivate_layout;
         }
 
 
-        if (!__dashlayout__.type) {
+        if (!_dashprivate_layout.type) {
             /* eslint-disable no-console */
-            console.error(type(__dashlayout__), __dashlayout__);
+            console.error(type(_dashprivate_layout), _dashprivate_layout);
             /* eslint-enable no-console */
             throw new Error('component.type is undefined');
         }
-        if (!__dashlayout__.namespace) {
+        if (!_dashprivate_layout.namespace) {
             /* eslint-disable no-console */
-            console.error(type(__dashlayout__), __dashlayout__);
+            console.error(type(_dashprivate_layout), _dashprivate_layout);
             /* eslint-enable no-console */
             throw new Error('component.namespace is undefined');
         }
-        const element = Registry.resolve(__dashlayout__.type, __dashlayout__.namespace);
+        const element = Registry.resolve(_dashprivate_layout.type, _dashprivate_layout.namespace);
 
         return Array.isArray(children) ?
             React.createElement(
                 element,
                 mergeAll([
-                    omit(['children'], __dashlayout__.props),
+                    omit(['children'], _dashprivate_layout.props),
                     { loading_state, setProps }
                 ]),
                 ...children
@@ -130,7 +85,7 @@ class TreeContainer extends PureComponent {
             React.createElement(
                 element,
                 mergeAll([
-                    omit(['children'], __dashlayout__.props),
+                    omit(['children'], _dashprivate_layout.props),
                     { loading_state, setProps }
                 ]),
                 ...[children]
@@ -171,28 +126,33 @@ class TreeContainer extends PureComponent {
 
     getSetProps() {
         return newProps => {
-            const { dependencies, dispatch, paths } = this.props;
+            const {
+                _dashprivate_dependencies,
+                _dashprivate_dispatch,
+                _dashprivate_paths
+            } = this.props;
+
             const id = this.getLayoutProps().id;
 
             // Identify the modified props that are required for callbacks
             const watchedKeys = filter(key =>
-                dependencies &&
-                dependencies.find(dependency =>
+                _dashprivate_dependencies &&
+                _dashprivate_dependencies.find(dependency =>
                     dependency.inputs.find(input => input.id === id && input.property === key) ||
                     dependency.state.find(state => state.id === id && state.property === key)
                 )
             )(keysIn(newProps));
 
             // Always update this component's props
-            dispatch(updateProps({
+            _dashprivate_dispatch(updateProps({
                 props: newProps,
                 id: id,
-                itempath: paths[id]
+                itempath: _dashprivate_paths[id]
             }));
 
             // Only dispatch changes to Dash if a watched prop changed
             if (watchedKeys.length) {
-                dispatch(notifyObservers({
+                _dashprivate_dispatch(notifyObservers({
                     id: id,
                     props: pick(watchedKeys)(newProps)
                 }));
@@ -202,31 +162,36 @@ class TreeContainer extends PureComponent {
     }
 
     shouldComponentUpdate(nextProps) {
-        return nextProps.__dashlayout__ !== this.props.__dashlayout__;
+        return nextProps._dashprivate_layout !== this.props._dashprivate_layout;
     }
 
     getLayoutProps() {
-        return propOr({}, 'props', this.props.__dashlayout__);
+        return propOr({}, 'props', this.props._dashprivate_layout);
     }
 
     render() {
-        const { dispatch, __dashlayout__, requestQueue } = this.props;
+        const {
+            _dashprivate_dispatch,
+            _dashprivate_layout,
+            _dashprivate_requestQueue
+        } = this.props;
+
         const layoutProps = this.getLayoutProps();
 
         const children = this.getChildren(layoutProps.children);
-        const loadingState = this.getLoadingState(layoutProps.id, requestQueue);
-        const setProps = this.getSetProps(dispatch);
+        const loadingState = this.getLoadingState(layoutProps.id, _dashprivate_requestQueue);
+        const setProps = this.getSetProps(_dashprivate_dispatch);
 
-        return this.getComponent(__dashlayout__, children, loadingState, setProps);
+        return this.getComponent(_dashprivate_layout, children, loadingState, setProps);
     }
 }
 
 TreeContainer.propTypes = {
-    dependencies: PropTypes.any,
-    dispatch: PropTypes.func,
-    __dashlayout__: PropTypes.object,
-    paths: PropTypes.any,
-    requestQueue: PropTypes.object,
+    _dashprivate_dependencies: PropTypes.any,
+    _dashprivate_dispatch: PropTypes.func,
+    _dashprivate_layout: PropTypes.object,
+    _dashprivate_paths: PropTypes.any,
+    _dashprivate_requestQueue: PropTypes.object,
 };
 
 function mapDispatchToProps(dispatch) {
@@ -237,17 +202,18 @@ function mapStateToProps(state) {
     return {
         dependencies: state.dependenciesRequest.content,
         paths: state.paths,
+        requestQueue: state.requestQueue
     };
 }
 
 function mergeProps(stateProps, dispatchProps, ownProps) {
     return {
-        dependencies: stateProps.dependencies,
-        dispatch: dispatchProps.dispatch,
-        __dashlayout__: ownProps.__dashlayout__,
-        loading: ownProps.loading,
-        paths: stateProps.paths,
-        requestQueue: stateProps.requestQueue,
+        _dashprivate_dependencies: stateProps.dependencies,
+        _dashprivate_dispatch: dispatchProps.dispatch,
+        _dashprivate_layout: ownProps._dashprivate_layout,
+        _dashprivate_loading: ownProps._dashprivate_loading,
+        _dashprivate_paths: stateProps.paths,
+        _dashprivate_requestQueue: stateProps.requestQueue,
     };
 }
 
