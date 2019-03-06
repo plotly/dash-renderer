@@ -54,7 +54,6 @@ class TreeContainer extends Component {
             return _dashprivate_layout;
         }
 
-
         if (!_dashprivate_layout.type) {
             /* eslint-disable no-console */
             console.error(type(_dashprivate_layout), _dashprivate_layout);
