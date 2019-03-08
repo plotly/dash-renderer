@@ -11,6 +11,7 @@ import {
     isEmpty,
     isNil,
     keysIn,
+    map,
     mergeAll,
     omit,
     pick,
@@ -21,6 +22,14 @@ import {STATUS} from './constants/constants';
 import { notifyObservers, updateProps } from './actions';
 
 const SIMPLE_COMPONENT_TYPES = ['String', 'Number', 'Null', 'Boolean'];
+const isSimpleComponent = component => contains(type(component), SIMPLE_COMPONENT_TYPES)
+
+const createContainer = component => isSimpleComponent(component) ?
+    component :
+    (<AugmentedTreeContainer
+        key={component && component.props && component.props.id}
+        _dashprivate_layout={component}
+    />);
 
 class TreeContainer extends Component {
     getChildren(components) {
@@ -28,21 +37,9 @@ class TreeContainer extends Component {
             return null;
         }
 
-        if (!Array.isArray(components)) {
-            return contains(type(components), SIMPLE_COMPONENT_TYPES) ?
-                components :
-                (<AugmentedTreeContainer
-                    key={components && components.props && components.props.id}
-                    _dashprivate_layout={components}
-                />);
-        }
-
-        return components.map(child => contains(type(child), SIMPLE_COMPONENT_TYPES) ?
-            child :
-            (<AugmentedTreeContainer
-                key={child && child.props && child.props.id}
-                _dashprivate_layout={child}
-            />));
+        return Array.isArray(components) ?
+            map(createContainer, components) :
+            createContainer(components);
     }
 
     getComponent(_dashprivate_layout, children, loading_state, setProps) {
@@ -50,7 +47,7 @@ class TreeContainer extends Component {
             return null;
         }
 
-        if (contains(type(_dashprivate_layout), SIMPLE_COMPONENT_TYPES)) {
+        if (isSimpleComponent(_dashprivate_layout)) {
             return _dashprivate_layout;
         }
 
@@ -68,23 +65,14 @@ class TreeContainer extends Component {
         }
         const element = Registry.resolve(_dashprivate_layout.type, _dashprivate_layout.namespace);
 
-        return Array.isArray(children) ?
-            React.createElement(
-                element,
-                mergeAll([
-                    omit(['children'], _dashprivate_layout.props),
-                    { loading_state, setProps }
-                ]),
-                ...children
-            ) :
-            React.createElement(
-                element,
-                mergeAll([
-                    omit(['children'], _dashprivate_layout.props),
-                    { loading_state, setProps }
-                ]),
-                ...[children]
-            );
+        return React.createElement(
+            element,
+            mergeAll([
+                omit(['children'], _dashprivate_layout.props),
+                { loading_state, setProps }
+            ]),
+            ...(Array.isArray(children) ? children : [children])
+        );
     }
 
     getLoadingState(id, requestQueue) {
