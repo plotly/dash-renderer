@@ -2119,6 +2119,7 @@ class Tests(IntegrationTests):
             dev_tools_hot_reload=True,
             dev_tools_hot_reload_interval=500,
             dev_tools_hot_reload_max_retry=30,
+            dev_tools_hot_reload_watch_interval=0.1,
         )
 
         hot_reload_file = os.path.join(
