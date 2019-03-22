@@ -2128,22 +2128,29 @@ class Tests(IntegrationTests):
             '#hot-reload-content', 'background-color', 'rgba(0, 0, 255, 1)'
         )
 
-        with open(hot_reload_file, 'r+') as f:
-            old_content = f.read()
-            f.truncate(0)
-            f.seek(0)
-            f.write(textwrap.dedent('''
-            #hot-reload-content {
-                background-color: red;
-            }
-            '''))
+        with open(hot_reload_file, 'r') as original:
+            initial_content = original.read()
+
+        def change_background(color):
+            with open(hot_reload_file, 'w') as style_file:
+                style_file.write(textwrap.dedent('''
+                #hot-reload-content {
+                    background-color: %(color);
+                }
+                '''.replace('%(color)', color)))
+
         try:
+            change_background('red')
             self.wait_for_style_to_equal(
                 '#hot-reload-content', 'background-color', 'rgba(255, 0, 0, 1)'
             )
+            change_background('green')
+            self.wait_for_style_to_equal(
+                '#hot-reload-content', 'background-color', 'rgba(0, 128, 0, 1)'
+            )
         finally:
             with open(hot_reload_file, 'w') as f:
-                f.write(old_content)
+                f.write(initial_content)
 
     def test_single_input_multi_outputs_on_multiple_components(self):
         call_count = Value('i')
