@@ -75,77 +75,6 @@ class TreeContainer extends Component {
         );
     }
 
-    getLoadingState() {
-        const {
-            _dashprivate_layout: layout,
-            _dashprivate_requestQueue: requestQueue
-        } = this.props;
-
-        const ids = this.isDeepStateElement() ?
-            this.getNestedIds() :
-            (layout && layout.props.id ?
-                [layout.props.id] :
-                []);
-
-        let isLoading = false;
-        let loadingProp;
-        let loadingComponent;
-
-        if (requestQueue) {
-            forEach(r => {
-                const controllerId = isNil(r.controllerId) ? '' : r.controllerId;
-                if (r.status === 'loading' && any(id => contains(id, controllerId), ids)) {
-                    isLoading = true;
-                    [loadingComponent, loadingProp] = r.controllerId.split('.');
-                }
-            }, requestQueue);
-        }
-
-        // Set loading state
-        return {
-            is_loading: isLoading,
-            prop_name: loadingProp,
-            component_name: loadingComponent,
-        };
-    }
-
-    getNestedIds() {
-        const {
-            _dashprivate_layout: layout
-        } = this.props;
-
-        const ids = [];
-        const queue = [layout];
-
-        while (queue.length) {
-            const elementLayout = queue.shift();
-
-            const props = elementLayout &&
-                elementLayout.props;
-
-            if (!props) {
-                continue;
-            }
-
-            const { children, id } = props;
-
-            if (id) {
-                ids.push(id);
-            }
-
-            if (children) {
-                const filteredChildren = filter(
-                    child => !isSimpleComponent(child) && !Registry.resolve(child.type, child.namespace)._dashprivate_deepstate,
-                    Array.isArray(children) ? children : [children]
-                );
-
-                queue.push(...filteredChildren);
-            }
-        }
-
-        return ids;
-    }
-
     getSetProps() {
         return newProps => {
             const {
@@ -184,16 +113,10 @@ class TreeContainer extends Component {
     }
 
     shouldComponentUpdate(nextProps) {
-        const { _dashprivate_layout, _dashprivate_requestQueue } = nextProps;
+        const { _dashprivate_layout, _dashprivate_loadingState } = nextProps;
 
         return _dashprivate_layout !== this.props._dashprivate_layout ||
-            (this.isDeepStateElement() && _dashprivate_requestQueue !== this.props._dashprivate_requestQueue);
-    }
-
-    isDeepStateElement() {
-        const _dashprivate_layout = this.props._dashprivate_layout;
-
-        return Registry.resolve(_dashprivate_layout.type, _dashprivate_layout.namespace)._dashprivate_deepstate;
+            _dashprivate_loadingState.is_loading !== this.props._dashprivate_loadingState.is_loading;
     }
 
     getLayoutProps() {
@@ -203,7 +126,8 @@ class TreeContainer extends Component {
     render() {
         const {
             _dashprivate_dispatch,
-            _dashprivate_layout
+            _dashprivate_layout,
+            _dashprivate_requestQueue
         } = this.props;
 
         const layoutProps = this.getLayoutProps();
@@ -211,7 +135,7 @@ class TreeContainer extends Component {
         const children = this.getChildren(layoutProps.children);
         const setProps = this.getSetProps(_dashprivate_dispatch);
 
-        const loadingState = this.getLoadingState();
+        const loadingState = getLoadingState(_dashprivate_layout, _dashprivate_requestQueue);
 
         return this.getComponent(
             _dashprivate_layout, children, loadingState, setProps);
@@ -222,6 +146,7 @@ TreeContainer.propTypes = {
     _dashprivate_dependencies: PropTypes.any,
     _dashprivate_dispatch: PropTypes.func,
     _dashprivate_layout: PropTypes.object,
+    _dashprivate_loadingState: PropTypes.object,
     _dashprivate_paths: PropTypes.any,
     _dashprivate_requestQueue: PropTypes.object,
 };
@@ -243,9 +168,76 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
         _dashprivate_dependencies: stateProps.dependencies,
         _dashprivate_dispatch: dispatchProps.dispatch,
         _dashprivate_layout: ownProps._dashprivate_layout,
+        _dashprivate_loadingState: getLoadingState(ownProps._dashprivate_layout, stateProps.requestQueue),
         _dashprivate_paths: stateProps.paths,
         _dashprivate_requestQueue: stateProps.requestQueue,
     };
+}
+
+function getLoadingState(layout, requestQueue) {
+    const ids = isDeepStateElement(layout) ?
+        getNestedIds() :
+        (layout && layout.props.id ?
+            [layout.props.id] :
+            []);
+
+    let isLoading = false;
+    let loadingProp;
+    let loadingComponent;
+
+    if (requestQueue) {
+        forEach(r => {
+            const controllerId = isNil(r.controllerId) ? '' : r.controllerId;
+            if (r.status === 'loading' && any(id => contains(id, controllerId), ids)) {
+                isLoading = true;
+                [loadingComponent, loadingProp] = r.controllerId.split('.');
+            }
+        }, requestQueue);
+    }
+
+    // Set loading state
+    return {
+        is_loading: isLoading,
+        prop_name: loadingProp,
+        component_name: loadingComponent,
+    };
+}
+
+function getNestedIds(layout) {
+    const ids = [];
+    const queue = [layout];
+
+    while (queue.length) {
+        const elementLayout = queue.shift();
+
+        const props = elementLayout &&
+            elementLayout.props;
+
+        if (!props) {
+            continue;
+        }
+
+        const { children, id } = props;
+
+        if (id) {
+            ids.push(id);
+        }
+
+        if (children) {
+            const filteredChildren = filter(
+                child => !isSimpleComponent(child) && !Registry.resolve(child.type, child.namespace)._dashprivate_deepstate,
+                Array.isArray(children) ? children : [children]
+            );
+
+            queue.push(...filteredChildren);
+        }
+    }
+
+    return ids;
+}
+
+function isDeepStateElement(layout) {
+    return Registry.resolve(layout.type, layout.namespace)._dashprivate_deepstate;
 }
 
 export const AugmentedTreeContainer = connect(mapStateToProps, mapDispatchToProps, mergeProps)(TreeContainer);
