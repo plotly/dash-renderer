@@ -176,7 +176,7 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 
 function getLoadingState(layout, requestQueue) {
     const ids = isDeepStateElement(layout) ?
-        getNestedIds() :
+        getNestedIds(layout) :
         (layout && layout.props.id ?
             [layout.props.id] :
             []);
