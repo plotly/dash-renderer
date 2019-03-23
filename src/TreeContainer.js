@@ -127,7 +127,7 @@ class TreeContainer extends Component {
         const {
             _dashprivate_dispatch,
             _dashprivate_layout,
-            _dashprivate_requestQueue
+            _dashprivate_loadingState
         } = this.props;
 
         const layoutProps = this.getLayoutProps();
@@ -135,10 +135,7 @@ class TreeContainer extends Component {
         const children = this.getChildren(layoutProps.children);
         const setProps = this.getSetProps(_dashprivate_dispatch);
 
-        const loadingState = getLoadingState(_dashprivate_layout, _dashprivate_requestQueue);
-
-        return this.getComponent(
-            _dashprivate_layout, children, loadingState, setProps);
+        return this.getComponent(_dashprivate_layout, children, _dashprivate_loadingState, setProps);
     }
 }
 
