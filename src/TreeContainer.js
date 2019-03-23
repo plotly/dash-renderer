@@ -42,6 +42,39 @@ class TreeContainer extends Component {
             createContainer(components);
     }
 
+    getComponent(_dashprivate_layout, children, loading_state, setProps) {
+        if (isEmpty(_dashprivate_layout)) {
+            return null;
+        }
+
+        if (isSimpleComponent(_dashprivate_layout)) {
+            return _dashprivate_layout;
+        }
+
+        if (!_dashprivate_layout.type) {
+            /* eslint-disable no-console */
+            console.error(type(_dashprivate_layout), _dashprivate_layout);
+            /* eslint-enable no-console */
+            throw new Error('component.type is undefined');
+        }
+        if (!_dashprivate_layout.namespace) {
+            /* eslint-disable no-console */
+            console.error(type(_dashprivate_layout), _dashprivate_layout);
+            /* eslint-enable no-console */
+            throw new Error('component.namespace is undefined');
+        }
+        const element = Registry.resolve(_dashprivate_layout.type, _dashprivate_layout.namespace);
+
+        return React.createElement(
+            element,
+            mergeAll([
+                omit(['children'], _dashprivate_layout.props),
+                { loading_state, setProps }
+            ]),
+            ...(Array.isArray(children) ? children : [children])
+        );
+    }
+
     getLoadingState() {
         const {
             _dashprivate_layout: layout,
@@ -111,39 +144,6 @@ class TreeContainer extends Component {
         }
 
         return ids;
-    }
-
-    getComponent(_dashprivate_layout, children, loading_state, setProps) {
-        if (isEmpty(_dashprivate_layout)) {
-            return null;
-        }
-
-        if (isSimpleComponent(_dashprivate_layout)) {
-            return _dashprivate_layout;
-        }
-
-        if (!_dashprivate_layout.type) {
-            /* eslint-disable no-console */
-            console.error(type(_dashprivate_layout), _dashprivate_layout);
-            /* eslint-enable no-console */
-            throw new Error('component.type is undefined');
-        }
-        if (!_dashprivate_layout.namespace) {
-            /* eslint-disable no-console */
-            console.error(type(_dashprivate_layout), _dashprivate_layout);
-            /* eslint-enable no-console */
-            throw new Error('component.namespace is undefined');
-        }
-        const element = Registry.resolve(_dashprivate_layout.type, _dashprivate_layout.namespace);
-
-        return React.createElement(
-            element,
-            mergeAll([
-                omit(['children'], _dashprivate_layout.props),
-                { loading_state, setProps }
-            ]),
-            ...(Array.isArray(children) ? children : [children])
-        );
     }
 
     getSetProps() {
