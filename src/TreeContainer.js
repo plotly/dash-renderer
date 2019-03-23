@@ -32,6 +32,16 @@ const createContainer = component => isSimpleComponent(component) ?
     />);
 
 class TreeContainer extends Component {
+    getChildren(components) {
+        if (!components) {
+            return null;
+        }
+
+        return Array.isArray(components) ?
+            map(createContainer, components) :
+            createContainer(components);
+    }
+
     getLoadingState() {
         const {
             _dashprivate_layout: layout,
@@ -101,16 +111,6 @@ class TreeContainer extends Component {
         }
 
         return ids;
-    }
-
-    getChildren(components) {
-        if (!components) {
-            return null;
-        }
-
-        return Array.isArray(components) ?
-            map(createContainer, components) :
-            createContainer(components);
     }
 
     getComponent(_dashprivate_layout, children, loading_state, setProps) {
