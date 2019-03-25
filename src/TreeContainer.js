@@ -172,7 +172,7 @@ function mergeProps(stateProps, dispatchProps, ownProps) {
 }
 
 function getLoadingState(layout, requestQueue) {
-    const ids = isDeepStateElement(layout) ?
+    const ids = isLoadingComponent(layout) ?
         getNestedIds(layout) :
         (layout && layout.props.id ?
             [layout.props.id] :
@@ -222,7 +222,7 @@ function getNestedIds(layout) {
 
         if (children) {
             const filteredChildren = filter(
-                child => !isSimpleComponent(child) && !isDeepStateElement(child),
+                child => !isSimpleComponent(child) && !isLoadingComponent(child),
                 Array.isArray(children) ? children : [children]
             );
 
@@ -233,7 +233,7 @@ function getNestedIds(layout) {
     return ids;
 }
 
-function isDeepStateElement(layout) {
+function isLoadingComponent(layout) {
     return Registry.resolve(layout.type, layout.namespace)._dashprivate_isLoadingComponent;
 }
 
