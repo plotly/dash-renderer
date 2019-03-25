@@ -222,7 +222,7 @@ function getNestedIds(layout) {
 
         if (children) {
             const filteredChildren = filter(
-                child => !isSimpleComponent(child) && !Registry.resolve(child.type, child.namespace)._dashprivate_deepstate,
+                child => !isSimpleComponent(child) && !isDeepStateElement(child),
                 Array.isArray(children) ? children : [children]
             );
 
@@ -234,7 +234,7 @@ function getNestedIds(layout) {
 }
 
 function isDeepStateElement(layout) {
-    return Registry.resolve(layout.type, layout.namespace)._dashprivate_deepstate;
+    return Registry.resolve(layout.type, layout.namespace)._dashprivate_isLoadingComponent;
 }
 
 export const AugmentedTreeContainer = connect(mapStateToProps, mapDispatchToProps, mergeProps)(TreeContainer);
