@@ -41,6 +41,113 @@ export const setLayout = createAction(getAction('SET_LAYOUT'));
 export const setAppLifecycle = createAction(getAction('SET_APP_LIFECYCLE'));
 export const readConfig = createAction(getAction('READ_CONFIG'));
 export const setHooks = createAction(getAction('SET_HOOKS'));
+export const setClientsideMapping = createAction(getAction('SET_CLIENTSIDE_MAPPING'));
+
+/**
+ * The layout may contain clientside functions.
+ * Crawl the layout and:
+ *  1. Extract the clientside functions and POP - as it wasn't supplied at all
+ *     - Note that we pop the key instead of setting to null because
+ *       if the key doesn't exist, the component will use the defaultProps,
+ *       which should work. whereas `null` won't always render
+ *       (e.g. dcc.Graph(figure=None) doesn't render but dcc.Graph() does)
+ *  2. Mutate the dependenciesRequest with the clientside input/output
+ *     relationships
+ *  3. Compute the Graphs with the updated dependenciesRequest
+ *
+ *  The actual clientside computations are done later in `hydrateInitialOutputs`
+ */
+export function computeDerivedState(dispatch, layout, dependenciesRequest) {
+    const mutableDependencies = JSON.parse(JSON.stringify(dependenciesRequest.content));
+    const mutableLayout = JSON.parse(JSON.stringify(layout));
+
+    const clientsideMapping = {};
+
+    crawlLayout(mutableLayout, function assignPath(child, itempath) {
+        if (hasId(child)) {
+            for(const key in child.props) {
+                /*
+                 * A layout with an embedded clientside function
+                 * will look something like this:
+                ```
+                {
+                    "type": "Div",
+                    "namespace": "dash_html_components",
+                    "props": {
+                        "id": "my-output",
+                        "children": {
+                            "_dash_type": "function",
+                            "function": "eq",
+                            "namespace": "ramda",
+                            "positional_arguments": [
+                                3,
+                                {
+                                    "_dash_type": "input",
+                                    "id": "my-input",
+                                    "property": "value"
+                                }
+                            ]
+                        }
+                    }
+                }
+                ```
+                */
+
+                if (is(Object, child.props[key]) &&
+                        has('_dash_type', child.props[key])) {
+                    const functionMeta = child.props[key]
+
+                    clientsideMapping[`${child.props.id}.${key}`] = functionMeta;
+
+                    // mutate the layout
+                    delete child.props[key];
+
+                    // mutate dependencies to include the relationship.
+                    const inputs = [];
+                    const state = [];
+                    for (let i=0; i<functionMeta.positional_arguments.length; i++) {
+                        // These arguments could include constants as well.
+                        if (R.has('_dash_type',
+                                  functionMeta.positional_arguments[i])) {
+
+                            const {
+                                _dash_type,
+                                id,
+                                property
+                            } = functionMeta.positional_arguments[i];
+
+                            if (_dash_type === 'input') {
+                                inputs.push({id, property});
+                            } else {
+                                state.push({id, property});
+                            }
+
+                        }
+                    }
+
+                    mutableDependencies.push({
+                        inputs: inputs,
+                        state: state,
+                        output: `${child.props.id}.${key}`
+                    });
+
+                }
+            }
+        }
+    });
+
+    dispatch(setLayout(mutableLayout));
+    dispatch(setClientsideMapping(clientsideMapping));
+    dispatch({
+        type: 'dependenciesRequest',
+        payload: {
+            status: 200,
+            content: mutableDependencies
+        }
+    });
+    dispatch(computeGraphs(mutableDependencies));
+
+}
 
 export function hydrateInitialOutputs() {
     return function(dispatch, getState) {

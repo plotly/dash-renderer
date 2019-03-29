@@ -4,6 +4,7 @@ import React, {Component} from 'react';
 import PropTypes from 'prop-types';
 import TreeContainer from './TreeContainer';
 import {
+    computeDerivedState,
     computeGraphs,
     computePaths,
     hydrateInitialOutputs,
@@ -52,23 +53,16 @@ class UnconnectedContainer extends Component {
 
         if (isEmpty(dependenciesRequest)) {
             dispatch(getDependencies());
-        } else if (
-            dependenciesRequest.status === STATUS.OK &&
-            isEmpty(graphs)
-        ) {
-            dispatch(computeGraphs(dependenciesRequest.content));
+        } else if (dependenciesRequest.status === STATUS.OK &&
+            layoutRequest.status === STATUS.OK &&
+                !isEmpty(layout) &&
+                isEmpty(graphs)) {
+            computeDerivedState(dispatch, layout, dependenciesRequest);
         }
 
         if (
-            // dependenciesRequest and its computed stores
-            dependenciesRequest.status === STATUS.OK &&
             !isEmpty(graphs) &&
-            // LayoutRequest and its computed stores
-            layoutRequest.status === STATUS.OK &&
-            !isEmpty(layout) &&
-            !isNil(paths) &&
-            // Hasn't already hydrated
-            appLifecycle === getAppState('STARTED')
+            (appLifecycle === getAppState('STARTED'))
         ) {
             dispatch(hydrateInitialOutputs());
         }
