@@ -5,7 +5,6 @@ import PropTypes from 'prop-types';
 import TreeContainer from './TreeContainer';
 import {
     computeDerivedState,
-    computeGraphs,
     computePaths,
     hydrateInitialOutputs,
     setLayout,

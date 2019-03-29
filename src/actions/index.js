@@ -46,7 +46,7 @@ export const readConfig = createAction(getAction('READ_CONFIG'));
 export const setHooks = createAction(getAction('SET_HOOKS'));
 export const setClientsideMapping = createAction(getAction('SET_CLIENTSIDE_MAPPING'));
 
-/**
+/*
  * The layout may contain clientside functions.
  * Crawl the layout and:
  *  1. Extract the clientside functions and POP - as it wasn't supplied at all
@@ -66,7 +66,7 @@ export function computeDerivedState(dispatch, layout, dependenciesRequest) {
 
     const clientsideMapping = {};
 
-    crawlLayout(mutableLayout, function assignPath(child, itempath) {
+    crawlLayout(mutableLayout, function extractClientsideFunctions(child) {
         if (hasId(child)) {
             for(const key in child.props) {
                 /*
@@ -110,8 +110,8 @@ export function computeDerivedState(dispatch, layout, dependenciesRequest) {
                     const state = [];
                     for (let i=0; i<functionMeta.positional_arguments.length; i++) {
                         // These arguments could include constants as well.
-                        if (R.has('_dash_type',
-                                  functionMeta.positional_arguments[i])) {
+                        if (has('_dash_type',
+                                functionMeta.positional_arguments[i])) {
 
                             const {
                                 _dash_type,
@@ -144,7 +144,7 @@ export function computeDerivedState(dispatch, layout, dependenciesRequest) {
     dispatch({
         type: 'dependenciesRequest',
         payload: {
-            status: 200,
+            status: STATUS.OK,
             content: mutableDependencies
         }
     });
@@ -295,7 +295,7 @@ function reduceInputIds(nodeIds, InputGraph) {
 export function notifyObservers(payload) {
     return function(dispatch, getState) {
         const {id, props, excludedOutputs} = payload;
-        const {clientside, graphs, requestQueue} = getState();
+        const {graphs, requestQueue} = getState();
         const {InputGraph} = graphs;
         /*
          * Figure out all of the output id's that depend on this input.
@@ -647,7 +647,6 @@ function updateOutput(
         );
 
         const [outputId, outputProp] = payload.output.split('.');
-        const outputIdAndProp = payload.output;
         const updatedProps = {
             [outputProp]: returnValue
         };
@@ -656,7 +655,7 @@ function updateOutput(
          * Update the request queue by treating a successful clientside
          * like a succesful serverside response (200 status code)
          */
-        updateRequestQueue(false, 200);
+        updateRequestQueue(false, STATUS.OK);
 
         // Update the layout with the new result
         dispatch(updateProps({
