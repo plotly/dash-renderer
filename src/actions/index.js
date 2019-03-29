@@ -2,16 +2,19 @@
 import {
     __,
     adjust,
+    allPass,
     any,
     append,
     concat,
     contains,
+    find,
     findIndex,
     findLastIndex,
     flatten,
     flip,
     has,
     intersection,
+    is,
     isEmpty,
     keys,
     lensPath,
@@ -292,8 +295,7 @@ function reduceInputIds(nodeIds, InputGraph) {
 export function notifyObservers(payload) {
     return function(dispatch, getState) {
         const {id, props, excludedOutputs} = payload;
-
-        const {graphs, requestQueue} = getState();
+        const {clientside, graphs, requestQueue} = getState();
         const {InputGraph} = graphs;
         /*
          * Figure out all of the output id's that depend on this input.
@@ -475,7 +477,14 @@ function updateOutput(
     dispatch,
     changedPropIds
 ) {
-    const {config, layout, graphs, dependenciesRequest, hooks} = getState();
+    const {
+        clientside,
+        config,
+        layout,
+        graphs,
+        dependenciesRequest,
+        hooks
+    } = getState();
     const {InputGraph} = graphs;
 
     const getThisRequestIndex = () => {
@@ -602,6 +611,77 @@ function updateOutput(
                 value: view(propLens, layout),
             };
         });
+    }
+
+    // Update via clientside instead of serverside
+    if(has(payload.output, clientside)) {
+        const functionMeta = clientside[payload.output];
+        const posArgs = functionMeta.positional_arguments;
+        const evaluatedArgs = [];
+        for(let i=0; i<posArgs.length; i++) {
+            if(is(Object, posArgs[i]) && has('_dash_type', posArgs[i])) {
+                const findPropId = find(allPass([
+                    propEq('property', posArgs[i].property),
+                    propEq('id', posArgs[i].id)
+                ]));
+                if(posArgs[i]._dash_type === 'input') {
+                    evaluatedArgs.push(findPropId(payload.inputs).value);
+                } else if(posArgs[i]._dash_type === 'state') {
+                    evaluatedArgs.push(findPropId(payload.state).value);
+                } else {
+                    throw new Error(
+                        'Clientside function signature is malformed. ' +
+                        `_dash_type is "${posArgs[i]._dash_type} "` +
+                        'but it can only be "input" or "state".'
+                    );
+                }
+            } else {
+                evaluatedArgs.push(posArgs[i]);
+            }
+        }
+
+        const returnValue = (
+            window[functionMeta.namespace][functionMeta.function](
+                ...evaluatedArgs
+            )
+        );
+
+        const [outputId, outputProp] = payload.output.split('.');
+        const outputIdAndProp = payload.output;
+        const updatedProps = {
+            [outputProp]: returnValue
+        };
+
+        /*
+         * Update the request queue by treating a successful clientside
+         * like a succesful serverside response (200 status code)
+         */
+        updateRequestQueue(false, 200);
+
+        // Update the layout with the new result
+        dispatch(updateProps({
+            itempath: getState().paths[outputId],
+            props: updatedProps,
+            source: 'response'
+        }));
+
+        /*
+         * This output could itself be a serverside or clientside input
+         * to another function
+         */
+        dispatch(notifyObservers({
+            id: outputId,
+            props: updatedProps
+        }));
+
+        /*
+         * Note that unlike serverside updates, we're not handling
+         * children as components right now, so we don't need to
+         * crawl the computed result to check for nested components
+         * or properties that might trigger other inputs.
+         * In the future, we could handle this case.
+         */
+        return;
     }
 
     if (hooks.request_pre !== null) {
