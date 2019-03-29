@@ -867,7 +867,7 @@ function updateOutput(
                          * special case (no input changed?)
                          */
 
-                        const outputIds = [];
+                        const loneOutputIds = [];
                         keys(newProps).forEach(idAndProp => {
                             if (
                                 // It's an output
@@ -882,7 +882,7 @@ function updateOutput(
                                     keys(newProps)
                                 ).length === 0
                             ) {
-                                outputIds.push(idAndProp);
+                                loneOutputIds.push(idAndProp);
                                 delete newProps[idAndProp];
                             }
                         });
@@ -907,7 +907,7 @@ function updateOutput(
                         });
 
                         // Dispatch updates to lone outputs
-                        outputIds.forEach(idAndProp => {
+                        loneOutputIds.forEach(idAndProp => {
                             const requestUid = uid();
                             dispatch(
                                 setRequestQueue(
