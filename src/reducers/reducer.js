@@ -10,6 +10,7 @@ import history from './history';
 import hooks from './hooks';
 import * as API from './api';
 import config from './config';
+import clientside from './clientside';
 
 const reducer = combineReducers({
     appLifecycle,
@@ -23,6 +24,7 @@ const reducer = combineReducers({
     history,
     hooks,
     reloadRequest: API.reloadRequest,
+    clientside
 });
 
 function getInputHistoryState(itempath, props, state) {

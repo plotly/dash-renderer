@@ -8,6 +8,7 @@ export const getAction = action => {
         SET_APP_LIFECYCLE: 'SET_APP_LIFECYCLE',
         READ_CONFIG: 'READ_CONFIG',
         SET_HOOKS: 'SET_HOOKS',
+        SET_CLIENTSIDE_MAPPING: 'SET_CLIENTSIDE_MAPPING'
     };
     if (actionList[action]) {
         return actionList[action];
