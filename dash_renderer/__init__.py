@@ -12,9 +12,19 @@ import sys
 from .version import __version__
 __file__
 
-_DEFAULT_REACT_VERSION = '15.4.2'
-_REACT_VERSION_TYPES = {'15.4.2', '16.2.0'}
+_DEFAULT_REACT_VERSION = '16.8.6'
+_REACT_VERSION_TYPES = {'16.8.6', '15.4.2'}
 _REACT_VERSION_TO_URLS = {
+    '16.8.6': {
+        'external_url': [
+            'https://unpkg.com/react@16.8.6/umd/react.production.min.js',
+            'https://unpkg.com/react-dom@16.8.6/umd/react-dom.production.min.js'
+        ],
+        'relative_package_path': [
+            'react@16.8.6.min.js',
+            'react-dom@16.8.6.min.js'
+        ],
+    },
     '15.4.2': {
         'external_url': [
             'https://unpkg.com/react@15.4.2/dist/react.min.js',
@@ -23,16 +33,6 @@ _REACT_VERSION_TO_URLS = {
         'relative_package_path': [
             'react@15.4.2.min.js',
             'react-dom@15.4.2.min.js'
-        ],
-    },
-    '16.2.0': {
-        'external_url': [
-            'https://unpkg.com/react@16.2.0/umd/react.production.min.js',
-            'https://unpkg.com/react-dom@16.2.0/umd/react-dom.production.min.js'
-        ],
-        'relative_package_path': [
-            'react@16.2.0.production.min.js',
-            'react-dom@16.2.0.production.min.js'
         ],
     }
 }
@@ -47,7 +47,7 @@ def _set_react_version(react_version):
     import dash_renderer
 
     # Set the react version before setting up the Dash application
-    dash_renderer._set_react_version('16.2.0')
+    dash_renderer._set_react_version('15.4.2')
 
     app = dash.Dash(...)
     ```
