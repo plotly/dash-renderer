@@ -4,6 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
 ### Changed
+[#145](https://github.com/plotly/dash-renderer/pull/145)
 - Update from React 15.4.2 to React 16.8.6
 
 ## [0.21.0] - 2019-03-25
