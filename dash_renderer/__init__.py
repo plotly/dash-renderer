@@ -28,31 +28,31 @@ _REACT_VERSION_TO_URLS = {
 }
 
 
-# def _set_react_version(react_version):
-#     """
-#     Update the version of React in _js_dist_dependencies served by dash-renderer to the client
+def _set_react_version(react_version):
+    """
+    Update the version of React in _js_dist_dependencies served by dash-renderer to the client
 
-#     Example:
-#     ```
-#     import dash_renderer
+    Example:
+    ```
+    import dash_renderer
 
-#     app = dash.Dash(...)
-#     ```
+    app = dash.Dash(...)
+    ```
 
-#     :param str react_version: Version of React
+    :param str react_version: Version of React
 
-#     """
-#     assert react_version in _REACT_VERSION_TYPES
+    """
+    assert react_version in _REACT_VERSION_TYPES
 
-#     _this_module = sys.modules[__name__]
+    _this_module = sys.modules[__name__]
 
-#     # Dash renderer's dependencies get loaded in a special order by the server:
-#     # React bundles first, the renderer bundle at the very end.
-#     setattr(_this_module, '_js_dist_dependencies', [{
-#         'external_url': _REACT_VERSION_TO_URLS[react_version]['external_url'],
-#         'relative_package_path': _REACT_VERSION_TO_URLS[react_version]['relative_package_path'],
-#         'namespace': 'dash_renderer'
-#     }])
+    # Dash renderer's dependencies get loaded in a special order by the server:
+    # React bundles first, the renderer bundle at the very end.
+    setattr(_this_module, '_js_dist_dependencies', [{
+        'external_url': _REACT_VERSION_TO_URLS[react_version]['external_url'],
+        'relative_package_path': _REACT_VERSION_TO_URLS[react_version]['relative_package_path'],
+        'namespace': 'dash_renderer'
+    }])
 
 
 _js_dist_dependencies = []

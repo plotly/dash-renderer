@@ -1849,9 +1849,6 @@ class Tests(IntegrationTests):
 
         self.startServer(app)
 
-        # Reset react version
-        dash_renderer._set_react_version(dash_renderer._DEFAULT_REACT_VERSION)
-
 
     def test_multiple_properties_update_at_same_time_on_same_component(self):
         call_count = Value('i', 0)
