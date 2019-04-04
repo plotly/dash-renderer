@@ -7,6 +7,9 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 [#145](https://github.com/plotly/dash-renderer/pull/145)
 - Update from React 15.4.2 to React 16.8.6
 
+### Removed
+- `dash_renderer._set_react_version` is removed because only React 16.8.6 is supported now
+
 ## [0.21.0] - 2019-03-25
 ### Changed
 [#140](https://github.com/plotly/dash-renderer/pull/140)
