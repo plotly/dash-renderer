@@ -238,3 +238,5 @@ function isLoadingComponent(layout) {
 }
 
 export const AugmentedTreeContainer = connect(mapStateToProps, mapDispatchToProps, mergeProps)(TreeContainer);
+
+export default AugmentedTreeContainer;
