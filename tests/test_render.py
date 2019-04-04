@@ -1817,23 +1817,6 @@ class Tests(IntegrationTests):
                 'namespace': 'dash_renderer',
             }])
 
-        # dash_renderer._set_react_version('15.4.2')
-
-        # # Check that the _js_dist_dependencies updated
-        # self.assertEqual(
-        #     dash_renderer._js_dist_dependencies,
-        #     [{
-        #         'external_url': [
-        #             'https://unpkg.com/react@15.4.2/dist/react.min.js',
-        #             'https://unpkg.com/react-dom@15.4.2/dist/react-dom.min.js',
-        #         ],
-        #         'relative_package_path': [
-        #             'react@15.4.2.min.js',
-        #             'react-dom@15.4.2.min.js',
-        #         ],
-        #         'namespace': 'dash_renderer',
-        #     }])
-
         app = dash.Dash()
 
         # Create a dummy component with no props
