@@ -21,7 +21,7 @@ class UnconnectedContainer extends Component {
         super(props);
         this.initialization = this.initialization.bind(this);
         this.state = {
-            errorLoading: false
+            errorLoading: false,
         };
     }
     componentDidMount() {
@@ -79,9 +79,11 @@ class UnconnectedContainer extends Component {
             } catch (err) {
                 errorLoading = true;
             } finally {
-                this.setState(state => state.errorLoading !== errorLoading ?
-                    { errorLoading } :
-                    null
+                this.setState(
+                    state =>
+                        state.errorLoading !== errorLoading
+                            ? {errorLoading}
+                            : null
                 );
             }
         }
@@ -95,9 +97,7 @@ class UnconnectedContainer extends Component {
             layout,
         } = this.props;
 
-        const {
-            errorLoading
-        } = this.state;
+        const {errorLoading} = this.state;
 
         if (
             layoutRequest.status &&
@@ -105,10 +105,9 @@ class UnconnectedContainer extends Component {
         ) {
             return <div className="_dash-error">{'Error loading layout'}</div>;
         } else if (
-            errorLoading || (
-                dependenciesRequest.status &&
-                !contains(dependenciesRequest.status, [STATUS.OK, 'loading'])
-            )
+            errorLoading ||
+            (dependenciesRequest.status &&
+                !contains(dependenciesRequest.status, [STATUS.OK, 'loading']))
         ) {
             return (
                 <div className="_dash-error">
