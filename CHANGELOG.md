@@ -8,7 +8,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - Update from React 15.4.2 to React 16.8.6
 
 ### Removed
-- `dash_renderer._set_react_version` is removed because only React 16.8.6 is supported now
+- `dash_renderer._set_react_version` support for 15.4.2 and 16.2.0
 
 ## [0.21.0] - 2019-03-25
 ### Changed
