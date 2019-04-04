@@ -54,6 +54,7 @@ function triggerDefaultState(dispatch, getState) {
     const {InputGraph, MultiGraph} = graphs;
     const allNodes = InputGraph.overallOrder();
     // overallOrder will assert circular dependencies for multi output.
+
     MultiGraph.overallOrder();
     const inputNodeIds = [];
     allNodes.reverse();
