@@ -3,6 +3,9 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## [Unreleased]
+### Added
+- Added support for clientside callbacks [#143](https://github.com/plotly/dash-renderer/pull/143)
+
 ### Changed
 [#145](https://github.com/plotly/dash-renderer/pull/145)
 - Update from React 15.4.2 to React 16.8.6
