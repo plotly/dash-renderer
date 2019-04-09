@@ -280,7 +280,6 @@ class Tests(IntegrationTests):
                     {
                       "namespace": "dash_html_components",
                       "props": {
-                        "children": None,
                         "id": "p.c.5"
                       },
                       "type": "Div"
@@ -334,7 +333,6 @@ class Tests(IntegrationTests):
                                                 {
                                                   "namespace": "dash_html_components",
                                                   "props": {
-                                                    "children": None,
                                                     "id": "p.c.6.p.c.2.p.c.0.p.c.p.c.0.p.c.0"
                                                   },
                                                   "type": "Div"
@@ -343,7 +341,6 @@ class Tests(IntegrationTests):
                                                 {
                                                   "namespace": "dash_html_components",
                                                   "props": {
-                                                    "children": None,
                                                     "id": "p.c.6.p.c.2.p.c.0.p.c.p.c.0.p.c.2"
                                                   },
                                                   "type": "Div"
