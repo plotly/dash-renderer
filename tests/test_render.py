@@ -104,7 +104,7 @@ class Tests(IntegrationTests):
 
         if expected_length is not None:
             self.assertEqual(len(request_queue), expected_length)
-    
+
     def test_initial_state(self):
         app = Dash(__name__)
         app.layout = html.Div([
@@ -472,6 +472,19 @@ class Tests(IntegrationTests):
         self.request_queue_assertions(0)
 
         self.percy_snapshot(name='layout')
+
+        assert_clean_console(self)
+
+    def test_nully_child(self):
+        app = Dash(__name__)
+        app.layout = html.Div(id='nully-wrapper', children=[0])
+
+        self.startServer(app)
+
+        self.wait_for_element_by_css_selector('#nully-wrapper')
+        wrapper = self.driver.find_element_by_id('nully-wrapper')
+
+        self.assertEqual(wrapper.get_attribute('innerHTML'), '0')
 
         assert_clean_console(self)
 
