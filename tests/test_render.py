@@ -481,10 +481,7 @@ class Tests(IntegrationTests):
 
         self.startServer(app)
 
-        self.wait_for_element_by_css_selector('#nully-wrapper')
-        wrapper = self.driver.find_element_by_id('nully-wrapper')
-
-        self.assertEqual(wrapper.get_attribute('innerHTML'), '0')
+        self.wait_for_text_to_equal('#nully-wrapper', '0')
 
         assert_clean_console(self)
 
@@ -494,10 +491,7 @@ class Tests(IntegrationTests):
 
         self.startServer(app)
 
-        self.wait_for_element_by_css_selector('#nully-wrapper')
-        wrapper = self.driver.find_element_by_id('nully-wrapper')
-
-        self.assertEqual(wrapper.get_attribute('innerHTML'), '0')
+        self.wait_for_text_to_equal('#nully-wrapper', '0')
 
         assert_clean_console(self)
 
