@@ -475,9 +475,22 @@ class Tests(IntegrationTests):
 
         assert_clean_console(self)
 
-    def test_nully_child(self):
+    def test_array_of_nully_child(self):
         app = Dash(__name__)
         app.layout = html.Div(id='nully-wrapper', children=[0])
+
+        self.startServer(app)
+
+        self.wait_for_element_by_css_selector('#nully-wrapper')
+        wrapper = self.driver.find_element_by_id('nully-wrapper')
+
+        self.assertEqual(wrapper.get_attribute('innerHTML'), '0')
+
+        assert_clean_console(self)
+
+    def test_of_nully_child(self):
+        app = Dash(__name__)
+        app.layout = html.Div(id='nully-wrapper', children=0)
 
         self.startServer(app)
 
