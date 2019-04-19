@@ -2960,3 +2960,27 @@ class Tests(IntegrationTests):
                         test_cases[test_case_id]['name']
                     )
                 )
+
+    def test_set_props_behavior(self):
+        app = dash.Dash(__name__)
+        app.layout = html.Div([
+            dash_renderer_test_components.UncontrolledInput(id='id'),
+            html.Div(
+                id='container',
+                children=dash_renderer_test_components.UncontrolledInput(),
+            )
+        ])
+
+        self.startServer(
+            app,
+            debug=True,
+            use_reloader=False,
+            use_debugger=True,
+            dev_tools_hot_reload=False,
+        )
+
+        self.wait_for_element_by_css_selector('#id').send_keys('hello input with ID')
+
+        self.wait_for_element_by_css_selector('#container input').send_keys('hello input without ID')
+
+        self.percy_snapshot('set props - inputs have values')
