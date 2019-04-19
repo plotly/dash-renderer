@@ -4,7 +4,9 @@ import Registry from './registry';
 import {propTypeErrorHandler} from './exceptions';
 import {connect} from 'react-redux';
 import {
+    addIndex,
     any,
+    concat,
     contains,
     filter,
     forEach,
@@ -15,6 +17,7 @@ import {
     map,
     mergeAll,
     omit,
+    path,
     pick,
     propOr,
     type
@@ -50,11 +53,12 @@ function validateComponent(componentDefinition) {
     }
 }
 
-const createContainer = component => isSimpleComponent(component) ?
+const createContainer = (component, path) => isSimpleComponent(component) ?
     component :
     (<AugmentedTreeContainer
         key={component && component.props && component.props.id}
         _dashprivate_layout={component}
+        path={path}
     />);
 
 function CheckedComponent(p) {
@@ -87,14 +91,16 @@ CheckedComponent.propTypes = {
     id: PropTypes.string,
 };
 class TreeContainer extends Component {
-    getChildren(components) {
+    getChildren(components, path) {
         if (isNil(components)) {
             return null;
         }
 
         return Array.isArray(components) ?
-            map(createContainer, components) :
-            createContainer(components);
+            addIndex(map)(
+                (component, i) => createContainer(component, concat(path, ['props', 'children', i])),
+                components
+            ) : createContainer(components, concat(path, ['props', 'children']));
     }
 
     getComponent(_dashprivate_layout, children, loading_state, setProps) {
@@ -148,7 +154,7 @@ class TreeContainer extends Component {
             const {
                 _dashprivate_dependencies,
                 _dashprivate_dispatch,
-                _dashprivate_paths
+                path
             } = this.props;
 
             const id = this.getLayoutProps().id;
@@ -165,8 +171,7 @@ class TreeContainer extends Component {
             // Always update this component's props
             _dashprivate_dispatch(updateProps({
                 props: newProps,
-                id: id,
-                itempath: _dashprivate_paths[id]
+                itempath: path
             }));
 
             // Only dispatch changes to Dash if a watched prop changed
@@ -194,12 +199,13 @@ class TreeContainer extends Component {
         const {
             _dashprivate_dispatch,
             _dashprivate_layout,
-            _dashprivate_loadingState
+            _dashprivate_loadingState,
+            path
         } = this.props;
 
         const layoutProps = this.getLayoutProps();
 
-        const children = this.getChildren(layoutProps.children);
+        const children = this.getChildren(layoutProps.children, path);
         const setProps = this.getSetProps(_dashprivate_dispatch);
 
         return this.getComponent(_dashprivate_layout, children, _dashprivate_loadingState, setProps);
@@ -295,6 +301,7 @@ export const AugmentedTreeContainer = connect(
         _dashprivate_dependencies: stateProps.dependencies,
         _dashprivate_dispatch: dispatchProps.dispatch,
         _dashprivate_layout: ownProps._dashprivate_layout,
+        path: ownProps.path,
         _dashprivate_loadingState: getLoadingState(ownProps._dashprivate_layout, stateProps.requestQueue),
         _dashprivate_paths: stateProps.paths,
         _dashprivate_requestQueue: stateProps.requestQueue,

@@ -119,11 +119,11 @@ class UnconnectedContainer extends Component {
         ) {
             return (
                 <GlobalErrorContainer>
-                    <TreeContainer _dashprivate_layout={layout} />
+                    <TreeContainer _dashprivate_layout={layout} path={[]}/>
                 </GlobalErrorContainer>
             );
         } else if (appLifecycle === getAppState('HYDRATED')) {
-            return <TreeContainer _dashprivate_layout={layout} />;
+            return <TreeContainer _dashprivate_layout={layout} path={[]}/>;
         }
 
         return <div className="_dash-loading">{'Loading...'}</div>;
