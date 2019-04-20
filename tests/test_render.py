@@ -8,6 +8,7 @@ from dash.exceptions import PreventUpdate
 from dash.development.base_component import Component
 import dash_html_components as html
 import dash_core_components as dcc
+import dash_renderer_test_components
 
 from bs4 import BeautifulSoup
 from selenium.webdriver.common.action_chains import ActionChains
