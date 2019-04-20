@@ -2981,7 +2981,7 @@ class Tests(IntegrationTests):
         )
 
         self.wait_for_element_by_css_selector('#id').send_keys('hello input with ID')
+        self.wait_for_text_to_equal('#id', 'hello input with ID')
 
         self.wait_for_element_by_css_selector('#container input').send_keys('hello input without ID')
-
-        self.percy_snapshot('set props - inputs have values')
+        self.wait_for_text_to_equal('#container input', 'hello input without ID')
