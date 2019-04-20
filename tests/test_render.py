@@ -2965,10 +2965,15 @@ class Tests(IntegrationTests):
     def test_set_props_behavior(self):
         app = dash.Dash(__name__)
         app.layout = html.Div([
-            dash_renderer_test_components.UncontrolledInput(id='id'),
+            dash_renderer_test_components.UncontrolledInput(
+                id='id',
+                value=''
+            ),
             html.Div(
                 id='container',
-                children=dash_renderer_test_components.UncontrolledInput(),
+                children=dash_renderer_test_components.UncontrolledInput(
+                    value=''
+                ),
             )
         ])
 
