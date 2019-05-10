@@ -328,6 +328,9 @@ class Tests(IntegrationTests):
                 '#react-entry-point').get_attribute('innerHTML'),
             'lxml').select_one('#output > div').contents
 
+        print('************************')
+        print(pad_input.attrs)
+        print(pad_input.name)
         self.assertTrue(
             pad_input.attrs == {'id': 'sub-input-1', 'value': 'sub input initial value'}
                 and pad_input.name == 'input',
