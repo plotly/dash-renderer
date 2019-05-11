@@ -26,6 +26,14 @@ class UnconnectedAppContainer extends React.Component {
         const config = JSON.parse(
             document.getElementById('_dash-config').textContent
         );
+        // preset common request params in the config
+        config.fetch = {
+            credentials: 'same-origin',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            }
+        };
         dispatch(setConfig(config));
     }
 
