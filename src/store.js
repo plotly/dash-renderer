@@ -9,11 +9,13 @@ let store;
 /**
  * Initialize a Redux store with thunk, plus logging (only in development mode) middleware
  *
+ * @param {bool} reset: discard any previous store
+ *
  * @returns {Store<GenericStoreEnhancer>}
  *  An initialized redux store with middleware and possible hot reloading of reducers
  */
-const initializeStore = () => {
-    if (store) {
+const initializeStore = (reset) => {
+    if (store && !reset) {
         return store;
     }
 
@@ -28,8 +30,10 @@ const initializeStore = () => {
                   applyMiddleware(thunk)
               );
 
-    // TODO - Protect this under a debug mode?
-    window.store = store; /* global window:true */
+    if(!reset) {
+        // TODO - Protect this under a debug mode?
+        window.store = store; /* global window:true */
+    }
 
     if (module.hot) {
         // Enable hot module replacement for reducers
