@@ -20,24 +20,32 @@ import appLifecycle from './appLifecycle';
 import history from './history';
 import error from './error';
 import hooks from './hooks';
-import * as API from './api';
+import createApiReducer from './api';
 import config from './config';
 
-const reducer = combineReducers({
-    appLifecycle,
-    layout,
-    graphs,
-    paths,
-    requestQueue,
-    config,
-    history,
-    error,
-    hooks,
-    dependenciesRequest: API.dependenciesRequest,
-    layoutRequest: API.layoutRequest,
-    reloadRequest: API.reloadRequest,
-    loginRequest: API.loginRequest,
-});
+export const apiRequests = [
+    'dependenciesRequest',
+    'layoutRequest',
+    'reloadRequest',
+    'loginRequest',
+];
+
+function mainReducer() {
+    const parts = {
+        appLifecycle,
+        layout,
+        graphs,
+        paths,
+        requestQueue,
+        config,
+        history,
+        error,
+        hooks
+    };
+    forEach(r => { parts[r] = createApiReducer(r); }, apiRequests);
+
+    return combineReducers(parts);
+};
 
 function getInputHistoryState(itempath, props, state) {
     const {graphs, layout, paths} = state;
@@ -105,13 +113,15 @@ function recordHistory(reducer) {
 
 function reloaderReducer(reducer) {
     return function(state, action) {
+        let newState = state;
         if (action.type === 'RELOAD') {
             const {history, config} = state;
-            // eslint-disable-next-line no-param-reassign
-            state = {history, config};
+            newState = {history, config};
         }
-        return reducer(state, action);
+        return reducer(newState, action);
     };
 }
 
-export default reloaderReducer(recordHistory(reducer));
+export function createReducer() {
+    return reloaderReducer(recordHistory(mainReducer()));
+}

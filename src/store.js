@@ -2,7 +2,7 @@
 
 import {createStore, applyMiddleware} from 'redux';
 import thunk from 'redux-thunk';
-import reducer from './reducers/reducer';
+import {createReducer} from './reducers/reducer';
 
 let store;
 
@@ -18,6 +18,8 @@ const initializeStore = (reset) => {
     if (store && !reset) {
         return store;
     }
+
+    const reducer = createReducer();
 
     // only attach logger to middleware in non-production mode
     store =
@@ -38,7 +40,7 @@ const initializeStore = (reset) => {
     if (module.hot) {
         // Enable hot module replacement for reducers
         module.hot.accept('./reducers/reducer', () => {
-            const nextRootReducer = require('./reducers/reducer');
+            const nextRootReducer = require('./reducers/reducer').createReducer();
 
             store.replaceReducer(nextRootReducer);
         });
