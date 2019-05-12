@@ -98,10 +98,7 @@ const decoupled = (env, argv) => ({
     entry: './src/decoupled.js',
     output: {
         path: path.resolve(__dirname, dashLibraryName),
-        filename:
-            getMode(env, argv) === 'development'
-                ? `${dashLibraryName}.commonjs.dev.js`
-                : `${dashLibraryName}.commonjs.min.js`,
+        filename: `${dashLibraryName}.commonjs.js`,
         libraryTarget: 'commonjs2',
     },
 });

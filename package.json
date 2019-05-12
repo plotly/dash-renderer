@@ -3,7 +3,7 @@
   "version": "0.23.0",
   "description": "render dash components in react",
   "main": "src/index.js",
-  "module": "dash_renderer/dash_renderer.commonjs.min.js",
+  "module": "dash_renderer/dash_renderer.commonjs.js",
   "scripts": {
     "lint": "./node_modules/.bin/eslint --quiet --fix .",
     "lint:test": "./node_modules/.bin/eslint .",
