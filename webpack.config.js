@@ -74,6 +74,7 @@ const common = (env, argv) => ({
 
 const standalone = (env, argv) => ({
     ...common(env, argv),
+    name: 'standalone',
     entry: {main: ['@babel/polyfill', 'whatwg-fetch', './src/index.js']},
     output: {
         path: path.resolve(__dirname, dashLibraryName),
@@ -91,4 +92,18 @@ const standalone = (env, argv) => ({
     },
 });
 
-module.exports = [standalone];
+const decoupled = (env, argv) => ({
+    ...common(env, argv),
+    name: 'decoupled',
+    entry: './src/decoupled.js',
+    output: {
+        path: path.resolve(__dirname, dashLibraryName),
+        filename:
+            getMode(env, argv) === 'development'
+                ? `${dashLibraryName}.commonjs.dev.js`
+                : `${dashLibraryName}.commonjs.min.js`,
+        libraryTarget: 'commonjs2',
+    },
+});
+
+module.exports = [standalone, decoupled];
