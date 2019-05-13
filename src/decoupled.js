@@ -1,4 +1,7 @@
 /* eslint-env browser */
 
 'use strict';
-export {DashRenderer} from './DashRenderer';
+import AppProvider from './AppProvider.react';
+import {DashRenderer} from './DashRenderer';
+
+export {DashRenderer, AppProvider};
