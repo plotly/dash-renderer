@@ -5,12 +5,9 @@ import {has, type} from 'ramda';
  * dash==0.18.0. The previous versions just had url_base_pathname
  */
 export function urlBase(config) {
-    if (
-        type(config) === 'Null' ||
-        (type(config) === 'Object' &&
-            !has('url_base_pathname', config) &&
-            !has('requests_pathname_prefix', config))
-    ) {
+    const hasUrlBase = has('url_base_pathname', config);
+    const hasReqPrefix = has('requests_pathname_prefix', config);
+    if (type(config) !== 'Object' || (!hasUrlBase && !hasReqPrefix)) {
         throw new Error(
             `
             Trying to make an API request but "url_base_pathname" and
@@ -18,20 +15,12 @@ export function urlBase(config) {
             is not in \`config\`. \`config\` is: `,
             config
         );
-    } else if (
-        has('url_base_pathname', config) &&
-        !has('requests_pathname_prefix', config)
-    ) {
-        return config.url_base_pathname;
-    } else if (has('requests_pathname_prefix', config)) {
-        return config.requests_pathname_prefix;
-    } else {
-        throw new Error(
-            `Unhandled case trying to get url_base_pathname or
-             requests_pathname_prefix from config`,
-            config
-        );
     }
+    const base = hasReqPrefix ?
+        config.requests_pathname_prefix :
+        config.url_base_pathname;
+
+    return (base.charAt(base.length - 1) === '/') ? base : (base + '/');
 }
 
 export function uid() {
