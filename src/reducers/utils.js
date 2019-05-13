@@ -7,7 +7,7 @@ import {
     is,
     prop,
     reduce,
-    type
+    type,
 } from 'ramda';
 
 const extend = reduce(flip(append));

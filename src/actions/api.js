@@ -4,18 +4,30 @@ import {onError, getCSRFHeader} from '../actions';
 import {urlBase} from '../utils';
 
 function GET(path, fetchConfig) {
-    return fetch(path, mergeDeepLeft({
-        method: 'GET',
-        headers: getCSRFHeader()
-    }, fetchConfig));
+    return fetch(
+        path,
+        mergeDeepLeft(
+            {
+                method: 'GET',
+                headers: getCSRFHeader(),
+            },
+            fetchConfig
+        )
+    );
 }
 
 function POST(path, fetchConfig, body = {}) {
-    return fetch(path, mergeDeepLeft({
-        method: 'POST',
-        headers: getCSRFHeader(),
-        body: body ? JSON.stringify(body) : null,
-    }, fetchConfig));
+    return fetch(
+        path,
+        mergeDeepLeft(
+            {
+                method: 'POST',
+                headers: getCSRFHeader(),
+                body: body ? JSON.stringify(body) : null,
+            },
+            fetchConfig
+        )
+    );
 }
 
 const request = {GET, POST};
@@ -58,9 +70,10 @@ export default function apiThunk(endpoint, method, store, id, body) {
                 });
             })
             .catch(err => {
-                const errText = (typeof err.text === 'function') ?
-                    err.text() :
-                    Promise.resolve(err);
+                const errText =
+                    typeof err.text === 'function'
+                        ? err.text()
+                        : Promise.resolve(err);
 
                 errText.then(text => {
                     dispatch(

@@ -7,7 +7,7 @@ import {
     keys,
     lensPath,
     forEach,
-    view
+    view,
 } from 'ramda';
 
 import {combineReducers} from 'redux';
@@ -40,12 +40,14 @@ function mainReducer() {
         config,
         history,
         error,
-        hooks
+        hooks,
     };
-    forEach(r => { parts[r] = createApiReducer(r); }, apiRequests);
+    forEach(r => {
+        parts[r] = createApiReducer(r);
+    }, apiRequests);
 
     return combineReducers(parts);
-};
+}
 
 function getInputHistoryState(itempath, props, state) {
     const {graphs, layout, paths} = state;

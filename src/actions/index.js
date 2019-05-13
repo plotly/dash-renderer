@@ -54,7 +54,7 @@ export function hydrateInitialOutputs() {
 
 export function getCSRFHeader() {
     return {
-        'X-CSRFToken': cookie.parse(document.cookie)._csrf_token
+        'X-CSRFToken': cookie.parse(document.cookie)._csrf_token,
     };
 }
 
@@ -650,13 +650,19 @@ function updateOutput(
     }
 
     /* eslint-disable consistent-return */
-    return fetch(`${urlBase(config)}_dash-update-component`, mergeDeepLeft({
-        /* eslint-enable consistent-return */
+    return fetch(
+        `${urlBase(config)}_dash-update-component`,
+        mergeDeepLeft(
+            {
+                /* eslint-enable consistent-return */
 
-        method: 'POST',
-        headers: getCSRFHeader(),
-        body: JSON.stringify(payload),
-    }, config.fetch))
+                method: 'POST',
+                headers: getCSRFHeader(),
+                body: JSON.stringify(payload),
+            },
+            config.fetch
+        )
+    )
         .then(function handleResponse(res) {
             const isRejected = () => {
                 const latestRequestIndex = findLastIndex(

@@ -32,7 +32,7 @@ class UnconnectedAppContainer extends React.Component {
             headers: {
                 Accept: 'application/json',
                 'Content-Type': 'application/json',
-            }
+            },
         };
         dispatch(setConfig(config));
     }

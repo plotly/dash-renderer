@@ -55,7 +55,9 @@ class UnconnectedContainer extends Component {
         }
 
         if (isEmpty(dependenciesRequest)) {
-            dispatch(apiThunk('_dash-dependencies', 'GET', 'dependenciesRequest'));
+            dispatch(
+                apiThunk('_dash-dependencies', 'GET', 'dependenciesRequest')
+            );
         } else if (
             dependenciesRequest.status === STATUS.OK &&
             isEmpty(graphs)
