@@ -6,9 +6,9 @@ import AppContainer from './AppContainer.react';
 
 import PropTypes from 'prop-types';
 
-const store = initializeStore();
+const AppProvider = ({hooks, name, enforceNew, initialConfig, registry}) => {
+    const store = initializeStore({name, enforceNew});
 
-const AppProvider = ({hooks, initialConfig, registry}) => {
     return (
         <Provider store={store}>
             <AppContainer
@@ -29,6 +29,8 @@ AppProvider.propTypes = {
     registry: PropTypes.shape({
         resolve: PropTypes.func,
     }),
+    name: PropTypes.string,
+    enforceNew: PropTypes.bool,
 };
 
 AppProvider.defaultProps = {
@@ -36,6 +38,7 @@ AppProvider.defaultProps = {
         request_pre: null,
         request_post: null,
     },
+    enforceNew: false,
 };
 
 export default AppProvider;

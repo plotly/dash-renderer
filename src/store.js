@@ -12,8 +12,8 @@ let store;
  * @returns {Store<GenericStoreEnhancer>}
  *  An initialized redux store with middleware and possible hot reloading of reducers
  */
-const initializeStore = () => {
-    if (store) {
+const initializeStore = ({name, enforceNew}) => {
+    if (store && !enforceNew) {
         return store;
     }
 
@@ -24,12 +24,14 @@ const initializeStore = () => {
             : createStore(
                   reducer,
                   window.__REDUX_DEVTOOLS_EXTENSION__ &&
-                      window.__REDUX_DEVTOOLS_EXTENSION__(),
+                      window.__REDUX_DEVTOOLS_EXTENSION__({name}),
                   applyMiddleware(thunk)
               );
 
     // TODO - Protect this under a debug mode?
-    window.store = store; /* global window:true */
+    if (!enforceNew) {
+        window.store = store; /* global window:true */
+    }
 
     if (module.hot) {
         // Enable hot module replacement for reducers
