@@ -8,10 +8,10 @@ import PropTypes from 'prop-types';
 
 const store = initializeStore();
 
-const AppProvider = ({hooks}) => {
+const AppProvider = ({hooks, initialConfig}) => {
     return (
         <Provider store={store}>
-            <AppContainer hooks={hooks} />
+            <AppContainer hooks={hooks} initialConfig={initialConfig} />
         </Provider>
     );
 };
@@ -21,6 +21,7 @@ AppProvider.propTypes = {
         request_pre: PropTypes.func,
         request_post: PropTypes.func,
     }),
+    initialConfig: PropTypes.object,
 };
 
 AppProvider.defaultProps = {

@@ -21,8 +21,8 @@ class UnconnectedAppContainer extends React.Component {
     }
 
     componentWillMount() {
-        const {dispatch} = this.props;
-        dispatch(readConfig());
+        const {dispatch, initialConfig} = this.props;
+        dispatch(readConfig({config: initialConfig}));
     }
 
     render() {
@@ -46,6 +46,7 @@ UnconnectedAppContainer.propTypes = {
     hooks: PropTypes.object,
     dispatch: PropTypes.func,
     config: PropTypes.object,
+    initialConfig: PropTypes.object,
 };
 
 const AppContainer = connect(
