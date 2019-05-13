@@ -56,12 +56,13 @@ function validateComponent(componentDefinition) {
     }
 }
 
-const createContainer = (component, path) =>
+const createContainer = (component, path, registry) =>
     isSimpleComponent(component) ? (
         component
     ) : (
         <AugmentedTreeContainer
             key={component && component.props && component.props.id}
+            _dashprivate_registry={registry}
             _dashprivate_layout={component}
             _dashprivate_path={path}
         />
@@ -101,20 +102,27 @@ class TreeContainer extends Component {
             return null;
         }
 
+        const {_dashprivate_registry} = this.props;
+
         return Array.isArray(components)
             ? addIndex(map)(
                   (component, i) =>
                       createContainer(
                           component,
-                          concat(path, ['props', 'children', i])
+                          concat(path, ['props', 'children', i]),
+                          _dashprivate_registry
                       ),
                   components
               )
-            : createContainer(components, concat(path, ['props', 'children']));
+            : createContainer(
+                  components,
+                  concat(path, ['props', 'children']),
+                  _dashprivate_registry
+              );
     }
 
     getComponent(_dashprivate_layout, children, loading_state, setProps) {
-        const {_dashprivate_config} = this.props;
+        const {_dashprivate_config, _dashprivate_registry} = this.props;
 
         if (isEmpty(_dashprivate_layout)) {
             return null;
@@ -125,7 +133,7 @@ class TreeContainer extends Component {
         }
         validateComponent(_dashprivate_layout);
 
-        const element = Registry.resolve(_dashprivate_layout);
+        const element = _dashprivate_registry.resolve(_dashprivate_layout);
 
         const props = omit(['children'], _dashprivate_layout.props);
 
@@ -251,14 +259,17 @@ TreeContainer.propTypes = {
     _dashprivate_requestQueue: PropTypes.any,
     _dashprivate_config: PropTypes.object,
     _dashprivate_path: PropTypes.array,
+    _dashprivate_registry: PropTypes.shape({
+        resolve: PropTypes.func,
+    }),
 };
 
-function isLoadingComponent(layout) {
+function isLoadingComponent(layout, registry) {
     validateComponent(layout);
-    return Registry.resolve(layout)._dashprivate_isLoadingComponent;
+    return registry.resolve(layout)._dashprivate_isLoadingComponent;
 }
 
-function getNestedIds(layout) {
+function getNestedIds(layout, registry) {
     const ids = [];
     const queue = [layout];
 
@@ -280,7 +291,8 @@ function getNestedIds(layout) {
         if (children) {
             const filteredChildren = filter(
                 child =>
-                    !isSimpleComponent(child) && !isLoadingComponent(child),
+                    !isSimpleComponent(child) &&
+                    !isLoadingComponent(child, registry),
                 Array.isArray(children) ? children : [children]
             );
 
@@ -291,9 +303,9 @@ function getNestedIds(layout) {
     return ids;
 }
 
-function getLoadingState(layout, requestQueue) {
-    const ids = isLoadingComponent(layout)
-        ? getNestedIds(layout)
+function getLoadingState(layout, requestQueue, registry) {
+    const ids = isLoadingComponent(layout, registry)
+        ? getNestedIds(layout, registry)
         : layout && layout.props.id
         ? [layout.props.id]
         : [];
@@ -330,18 +342,24 @@ export const AugmentedTreeContainer = connect(
         config: state.config,
     }),
     dispatch => ({dispatch}),
-    (stateProps, dispatchProps, ownProps) => ({
-        _dashprivate_dependencies: stateProps.dependencies,
-        _dashprivate_dispatch: dispatchProps.dispatch,
-        _dashprivate_layout: ownProps._dashprivate_layout,
-        _dashprivate_path: ownProps._dashprivate_path,
-        _dashprivate_loadingState: getLoadingState(
-            ownProps._dashprivate_layout,
-            stateProps.requestQueue
-        ),
-        _dashprivate_requestQueue: stateProps.requestQueue,
-        _dashprivate_config: stateProps.config,
-    })
+    (stateProps, dispatchProps, ownProps) => {
+        const registry = ownProps._dashprivate_registry || Registry;
+
+        return {
+            _dashprivate_registry: registry,
+            _dashprivate_dependencies: stateProps.dependencies,
+            _dashprivate_dispatch: dispatchProps.dispatch,
+            _dashprivate_layout: ownProps._dashprivate_layout,
+            _dashprivate_path: ownProps._dashprivate_path,
+            _dashprivate_loadingState: getLoadingState(
+                ownProps._dashprivate_layout,
+                stateProps.requestQueue,
+                registry
+            ),
+            _dashprivate_requestQueue: stateProps.requestQueue,
+            _dashprivate_config: stateProps.config,
+        };
+    }
 )(TreeContainer);
 
 export default AugmentedTreeContainer;

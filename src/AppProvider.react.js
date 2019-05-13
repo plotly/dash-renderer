@@ -8,10 +8,14 @@ import PropTypes from 'prop-types';
 
 const store = initializeStore();
 
-const AppProvider = ({hooks, initialConfig}) => {
+const AppProvider = ({hooks, initialConfig, registry}) => {
     return (
         <Provider store={store}>
-            <AppContainer hooks={hooks} initialConfig={initialConfig} />
+            <AppContainer
+                hooks={hooks}
+                initialConfig={initialConfig}
+                registry={registry}
+            />
         </Provider>
     );
 };
@@ -22,6 +26,9 @@ AppProvider.propTypes = {
         request_post: PropTypes.func,
     }),
     initialConfig: PropTypes.object,
+    registry: PropTypes.shape({
+        resolve: PropTypes.func,
+    }),
 };
 
 AppProvider.defaultProps = {

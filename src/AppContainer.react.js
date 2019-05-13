@@ -26,14 +26,14 @@ class UnconnectedAppContainer extends React.Component {
     }
 
     render() {
-        const {config} = this.props;
+        const {config, registry} = this.props;
         if (type(config) === 'Null') {
             return <div className="_dash-loading">Loading...</div>;
         }
         return (
             <React.Fragment>
                 <Toolbar />
-                <APIController />
+                <APIController registry={registry} />
                 <DocumentTitle />
                 <Loading />
                 <Reloader />
@@ -47,6 +47,9 @@ UnconnectedAppContainer.propTypes = {
     dispatch: PropTypes.func,
     config: PropTypes.object,
     initialConfig: PropTypes.object,
+    registry: PropTypes.shape({
+        resolve: PropTypes.func,
+    }),
 };
 
 const AppContainer = connect(

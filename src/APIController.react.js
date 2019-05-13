@@ -94,6 +94,7 @@ class UnconnectedContainer extends Component {
             layoutRequest,
             layout,
             config,
+            registry,
         } = this.props;
 
         const {errorLoading} = this.state;
@@ -120,6 +121,7 @@ class UnconnectedContainer extends Component {
             return (
                 <GlobalErrorContainer>
                     <TreeContainer
+                        _dashprivate_registry={registry}
                         _dashprivate_layout={layout}
                         _dashprivate_path={[]}
                     />
@@ -128,6 +130,7 @@ class UnconnectedContainer extends Component {
         } else if (appLifecycle === getAppState('HYDRATED')) {
             return (
                 <TreeContainer
+                    _dashprivate_registry={registry}
                     _dashprivate_layout={layout}
                     _dashprivate_path={[]}
                 />
@@ -150,6 +153,9 @@ UnconnectedContainer.propTypes = {
     history: PropTypes.any,
     error: PropTypes.object,
     config: PropTypes.object,
+    registry: PropTypes.shape({
+        resolve: PropTypes.func,
+    }),
 };
 
 const Container = connect(
