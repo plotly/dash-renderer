@@ -4,14 +4,14 @@
   "description": "render dash components in react",
   "main": "src/index.js",
   "scripts": {
+    "private::extract-version": "node scripts/extract-version.js",
     "lint": "./node_modules/.bin/eslint --quiet --fix .",
     "lint:test": "./node_modules/.bin/eslint .",
-    "prepublish": "npm test && npm run build && npm run build:dev",
+    "prepublish": "npm test && npm run build",
     "publish-all": "npm publish && echo \"twine!!!\"",
     "publish-pypi": "npm run prepublish && python setup.py sdist upload",
-    "build:dev": "webpack --mode development",
-    "build:dev.watch": "webpack --mode development --watch",
-    "build": "webpack --mode production",
+    "build:js": "webpack --mode production",
+    "build": "npm run private::extract-version && npm run build:js",
     "start": "webpack-serve ./webpack.serve.config.js",
     "format": "prettier --config .prettierrc --write src/**/*.js src/**/*.react.js",
     "format:test": "prettier --config .prettierrc src/**/*.js src/**/*.react.js --list-different",
@@ -76,5 +76,8 @@
     "redux-logger": "^2.8.0",
     "style-loader": "^0.23.1",
     "webpack-dev-server": "^3.1.11"
-  }
+  },
+  "files": [
+    "/dash_renderer/*{.js,.map}"
+  ]
 }
