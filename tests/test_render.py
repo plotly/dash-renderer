@@ -109,7 +109,6 @@ class Tests(IntegrationTests):
         if expected_length is not None:
             self.assertEqual(len(request_queue), expected_length)
 
-
     def test_initial_state(self):
         app = Dash(__name__)
         my_class_attrs = {
@@ -1876,6 +1875,11 @@ class Tests(IntegrationTests):
                 '#hot-reload-content', 'background-color', 'rgba(255, 0, 0, 1)'
             )
         finally:
+            # load a blank page, so we don't get errant _reload_hash
+            # network failures
+            self.driver.get('about:blank')
+
+            # only then put back the old content
             with open(hot_reload_file, 'w') as f:
                 f.write(old_content)
 
