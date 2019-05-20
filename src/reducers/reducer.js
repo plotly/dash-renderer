@@ -119,8 +119,7 @@ function reloaderReducer(reducer) {
         if (action.type === 'RELOAD') {
             const {history, config} = state;
             newState = {history, config};
-        }
-        else if (action.type === 'SET_CONFIG') {
+        } else if (action.type === 'SET_CONFIG') {
             // new config also reloads, and even clears history,
             // in case there's a new user or even a totally different app!
             newState = {};
