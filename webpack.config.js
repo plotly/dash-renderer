@@ -78,10 +78,7 @@ const standalone = (env, argv) => ({
     entry: {main: ['@babel/polyfill', 'whatwg-fetch', './src/index.js']},
     output: {
         path: path.resolve(__dirname, dashLibraryName),
-        filename:
-            getMode(env, argv) === 'development'
-                ? `${dashLibraryName}.dev.js`
-                : `${dashLibraryName}.min.js`,
+        filename: `${dashLibraryName}.min.js`,
         library: dashLibraryName,
         libraryTarget: 'window',
     },
