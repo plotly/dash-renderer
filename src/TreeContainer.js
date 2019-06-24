@@ -171,10 +171,10 @@ class TreeContainer extends Component {
             const {
                 _dashprivate_dependencies,
                 _dashprivate_dispatch,
-                _dashprivate_path,
             } = this.props;
 
-            const id = this.getLayoutProps().id;
+            const props = this.getComponentProps();
+            const id = props.id;
 
             // Identify the modified props that are required for callbacks
             const watchedKeys = filter(
@@ -197,7 +197,7 @@ class TreeContainer extends Component {
             _dashprivate_dispatch(
                 updateProps({
                     props: newProps,
-                    itempath: _dashprivate_path,
+                    itempath: this.getComponentPath(),
                 })
             );
 
@@ -224,6 +224,22 @@ class TreeContainer extends Component {
 
     getLayoutProps() {
         return propOr({}, 'props', this.props._dashprivate_layout);
+    }
+
+    getComponentProps() {
+        const {_dashprivate_layout} = this.props;
+
+        return _dashprivate_layout.props.component
+            ? _dashprivate_layout.props.component.props
+            : _dashprivate_layout.props;
+    }
+
+    getComponentPath() {
+        const {_dashprivate_layout, _dashprivate_path} = this.props;
+
+        return _dashprivate_layout.props.component
+            ? _dashprivate_path.concat(['props', 'component'])
+            : _dashprivate_path;
     }
 
     render() {
