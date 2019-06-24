@@ -289,10 +289,14 @@ function getNestedIds(layout, registry) {
     while (queue.length) {
         const elementLayout = queue.shift();
 
-        const props = elementLayout && elementLayout.props;
+        let props = elementLayout && elementLayout.props;
 
         if (!props) {
             continue;
+        }
+
+        if (props.component) {
+            props = props.component.props;
         }
 
         const {children, id} = props;
