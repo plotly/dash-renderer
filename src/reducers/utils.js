@@ -20,6 +20,14 @@ export const hasPropsChildren = R.allPass([
     ),
 ]);
 
+export const hasPropsComponent = R.allPass([
+    hasProps,
+    R.compose(
+        R.has('component'),
+        R.prop('props')
+    ),
+]);
+
 // crawl a layout object, apply a function on every object
 export const crawlLayout = (object, func, path = []) => {
     func(object, path);
@@ -37,7 +45,17 @@ export const crawlLayout = (object, func, path = []) => {
         } else {
             crawlLayout(object.props.children, func, newPath);
         }
-    } else if (R.is(Array, object)) {
+    }
+
+    if (hasPropsComponent(object)) {
+        crawlLayout(
+            object.props.component,
+            func,
+            extend(path, ['props', 'component'])
+        );
+    }
+
+    if (R.is(Array, object)) {
         /*
          * Sometimes when we're updating a sub-tree
          * (like when we're responding to a callback)
