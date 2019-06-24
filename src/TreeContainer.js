@@ -247,15 +247,12 @@ class TreeContainer extends Component {
             _dashprivate_dispatch,
             _dashprivate_layout,
             _dashprivate_loadingState,
-            _dashprivate_path,
         } = this.props;
 
-        const layoutProps = this.getLayoutProps();
+        const props = this.getComponentProps();
+        const path = this.getComponentPath();
 
-        const children = this.getChildren(
-            layoutProps.children,
-            _dashprivate_path
-        );
+        const children = this.getChildren(props.children, path);
         const setProps = this.getSetProps(_dashprivate_dispatch);
 
         return this.getComponent(
