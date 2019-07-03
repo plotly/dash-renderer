@@ -1,4 +1,4 @@
-import {append, assocPath, contains, lensPath, merge, view} from 'ramda';
+import {append, assocPath, contains, lensPath, merge, view, set} from 'ramda';
 
 import {getAction} from '../actions/constants';
 
@@ -13,8 +13,19 @@ const layout = (state = {}, action) => {
         ])
     ) {
         const propPath = append('props', action.payload.itempath);
-        const existingProps = view(lensPath(propPath), state);
-        const mergedProps = merge(existingProps, action.payload.props);
+        const props = action.payload.props;
+        let mergedProps = view(lensPath(propPath), state);
+
+        for (const prop in props) {
+            if (props.hasOwnProperty(prop)) {
+                mergedProps = set(
+                    lensPath(prop.split('.')),
+                    props[prop],
+                    mergedProps
+                );
+            }
+        }
+
         return assocPath(propPath, mergedProps, state);
     }
 
