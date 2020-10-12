@@ -1,6 +1,6 @@
-### DEPRECATED
+### OBSOLETE
 
-This repository will be deprecated soon as we are merging dash-renderer into main [dash repo](https://github.com/plotly/dash)
+This repository has been merged into the main [dash repo](https://github.com/plotly/dash)
 
 
 ### Dash Renderer - The Dash Frontend
